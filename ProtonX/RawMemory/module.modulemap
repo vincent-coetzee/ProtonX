@@ -1,0 +1,5 @@
+module RawMemory [system] [extern_c] {
+    header "RawMemory.h"
+    export *
+}
+

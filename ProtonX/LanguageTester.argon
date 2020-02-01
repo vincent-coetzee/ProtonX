@@ -1,0 +1,144 @@
+
+
+
+public type Business is package
+    {
+    import Strings(*) from(/Users/vincent/Argon/packages/Strings.argon.package)
+    import Collections(OrderedSet,SortedArray,SortedList)
+    import Collections(RingBuffer as CircularBuffer)
+    import Maths
+    
+    private slot PrivateSlot::Signed = 23
+    private slot(mutable) PrivateBoolean = #true
+    private slot(immutable) ConstantSlot::Signed = 47
+    
+    public verge MessageQueue
+        {
+        method send(message::Message)
+        }
+        
+    public mixin Actor
+        {
+        private constant kActorName = "Actor"
+        
+        public slot(read) messageQueue::MessageQueue = make(MessageQueue,kActorName)
+        public slot(read) name::String
+        
+        initialize(actorName::String)
+            {
+            this.name = actorName
+            }
+            
+        deinitialize
+            {
+            }
+        }
+        
+    public enumeration Months<NameType>::Signed
+        {
+        .january(NameType) = 1,
+        .february(NameType) = 2,
+        .march(NameType) = 3
+        }
+        
+    private contract Object
+        {
+        slot(read) id::Signed
+        slot(readwrite) value::Object
+        method print(-object::This,-terminator::String)
+        }
+        
+    public type PersonTuple is (name::String,age::Signed,dateOfBirth::Date)
+    
+    public array FloatMonthArray<Float32,Months<NameType::String>>
+    
+    public type NewArray is FloatMonthArray
+    
+    //
+    // Operators need to be declared before they can be defined
+    //
+    public infix operator *==*
+    
+    public method *==*(lhs:PersonTuple,rhs:PersonTuple) -> Boolean
+        {
+        return(lhs.name == rhs.name)
+        }
+        
+    public package Accounts<A::(ConstraintOnA),B,SomeContract>
+        {
+        public seam BasicAccount::(A,B,SomeContract)
+            {
+            }
+            
+        private seam PrivateAccount
+            {
+            
+            }
+            
+        private seam Processor::(Actor)
+            {
+            }
+            
+        progeny mixin LocalAccount
+            {
+            progeny seam constant kSeamAccountPrefix = "Prefix"
+            
+            private seam slot seamSlot = 0
+            
+            progeny seam slot nextIndex::UInteger
+                {
+                static let nextInteger = 1::UInteger
+                read
+                    {
+                    return(nextInteger++)
+                    }
+                }
+                
+            progeny constant kAccountNamePrefix = "AccountLocal"
+            progeny constant kAccountNumberIndex = 1_000
+            
+            private slot _name = "Name"
+            
+            progeny slot name::String
+                {
+                read
+                    {
+                    return(this._name + Format.format("%04i",This.nextIndex))
+                    }
+                write(value)
+                    {
+                    this._name = value
+                    }
+                }
+                
+            initialize(account::This,balance::Integer) // this maps into a make(LocalAccount,balance:Integer) method
+                {
+                this.balance = balance
+                }
+                
+            deinitialize(account::This)
+                {
+                }
+                
+            public infix operator +(lhs::This,rhs::This) -> This
+                {
+                let newAccount = make(This,lhs.balance + rhs.balance)
+                }
+                
+            public method balance(account::This,month::Month,year::Integer) -> Boolean
+                {
+                let monthEnd = make(MonthEnd,month,year)
+                return(this.next-method(month::month,year::year))
+                }
+            }
+            
+        progeny verge Account::(BasicAccount,LocalAccount)
+        
+        progeny contract AccountInterface::(BasicContract)
+            {
+            slot(readwrite) name::String = ""
+            slot(read) dateCreated::Date = @(today)
+            method create(account::This) -> Boolean
+            }
+        }
+    }
