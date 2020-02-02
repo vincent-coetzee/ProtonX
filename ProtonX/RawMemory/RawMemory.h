@@ -25,6 +25,7 @@ typedef Byte* BytePointer;
 typedef char* CharPointer;
 typedef long long CInt64;
 typedef unsigned long long CUInt64;
+typedef unsigned char* BitsPointer;
 
 typedef struct _SlotIndex
     {
@@ -186,6 +187,7 @@ typedef struct _Root
 #define AsBytePointer(p) ((BytePointer)(p))
 #define AsCharPointer(p) ((CharPointer)(p))
 #define AsInt64Pointer(p) ((CInt64*)(p))
+#define AsBitsPointer(p) ((BitsPointer)(p))
 
 #define AsTaggedBoolean(p) ((AsWord(p) & ~(kTagBitsMask << kTagBitsShift)) | ((kTagBitsBoolean & kTagBitsMask)<<kTagBitsShift))
 #define AsTaggedByte(p) ((AsWord(p) & ~(kTagBitsMask << kTagBitsShift)) | ((kTagBitsByte & kTagBitsMask)<<kTagBitsShift))
@@ -283,5 +285,7 @@ double untaggedFloat64AtIndexAtPointer(SlotIndex index,void* pointer);
 _Bool untaggedBooleanAtIndexAtPointer(SlotIndex index,void* pointer);
 Byte untaggedByteAtIndexAtPointer(SlotIndex index,void* pointer);
 Word untaggedAddressAtIndexAtPointer(SlotIndex index,void* pointer);
+Word wordAtIndexAtBitsPointer(SlotIndex index,void* pointer);
+void setWordAtIndexAtBitsPointer(Word word,SlotIndex index,void* pointer);
 
 #endif /* RawMemory_h */

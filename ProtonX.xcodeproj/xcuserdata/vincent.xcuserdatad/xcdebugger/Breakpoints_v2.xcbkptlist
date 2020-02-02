@@ -7,33 +7,33 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7CA3A7BC-8604-4F38-BF02-F92791183ECE"
+            uuid = "F709EFFB-A1ED-45A9-926D-9BDCC6B71A03"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ProtonX/Pointers and Pointer Support/Collection Pointers/BitSetPointer.swift"
+            filePath = "ProtonX/Memory and Segments/MemorySegment.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "203"
-            endingLineNumber = "203"
-            landmarkName = "withOnes(at:length:)"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
+            landmarkName = "testBitFieldMaskSections()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C2CBD697-E91F-42FF-8370-C634C316DF6E"
+            uuid = "6E14B5A3-E163-41C6-898F-463E654FCEF3"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ProtonX/Pointers and Pointer Support/Collection Pointers/BitSetPointer.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32"
-            endingLineNumber = "32"
-            landmarkName = "testSections()"
-            landmarkType = "7">
+            startingLineNumber = "762"
+            endingLineNumber = "762"
+            landmarkName = "mask"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

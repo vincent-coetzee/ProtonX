@@ -73,7 +73,18 @@ public class MemorySegment:Equatable
         
     public static func testBitFieldMaskSections()
         {
-        BitSetPointer.testSections()
+        try! BitSetPointer.testSections()
+        var bitSetPointer = Memory.staticSegment.allocateBitSet(maximumBitCount: 128)
+        bitSetPointer.bits = "1111111111111111000000000000000011111111111111110000000000000000111111111111111100000000000000001111111111111111000000000000000011111111111111110000000000000000111111111111111100000000000000001111111111111111000000000000000011111111111111110000000000000000"
+        var bits = BitSetPointer.BitsPointer(bitSetPointer)
+        let mixedBits = bits[try! BitRange(from:12,to:20)]
+        bitSetPointer = Memory.staticSegment.allocateBitSet(maximumBitCount: 64)
+        bitSetPointer.bits = "1110111010101010101010101010101010101010101010101010101011101110"
+        print(mixedBits.bitString)
+        bits = BitSetPointer.BitsPointer(bitSetPointer)
+        let extracted = bits[try! BitRange(from:0,to:8)]
+        print(extracted.bitString)
+        print(bitSetPointer.bits)
         }
         
     public static func testTrees()

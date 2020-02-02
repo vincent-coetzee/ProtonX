@@ -15,6 +15,18 @@ public typealias DoubleWordTupleArray = Array<DoubleWordTuple>
 
 extension Word:HashableValue,Value
     {
+    public static let allOnes:Word = 18446744073709551615
+    public static let allZeros:Word = 0
+        
+    public static func twoToPower(of n:Word) -> Word
+        {
+        if n == 0
+            {
+            return(1)
+            }
+        return(2 << (n-1))
+        }
+        
     public var hashedValue:Int
         {
         return(unsafeBitCast(self,to: Int.self))
@@ -164,5 +176,10 @@ extension Word:HashableValue,Value
     public init(bitPattern float:Float)
         {
         self.init(bitPattern: Int64(Int32(bitPattern: float.bitPattern)))
+        }
+        
+    public init(bits:String)
+        {
+        self.init(BitSetPointer.bitsAsWord(bits))
         }
     }

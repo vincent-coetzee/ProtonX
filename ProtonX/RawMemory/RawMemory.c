@@ -421,4 +421,30 @@ void setTaggedObjectPointerAtIndexAtPointer(void* address,SlotIndex index,void* 
     *(AsWordPointer(pointer) + index.index) = AsTaggedObject(address);
     }
 
-
+Word wordAtIndexAtBitsPointer(SlotIndex index,void* pointer)
+    {
+    Word offset = index.index * (sizeof(Word) + 1);
+    BitsPointer bitsPointer = AsBitsPointer(pointer) + offset;
+    Word word = 0;
+    BitsPointer wordPointer = AsBitsPointer(&word);
+    for (int loop = 0;loop < 7;loop++)
+        {
+        *wordPointer++ = *bitsPointer++;
+        }
+    bitsPointer++;
+    *wordPointer = *bitsPointer;
+    return(word);
+    }
+    
+void setWordAtIndexAtBitsPointer(Word word,SlotIndex index,void* pointer)
+    {
+    Word offset = index.index * (sizeof(Word) + 1);
+    BitsPointer bitsPointer = AsBitsPointer(pointer) + offset;
+    BitsPointer wordPointer = AsBitsPointer(&word);
+    for (int loop = 0;loop<7;loop++)
+        {
+        *bitsPointer++ = *wordPointer++;
+        }
+    *bitsPointer++ = kTagBitsBits;
+    *bitsPointer = *wordPointer;
+    }

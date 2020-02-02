@@ -422,7 +422,8 @@ public class Argon
         
     public enum Error:Swift.Error
         {
-        case bitPatternSectionsConflict(BitSetPointer.BitPattern.BitPatternSection,BitSetPointer.BitPattern.BitPatternSection)
+        case bitCountMustBeMultipleOfWordBitWidth
+        case bitRangeWidthMustBeLessThanWordBitWidth
         case arrayIndexBoundsViolation(Int,Int)
         case outOfMemory(MemorySegment)
         case internalErrorCanNotGrowArray
