@@ -47,6 +47,7 @@ public class MemorySegment:Equatable
         {
         Log.silent()
         Memory.initTypes()
+        self.testInstructions()
         self.testBitFieldMaskSections()
         self.testTrees()
         self.testLists()
@@ -85,6 +86,16 @@ public class MemorySegment:Equatable
         let extracted = bits[try! BitRange(from:0,to:8)]
         print(extracted.bitString)
         print(bitSetPointer.bits)
+        }
+        
+    public static func testInstructions()
+        {
+        let string1 = ImmutableStringPointer("Test String 1")
+        let string2 = ImmutableStringPointer("Test String 2")
+        let codeBlock = CodeBlock()
+        codeBlock.appendInstruction(.ENTER(operand1: .immediate(8 * 3)))
+        codeBlock.appendInstruction(.PUSH(operand: .address(string1.taggedAddress,.indirect)))
+        codeBlock.appendInstruction(.PUSH(operand: .address(string2.taggedAddress,.indirect)))
         }
         
     public static func testTrees()

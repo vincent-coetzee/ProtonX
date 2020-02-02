@@ -9,6 +9,27 @@
 import Foundation
 import RawMemory
 
+public class CodeBlock
+    {
+    private var instructions:[Instruction] = []
+    private var pendingLabel:Int?
+    
+    public func decorateNextInstruction(withLabel:Int)
+        {
+        self.pendingLabel = withLabel
+        }
+        
+    public func appendInstruction(_ instruction:Instruction)
+        {
+        if self.pendingLabel != nil
+            {
+            instruction.set(incomingLabel: pendingLabel!)
+            self.pendingLabel = nil
+            }
+        self.instructions.append(instruction)
+        }
+    }
+    
 public class CodeBlockPointer:ObjectPointer
     {
     public static let kCodeBlockCodeBufferIndex = SlotIndex.two
