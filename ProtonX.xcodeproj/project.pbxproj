@@ -37,7 +37,6 @@
 		BF0045D723E5597000F07111 /* ValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458423E5596F00F07111 /* ValueHolder.swift */; };
 		BF0045D823E5597000F07111 /* Instruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458623E5596F00F07111 /* Instruction.swift */; };
 		BF0045D923E5597000F07111 /* IndexVector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458723E5596F00F07111 /* IndexVector.swift */; };
-		BF0045DA23E5597000F07111 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458823E5596F00F07111 /* Thread.swift */; };
 		BF0045DB23E5597000F07111 /* TreeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458A23E5597000F07111 /* TreeValue.swift */; };
 		BF0045DC23E5597100F07111 /* ScalarValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458B23E5597000F07111 /* ScalarValue.swift */; };
 		BF0045DD23E5597100F07111 /* Pointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458C23E5597000F07111 /* Pointer.swift */; };
@@ -88,6 +87,16 @@
 		BF00460A23E5597100F07111 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF0045C023E5597000F07111 /* Preview Assets.xcassets */; };
 		BF00460B23E5597100F07111 /* LanguageTester.argon in Resources */ = {isa = PBXBuildFile; fileRef = BF0045C123E5597000F07111 /* LanguageTester.argon */; };
 		BF00461023E5598400F07111 /* RawMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = BF00460E23E5598400F07111 /* RawMemory.c */; };
+		BF3C475123E89F1C008BCF13 /* SlotValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C475023E89F1C008BCF13 /* SlotValue.swift */; };
+		BF3C475423E8BF29008BCF13 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C475323E8BF29008BCF13 /* Thread.swift */; };
+		BF3C475623E8C615008BCF13 /* Method.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C475523E8C615008BCF13 /* Method.swift */; };
+		BF3C475823E8C621008BCF13 /* MethodInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C475723E8C621008BCF13 /* MethodInstance.swift */; };
+		BF3C475A23E8C634008BCF13 /* MethodDispatchGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C475923E8C634008BCF13 /* MethodDispatchGraph.swift */; };
+		BF71F56923E827A90016ED08 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56823E827A90016ED08 /* Label.swift */; };
+		BF71F56C23E83C570016ED08 /* SeamPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56B23E83C570016ED08 /* SeamPointer.swift */; };
+		BF71F56E23E83EFE0016ED08 /* VisibilityModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56D23E83EFE0016ED08 /* VisibilityModifier.swift */; };
+		BF71F57023E840B90016ED08 /* VergePointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56F23E840B90016ED08 /* VergePointer.swift */; };
+		BF71F57423E87CDB0016ED08 /* CachedPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F57323E87CDB0016ED08 /* CachedPointer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -124,7 +133,6 @@
 		BF00458423E5596F00F07111 /* ValueHolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueHolder.swift; sourceTree = "<group>"; };
 		BF00458623E5596F00F07111 /* Instruction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Instruction.swift; sourceTree = "<group>"; };
 		BF00458723E5596F00F07111 /* IndexVector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndexVector.swift; sourceTree = "<group>"; };
-		BF00458823E5596F00F07111 /* Thread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Thread.swift; sourceTree = "<group>"; };
 		BF00458A23E5597000F07111 /* TreeValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreeValue.swift; sourceTree = "<group>"; };
 		BF00458B23E5597000F07111 /* ScalarValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScalarValue.swift; sourceTree = "<group>"; };
 		BF00458C23E5597000F07111 /* Pointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pointer.swift; sourceTree = "<group>"; };
@@ -177,6 +185,16 @@
 		BF00460D23E5598400F07111 /* RawMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawMemory.h; sourceTree = "<group>"; };
 		BF00460E23E5598400F07111 /* RawMemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RawMemory.c; sourceTree = "<group>"; };
 		BF00460F23E5598400F07111 /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		BF3C475023E89F1C008BCF13 /* SlotValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotValue.swift; sourceTree = "<group>"; };
+		BF3C475323E8BF29008BCF13 /* Thread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thread.swift; sourceTree = "<group>"; };
+		BF3C475523E8C615008BCF13 /* Method.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Method.swift; sourceTree = "<group>"; };
+		BF3C475723E8C621008BCF13 /* MethodInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MethodInstance.swift; sourceTree = "<group>"; };
+		BF3C475923E8C634008BCF13 /* MethodDispatchGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MethodDispatchGraph.swift; sourceTree = "<group>"; };
+		BF71F56823E827A90016ED08 /* Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
+		BF71F56B23E83C570016ED08 /* SeamPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeamPointer.swift; sourceTree = "<group>"; };
+		BF71F56D23E83EFE0016ED08 /* VisibilityModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisibilityModifier.swift; sourceTree = "<group>"; };
+		BF71F56F23E840B90016ED08 /* VergePointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergePointer.swift; sourceTree = "<group>"; };
+		BF71F57323E87CDB0016ED08 /* CachedPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedPointer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,6 +233,7 @@
 				BF00458523E5596F00F07111 /* Instructions */,
 				BF0045C123E5597000F07111 /* LanguageTester.argon */,
 				BF00457723E5596F00F07111 /* Line.swift */,
+				BF3C475223E8BF0B008BCF13 /* Execution */,
 				BF00456D23E5596F00F07111 /* Memory and Segments */,
 				BF00459823E5597000F07111 /* Pointers and Pointer Support */,
 				BF0045BF23E5597000F07111 /* Preview Content */,
@@ -289,7 +308,6 @@
 			children = (
 				BF00458623E5596F00F07111 /* Instruction.swift */,
 				BF00458723E5596F00F07111 /* IndexVector.swift */,
-				BF00458823E5596F00F07111 /* Thread.swift */,
 			);
 			path = Instructions;
 			sourceTree = "<group>";
@@ -305,6 +323,7 @@
 				BF00458F23E5597000F07111 /* Key.swift */,
 				BF00459023E5597000F07111 /* Value.swift */,
 				BF00459123E5597000F07111 /* NamedPointer.swift */,
+				BF71F57323E87CDB0016ED08 /* CachedPointer.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -315,6 +334,8 @@
 				BF00459323E5597000F07111 /* Log.swift */,
 				BF00459423E5597000F07111 /* Timer.swift */,
 				BF00459523E5597000F07111 /* EnglishWord.swift */,
+				BF71F56823E827A90016ED08 /* Label.swift */,
+				BF71F56D23E83EFE0016ED08 /* VisibilityModifier.swift */,
 			);
 			path = "Support ";
 			sourceTree = "<group>";
@@ -333,6 +354,8 @@
 		BF00459923E5597000F07111 /* Type Pointers */ = {
 			isa = PBXGroup;
 			children = (
+				BF71F56F23E840B90016ED08 /* VergePointer.swift */,
+				BF71F56B23E83C570016ED08 /* SeamPointer.swift */,
 				BF00459A23E5597000F07111 /* ContractPointer.swift */,
 				BF00459B23E5597000F07111 /* EnumerationPointer.swift */,
 				BF00459C23E5597000F07111 /* ScalarTypePointer.swift */,
@@ -353,6 +376,7 @@
 				BF0045A523E5597000F07111 /* VirtualSlotPointer.swift */,
 				BF0045A623E5597000F07111 /* ValuePointer.swift */,
 				BF0045A723E5597000F07111 /* ObjectTypePointer.swift */,
+				BF3C475023E89F1C008BCF13 /* SlotValue.swift */,
 			);
 			path = "Base Pointers";
 			sourceTree = "<group>";
@@ -409,6 +433,17 @@
 				BF00460F23E5598400F07111 /* module.modulemap */,
 			);
 			path = RawMemory;
+			sourceTree = "<group>";
+		};
+		BF3C475223E8BF0B008BCF13 /* Execution */ = {
+			isa = PBXGroup;
+			children = (
+				BF3C475323E8BF29008BCF13 /* Thread.swift */,
+				BF3C475523E8C615008BCF13 /* Method.swift */,
+				BF3C475723E8C621008BCF13 /* MethodInstance.swift */,
+				BF3C475923E8C634008BCF13 /* MethodDispatchGraph.swift */,
+			);
+			path = Execution;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -487,6 +522,7 @@
 			files = (
 				BF00460323E5597100F07111 /* PackagePointer.swift in Sources */,
 				BF0045E323E5597100F07111 /* Log.swift in Sources */,
+				BF3C475123E89F1C008BCF13 /* SlotValue.swift in Sources */,
 				BF0045D423E5597000F07111 /* Instruction.Address + Extensions.swift in Sources */,
 				BF00455A23E5592D00F07111 /* Document.swift in Sources */,
 				BF0045ED23E5597100F07111 /* VirtualSlotTypePointer.swift in Sources */,
@@ -499,10 +535,12 @@
 				BF0045E823E5597100F07111 /* ContractPointer.swift in Sources */,
 				BF0045DE23E5597100F07111 /* HashableValue.swift in Sources */,
 				BF00455823E5592D00F07111 /* AppDelegate.swift in Sources */,
+				BF3C475A23E8C634008BCF13 /* MethodDispatchGraph.swift in Sources */,
 				BF0045C623E5597000F07111 /* MemorySegment.swift in Sources */,
 				BF0045FF23E5597100F07111 /* ArrayPointer.swift in Sources */,
 				BF0045DD23E5597100F07111 /* Pointer.swift in Sources */,
 				BF0045DB23E5597000F07111 /* TreeValue.swift in Sources */,
+				BF71F57023E840B90016ED08 /* VergePointer.swift in Sources */,
 				BF0045CA23E5597000F07111 /* ManagedSegment.swift in Sources */,
 				BF0045F723E5597100F07111 /* ImmutableStringPointer.swift in Sources */,
 				BF0045CE23E5597000F07111 /* Int+Extensions.swift in Sources */,
@@ -532,11 +570,11 @@
 				BF0045D323E5597000F07111 /* SlotOffset+Extensions.swift in Sources */,
 				BF00460223E5597100F07111 /* WordBlockPointer.swift in Sources */,
 				BF0045C223E5597000F07111 /* BitSet.swift in Sources */,
+				BF71F57423E87CDB0016ED08 /* CachedPointer.swift in Sources */,
 				BF00460423E5597100F07111 /* DictionaryBucketNodePointer.swift in Sources */,
 				BF0045C923E5597000F07111 /* Header.swift in Sources */,
 				BF0045C323E5597000F07111 /* StackSegment.swift in Sources */,
 				BF0045D923E5597000F07111 /* IndexVector.swift in Sources */,
-				BF0045DA23E5597000F07111 /* Thread.swift in Sources */,
 				BF0045E423E5597100F07111 /* Timer.swift in Sources */,
 				BF0045C423E5597000F07111 /* CodeSegment.swift in Sources */,
 				BF0045E723E5597100F07111 /* Argon.swift in Sources */,
@@ -547,14 +585,20 @@
 				BF0045D523E5597000F07111 /* SlotIndex+Extensions.swift in Sources */,
 				BF0045C723E5597000F07111 /* DataSegment.swift in Sources */,
 				BF0045F423E5597100F07111 /* ObjectTypePointer.swift in Sources */,
+				BF3C475423E8BF29008BCF13 /* Thread.swift in Sources */,
 				BF0045F123E5597100F07111 /* SystemSlotPointer.swift in Sources */,
 				BF0045D123E5597000F07111 /* Float64+Extensions.swift in Sources */,
 				BF0045DC23E5597100F07111 /* ScalarValue.swift in Sources */,
 				BF0045E523E5597100F07111 /* EnglishWord.swift in Sources */,
+				BF71F56923E827A90016ED08 /* Label.swift in Sources */,
 				BF0045EB23E5597100F07111 /* TypePointer.swift in Sources */,
 				BF0045D823E5597000F07111 /* Instruction.swift in Sources */,
+				BF3C475623E8C615008BCF13 /* Method.swift in Sources */,
 				BF0045C823E5597000F07111 /* Memory.swift in Sources */,
+				BF71F56E23E83EFE0016ED08 /* VisibilityModifier.swift in Sources */,
+				BF71F56C23E83C570016ED08 /* SeamPointer.swift in Sources */,
 				BF00460523E5597100F07111 /* TreePointer.swift in Sources */,
+				BF3C475823E8C621008BCF13 /* MethodInstance.swift in Sources */,
 				BF0045CF23E5597000F07111 /* Integer+Extensions.swift in Sources */,
 				BF00460823E5597100F07111 /* ClosurePointer.swift in Sources */,
 				BF0045F923E5597100F07111 /* Association.swift in Sources */,

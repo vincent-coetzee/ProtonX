@@ -178,7 +178,7 @@ public enum ValueHolder:Comparable
                 return(uint)
             case .float32(let value):
                 return(value.asWord())
-            case .float64(let value):
+            case .float64:
                return(0)
             case .boolean(let value):
                 return(value.asWord())
@@ -201,7 +201,6 @@ public enum ValueHolder:Comparable
             case .package(let value):
                return(value.asWord())
             }
-        return(0)
         }
         
     public var bitString:String

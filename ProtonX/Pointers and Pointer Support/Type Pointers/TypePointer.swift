@@ -20,18 +20,16 @@ public class TypePointer:PackageElementPointer
         {
         return(lhs.fullName < rhs.fullName)
         }
-        
-    public static let kTypeInstanceTypeFlagIndex = SlotIndex.two
-    public static let kTypeSlotCountIndex = SlotIndex.three
-    public static let kTypeSlotArrayIndex = SlotIndex.four
-    public static let kTypeParentCountIndex = SlotIndex.five
-    public static let kTypeParentArrayIndex = SlotIndex.six
-    public static let kTypeInstanceSlotCountIndex = SlotIndex.seven
-    public static let kTypeInstanceHasBytesIndex = SlotIndex.eight
 
+    public static let kFlagInstanceContainsBits:Word = 1
+    
+    public static let kTypeVisibilityModifierIndex = SlotIndex.three
+    public static let kTypeFlagsIndex = SlotIndex.four
+    public static let kTypeInstanceTypeIndex = SlotIndex.five
+    
     public override class var totalSlotCount:Argon.SlotCount
         {
-        return(9)
+        return(6)
         }
         
 //    public class func pointer(forType pointer:Argon.Pointer?) -> ValuePointer
@@ -70,102 +68,47 @@ public class TypePointer:PackageElementPointer
 //            }
 //        }
         
-
-        
-    public var slotArrayPointer:ArrayPointer
+    public var visibilityModifier:VisibilityModifier
         {
         get
             {
-            return(ArrayPointer(wordAsPointer(untaggedWordAtIndexAtPointer(Self.kTypeSlotArrayIndex,self.pointer))))
+            return(VisibilityModifier(rawValue: untaggedWordAtIndexAtPointer(Self.kTypeVisibilityModifierIndex,self.pointer))!)
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue.pointer,Self.kTypeSlotArrayIndex,self.pointer)
+            setWordAtIndexAtPointer(newValue.rawValue,Self.kTypeVisibilityModifierIndex,self.pointer)
             }
         }
         
-    public var parentArrayPointer:ArrayPointer?
+    public var instanceType:Word
         {
         get
             {
-            return(ArrayPointer(untaggedPointerAtIndexAtPointer(Self.kTypeParentArrayIndex,self.pointer)))
+            return(untaggedWordAtIndexAtPointer(Self.kTypeInstanceTypeIndex,self.pointer))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kTypeParentArrayIndex,self.pointer)
+            setWordAtIndexAtPointer(newValue,Self.kTypeInstanceTypeIndex,self.pointer)
             }
         }
         
-    public var typeSlotCount:Int
+    public var typeFlags:Word
         {
         get
             {
-            return(Int(untaggedWordAtIndexAtPointer(Self.kTypeSlotCountIndex,self.pointer)))
+            return(untaggedWordAtIndexAtPointer(Self.kTypeFlagsIndex,self.pointer))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kTypeSlotCountIndex,self.pointer)
+            setWordAtIndexAtPointer(newValue,Self.kTypeFlagsIndex,self.pointer)
             }
         }
         
-    public var instanceTypeFlag:Word
-        {
-        get
-            {
-            return(untaggedWordAtIndexAtPointer(Self.kTypeInstanceTypeFlagIndex,self.pointer))
-            }
-        set
-            {
-            setWordAtIndexAtPointer(newValue,Self.kTypeInstanceTypeFlagIndex,self.pointer)
-            }
-        }
-        
-    public var fitsInWord:Bool
-        {
-        let flag = untaggedWordAtIndexAtPointer(Self.kTypeInstanceTypeFlagIndex,self.pointer)
-        return(flag == Argon.kTypeUnsigned || flag == Argon.kTypeSigned || flag == Argon.kTypeBoolean || flag == Argon.kTypeByte || flag == Argon.kTypeFloat32)
-        }
-        
-    public var instanceHasBytes:Bool
-        {
-        get
-            {
-            return(untaggedWordAtIndexAtPointer(Self.kTypeInstanceHasBytesIndex,self.pointer) == 1)
-            }
-        set
-            {
-            setWordAtIndexAtPointer(newValue ? 1 : 0,Self.kTypeInstanceHasBytesIndex,self.pointer)
-            }
-        }
-        
-    public var instanceSlotCount:Int
-        {
-        get
-            {
-            return(Int(untaggedWordAtIndexAtPointer(Self.kTypeInstanceSlotCountIndex,self.pointer)))
-            }
-        set
-            {
-            setWordAtIndexAtPointer(Word(newValue),Self.kTypeInstanceSlotCountIndex,self.pointer)
-            }
-        }
-        
-    public var parentCount:Int
-        {
-        get
-            {
-            return(Int(untaggedWordAtIndexAtPointer(Self.kTypeParentCountIndex,self.pointer)))
-            }
-        set
-            {
-            setWordAtIndexAtPointer(Word(newValue),Self.kTypeParentCountIndex,self.pointer)
-            }
-        }
-
     public override var objectStrideInBytes:Argon.ByteCount
         {
-        let stride = MemoryLayout<Word>.stride
-        return(Argon.ByteCount(max(self.slotArrayPointer.count * stride,stride)))
+//        let stride = MemoryLayout<Word>.stride
+//        return(Argon.ByteCount(max(self.slotArrayPointer.count * stride,stride)))
+        return(Argon.ByteCount(0))
         }
         
     public override var taggedAddress:Instruction.Address
@@ -175,21 +118,22 @@ public class TypePointer:PackageElementPointer
         
     public convenience init(_ name:String,segment:MemorySegment = Memory.staticSegment)
         {
-        let byteCount = Argon.ByteCount(Self.totalSlotCount)
-        var newSlotCount = Argon.SlotCount(0)
-        let address = segment.allocate(byteCount: byteCount,slotCount: &newSlotCount)
-        self.init(address)
-        self.parentArrayPointer = segment.allocateArray(count: 16,elementType: Memory.kTypeInteger!)
-        self.parentCount = 0
-        self.slotArrayPointer = segment.allocateArray(count: 16,elementType: Memory.kTypeUInteger!)
-        self.typePointer = Memory.kTypeType
-        self.totalSlotCount = newSlotCount
-        self.isMarked = true
-        self.valueType = .typeType
-        self.instanceTypeFlag = Argon.kTypeType
-        self.instanceSlotCount = 0
-        self.instanceHasBytes = false
-        self.name = name
+        fatalError("This should not be used")
+//        let byteCount = Argon.ByteCount(Self.totalSlotCount)
+//        var newSlotCount = Argon.SlotCount(0)
+//        let address = segment.allocate(byteCount: byteCount,slotCount: &newSlotCount)
+//        self.init(address)
+//        self.parentArrayPointer = segment.allocateArray(count: 16,elementType: Memory.kTypeInteger!)
+//        self.parentCount = 0
+//        self.slotArrayPointer = segment.allocateArray(count: 16,elementType: Memory.kTypeUInteger!)
+//        self.typePointer = Memory.kTypeType
+//        self.totalSlotCount = newSlotCount
+//        self.isMarked = true
+//        self.valueType = .typeType
+//        self.instanceTypeFlag = Argon.kTypeType
+//        self.instanceSlotCount = 0
+//        self.instanceHasBytes = false
+//        self.name = name
         }
         
     public required init(_ pointer:Argon.Pointer)
@@ -203,7 +147,7 @@ public class TypePointer:PackageElementPointer
         self.name = name
         }
         
-    public override  init(_ address:Instruction.Address)
+    public required  init(_ address:Instruction.Address)
         {
         super.init(untaggedAddressAsPointer(address))
         }
@@ -226,29 +170,23 @@ public class TypePointer:PackageElementPointer
         {
         return(Argon.UInteger(word))
         }
-
-    public func appendSlot(name:String,type:TypePointer?,flags:Word,index:SlotIndex,segment: MemorySegment)
-        {
-        self.appendSlot(SlotPointer(name: name,type: type,flags: flags,index: index,segment: segment))
-        }
-        
-    public func appendSlot(_ slot:SlotPointer)
-        {
-        if self.slotArrayPointer.isNull
-            {
-            self.slotArrayPointer = self.segment.allocateArray(count: 16, elementType: Memory.kTypeSlot!)
-            if self.slotArrayPointer.isNull
-                {
-                fatalError("SlotArray not allocating correctly")
-                }
-            }
-        self.slotArrayPointer.append(slot.taggedAddress)
-        self.instanceSlotCount+=1
-        }
         
     public override func makeInstance(in segment:MemorySegment = Memory.managedSegment) -> Argon.Pointer?
         {
         fatalError("A type itself should not be making instances")
+        }
+        
+    public func flag(_ value:Word) -> Bool
+        {
+        let mask = Word.twoToPower(of: value)
+        return((self.typeFlags & mask) == mask)
+        }
+        
+    public func setFlag(_ value:Word,to:Bool)
+        {
+        let mask = Word.twoToPower(of: value)
+        let newValue = Word((to ? 1 : 0) << (value - 1))
+        self.typeFlags = (self.typeFlags & ~mask) | newValue
         }
     }
 

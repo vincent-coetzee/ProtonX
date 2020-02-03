@@ -105,4 +105,9 @@ public class SlotPointer:ObjectPointer
         {
         super.init(address)
         }
+    
+    public required init(_ address: Instruction.Address)
+        {
+        super.init(address)
+        }
 }

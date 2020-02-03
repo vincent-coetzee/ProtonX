@@ -61,4 +61,9 @@ public class MethodInstancePointer:CodeBlockPointer
         {
         super.init(address)
         }        
-    }
+    
+    public required init(_ address: Instruction.Address)
+        {
+        super.init(address)
+        }
+}

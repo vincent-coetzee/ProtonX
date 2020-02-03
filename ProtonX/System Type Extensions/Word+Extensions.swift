@@ -29,7 +29,7 @@ extension Word:HashableValue,Value
         
     public var hashedValue:Int
         {
-        return(unsafeBitCast(self,to: Int.self))
+        return(Int(Int64(bitPattern: self)))
         }
     
     public var wordValue: Word

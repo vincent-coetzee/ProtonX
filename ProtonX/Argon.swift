@@ -63,8 +63,8 @@ public class Argon
     public static let kTypeClosure:Word = ValueType.closure.rawValue
     public static let kTypeByteArray:Word = ValueType.byteArray.rawValue
     public static let kTypeMetaType:Word = ValueType.metaType.rawValue
-    public static let kTypeSigned:Word = ValueType.integer.rawValue
-    public static let kTypeUnsigned:Word = ValueType.uinteger.rawValue
+    public static let kTypeInteger:Word = ValueType.integer.rawValue
+    public static let kTypeUInteger:Word = ValueType.uinteger.rawValue
     public static let kTypeBoolean:Word = ValueType.boolean.rawValue
     public static let kTypeByte:Word = ValueType.byte.rawValue
     public static let kTypeObject:Word = ValueType.object.rawValue
@@ -78,6 +78,9 @@ public class Argon
     public static let kTypeContractMethod:Word = ValueType.contractMethod.rawValue
     public static let kTypeContractSlot:Word = ValueType.contractSlot.rawValue
     public static let kTypePackageImportElement:Word = ValueType.packageImportElement.rawValue
+    public static let kTypeListNode:Word = ValueType.listNode.rawValue
+    public static let kTypeTreeNode:Word = ValueType.treeNode.rawValue
+    public static let kTypeTree:Word = ValueType.tree.rawValue
     
     public enum ValueType:Word
         {
@@ -89,9 +92,7 @@ public class Argon
         case bitSet
         case array
         case list
-        case listNode
         case tree
-        case treeNode
         case custom
         case enumeration
         case type
@@ -120,6 +121,8 @@ public class Argon
         case contractSlot
         case packageImportElement
         case bits
+        case treeNode
+        case listNode
         }
         
     public enum HeaderTag:Word

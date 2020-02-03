@@ -165,7 +165,7 @@ public class DictionaryBucketNodePointer:ObjectPointer
             }
         }
     
-    public override init(_ address: Instruction.Address)
+    public required init(_ address: Instruction.Address)
         {
         super.init(address)
         }

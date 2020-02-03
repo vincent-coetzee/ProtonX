@@ -34,8 +34,8 @@ public class CodeBlockPointer:ObjectPointer
     {
     public static let kCodeBlockCodeBufferIndex = SlotIndex.two
     public static let kCodeBlockInstructionCountIndex = SlotIndex.three
-    public static let kCodeBlockInstructionsIndex = SlotIndex.four
-    public static let kCodeBlockBaseSlotCount = SlotIndex.five
+    public static let kCodeBlockBaseSlotCount = SlotIndex.four
+    public static let kCodeBlockInstructionsIndex = SlotIndex.five
         
     public override class var totalSlotCount:Argon.SlotCount
         {
@@ -65,6 +65,11 @@ public class CodeBlockPointer:ObjectPointer
             setWordAtIndexAtPointer(unsafeBitCast(newValue,to: Word.self),SlotIndex(index: index + Self.kCodeBlockInstructionsIndex.index),self.pointer)
             }
         }
+        
+    public var instructionsAddress:Instruction.Address
+        {
+        return(addressOfIndexAtPointer(Self.kCodeBlockInstructionsIndex,self.pointer))
+        }
 
     public init(instructions:InstructionVector,segment:MemorySegment = Memory.managedSegment)
         {
@@ -90,4 +95,9 @@ public class CodeBlockPointer:ObjectPointer
         {
         super.init(address)
         }
-    }
+    
+    public required init(_ address: Instruction.Address)
+        {
+        super.init(address)
+        }
+}

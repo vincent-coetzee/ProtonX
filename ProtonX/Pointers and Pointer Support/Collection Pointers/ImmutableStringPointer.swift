@@ -47,7 +47,7 @@ public class ImmutableStringPointer:StringPointer
         super.init(address)
         }
         
-    public override init(_ address:Instruction.Address)
+    public required init(_ address:Instruction.Address)
         {
         super.init(address)
         }

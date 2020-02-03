@@ -49,6 +49,7 @@ public class BitSetPointer:CollectionPointer
         {
         let mask = BitFieldMask(from: 60, to: 70,wordCount:4)
         let layout = mask.layout
+        print(layout)
         let maskBits = mask.bits
         print(maskBits.bitString)
         let bitSet = Memory.staticSegment.allocateBitSet(maximumBitCount: 192)
@@ -215,7 +216,7 @@ public class BitSetPointer:CollectionPointer
             
         public func orValue(of source:Bits,into target:Bits)
             {
-            let sourceValue = source[self]
+//            let sourceValue = source[self]
             }
         }
         
@@ -262,13 +263,12 @@ public class BitSetPointer:CollectionPointer
             
         public func setBits(of bitSet:BitSetPointer,to value:Word)
             {
-            var word:Word = 0
-            let firstIndex = self.sections.reduce(0,{min($0,$1.wordFrom)})
-            var offset = 0
-            for section in self.sections
-                {
-                word = word | 0
-                }
+//            var word:Word = 0
+//            let firstIndex = self.sections.reduce(0,{min($0,$1.wordFrom)})
+//            for section in self.sections
+//                {
+//                word = word | 0
+//                }
             }
         }
         
@@ -453,13 +453,13 @@ public class BitSetPointer:CollectionPointer
                 
             public func setBits(of bitSet:BitSetPointer,to value:Word)
                 {
-                var word:Word = 0
-                let firstIndex = self.sections.reduce(0,{min($0,$1.wordFrom)})
-                var offset = 0
-                for section in self.sections
-                    {
-                    word = word | 0
-                    }
+//                var word:Word = 0
+//                let firstIndex = self.sections.reduce(0,{min($0,$1.wordFrom)})
+//                var offset = 0
+//                for section in self.sections
+//                    {
+//                    word = word | 0
+//                    }
                 }
             }
         
@@ -674,7 +674,7 @@ extension BitSetPointer.Bits
         
     public func setBits(of mask:BitSetPointer.BitFieldMask,to value:Word)
         {
-        let layout = mask.layout
+//        let layout = mask.layout
 //            let values = layout.valueSections(value)
         }
     }

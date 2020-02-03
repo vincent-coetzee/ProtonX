@@ -21,29 +21,37 @@ public class PackageElementPointer:ObjectPointer,NamedPointer
         
     public var fullName:String
         {
-        return((self.packagePointer?.fullName ?? "") + "::" + self.name)
+        return((self.packagePointer?.fullName ?? "") + "::" + self.nameSlot.value.string)
         }
+    
+//    public var namePointer:ImmutableStringPointer?
+//        {
+//        get
+//            {
+//            return(ImmutableStringPointer(untaggedPointerAtIndexAtPointer(Self.kPackageElementNameIndex,self.pointer)))
+//            }
+//        set
+//            {
+//            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kPackageElementNameIndex,self.pointer)
+//            }
+//        }
         
-    public var namePointer:ImmutableStringPointer?
-        {
-        get
-            {
-            return(ImmutableStringPointer(untaggedPointerAtIndexAtPointer(Self.kPackageElementNameIndex,self.pointer)))
-            }
-        set
-            {
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kPackageElementNameIndex,self.pointer)
-            }
-        }
-        
+    private var  _packagePointer:PackagePointer?
+    
     public var packagePointer:PackagePointer?
         {
         get
             {
-            return(PackagePointer(untaggedPointerAtIndexAtPointer(Self.kPackageElementPackageIndex,self.pointer)))
+            if self._packagePointer != nil
+                {
+                return(self._packagePointer)
+                }
+            self._packagePointer = PackagePointer(untaggedPointerAtIndexAtPointer(Self.kPackageElementPackageIndex,self.pointer))
+            return(self._packagePointer)
             }
         set
             {
+            self._packagePointer = newValue
             tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kPackageElementPackageIndex,self.pointer)
             }
         }
@@ -52,11 +60,19 @@ public class PackageElementPointer:ObjectPointer,NamedPointer
         {
         get
             {
-            return(self.namePointer?.string ?? "")
+            return(self.nameSlot.value.string)
             }
         set
             {
-            self.namePointer = ImmutableStringPointer(newValue)
+            self.nameSlot.value = ImmutableStringPointer(newValue)
             }
         }
+        
+    public let nameSlot = SlotValue<ImmutableStringPointer>(index: PackageElementPointer.kPackageElementNameIndex)
+    
+    internal override func initSlots()
+        {
+        self.nameSlot.source = self
+        }
+
     }

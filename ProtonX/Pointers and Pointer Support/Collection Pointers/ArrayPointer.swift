@@ -290,7 +290,7 @@ public class ArrayPointer:CollectionPointer
         self.append(pointerAsWord(pointer))
         }
         
-    public override init(_ word:Instruction.Address)
+    public required init(_ word:Instruction.Address)
         {
         super.init(word)
         }

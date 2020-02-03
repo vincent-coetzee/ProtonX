@@ -26,44 +26,169 @@ public class Instruction
         return(Instruction(.POP,operand))
         }
         
-    public class func MAKE(operand1:Operand,_ operand2:Operand) -> Instruction
+    public class func MAKE(verge:VergePointer,parameters:[Operand]) -> Instruction
         {
-        return(Instruction(.MAKE,operand1,operand2))
+        return(Instruction(.MAKE,.literal(.verge(verge)),.array(parameters)))
         }
         
-    public class func ARITHMETIC(_ operation:Operation,operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
+    public class func ADD(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
         {
-        return(Instruction(operation,operand1,operand2,operand3))
+        return(Instruction(.ADD,operand1,operand2,operand3))
+        }
+
+    public class func SUB(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
+        {
+        return(Instruction(.SUB,operand1,operand2,operand3))
         }
         
-    public class func DISP(operand1:Operand) -> Instruction
+    public class func MUL(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
         {
-        return(Instruction(.DISP,operand1))
+        return(Instruction(.MUL,operand1,operand2,operand3))
         }
         
-    public class func BRANCH(operation:Operation,operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
+    public class func DIV(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
         {
-        return(Instruction(operation,operand1,operand2,operand3))
+        return(Instruction(.DIV,operand1,operand2,operand3))
         }
         
-    public class func SLOTGET(operand1:Operand,operand2:Operand) -> Instruction
+    public class func MOD(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
         {
-        return(Instruction(.SLOTGET,operand1,operand2))
+        return(Instruction(.MOD,operand1,operand2,operand3))
         }
         
-    public class func SLOTSET(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
+    public class func FADD(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
         {
-        return(Instruction(.SLOTSET,operand1,operand2,operand3))
+        return(Instruction(.FADD,operand1,operand2,operand3))
+        }
+
+    public class func FSUB(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
+        {
+        return(Instruction(.FSUB,operand1,operand2,operand3))
         }
         
-    public class func CALL(operand1:Operand) -> Instruction
+    public class func FMUL(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
         {
-        return(Instruction(.CALL,.label,operand1))
+        return(Instruction(.FMUL,operand1,operand2,operand3))
         }
         
-    public class func ENTER(operand1:Operand) -> Instruction
+    public class func FDIV(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
         {
-        return(Instruction(.CALL,.immediate,operand1))
+        return(Instruction(.FDIV,operand1,operand2,operand3))
+        }
+        
+    public class func FMOD(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
+        {
+        return(Instruction(.FMOD,operand1,operand2,operand3))
+        }
+        
+    public class func AND(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
+        {
+        return(Instruction(.AND,operand1,operand2,operand3))
+        }
+        
+    public class func OR(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
+        {
+        return(Instruction(.OR,operand1,operand2,operand3))
+        }
+        
+    public class func XOR(operand1:Operand,operand2:Operand,operand3:Operand) -> Instruction
+        {
+        return(Instruction(.XOR,operand1,operand2,operand3))
+        }
+        
+    public class func NOT(operand1:Operand,operand2:Operand) -> Instruction
+        {
+        return(Instruction(.NOT,operand1,operand2))
+        }
+        
+    public class func MOV(contentsOf address:Address,into register:Register) -> Instruction
+        {
+        return(Instruction(.MOV,.addressRegister,.address(address,.indirect),.register(register,.direct)))
+        }
+        
+    public class func MOV(contentsOf register:Register,into address:Address) -> Instruction
+        {
+        return(Instruction(.MOV,.registerAddress,.register(register,.direct),.address(address,.indirect)))
+        }
+        
+    public class func MOV(contentsOf register1:Register,into register2:Register) -> Instruction
+        {
+        return(Instruction(.MOV,.registerRegister,.register(register1,.direct),.register(register2,.direct)))
+        }
+        
+    public class func MOV(contentsPointedToBy register1:Register,into register2:Register) -> Instruction
+        {
+        return(Instruction(.MOV,.registerRegister,.register(register1,.indirect),.register(register2,.direct)))
+        }
+        
+    public class func DISP(method:MethodPointer,parameters:[Operand]) -> Instruction
+        {
+        return(Instruction(.DISP,.address(method.taggedAddress,.direct),.array(parameters)))
+        }
+        
+    public class func BR(label:Label) -> Instruction
+        {
+        return(Instruction(.BR,.label(label)))
+        }
+        
+    public class func BREQ(operand1:Operand,operand2:Operand,label:Label) -> Instruction
+        {
+        return(Instruction(.BREQ,operand1,operand2,.label(label)))
+        }
+        
+    public class func BRNEQ(operand1:Operand,operand2:Operand,label:Label) -> Instruction
+        {
+        return(Instruction(.BRNEQ,operand1,operand2,.label(label)))
+        }
+        
+    public class func BTLT(operand1:Operand,operand2:Operand,label:Label) -> Instruction
+        {
+        return(Instruction(.BRLT,operand1,operand2,.label(label)))
+        }
+        
+    public class func BRLTEQ(operand1:Operand,operand2:Operand,label:Label) -> Instruction
+        {
+        return(Instruction(.BRLTEQ,operand1,operand2,.label(label)))
+        }
+        
+    public class func BRGTEQ(operand1:Operand,operand2:Operand,label:Label) -> Instruction
+        {
+        return(Instruction(.BRGTEQ,operand1,operand2,.label(label)))
+        }
+        
+    public class func BRGT(operand1:Operand,operand2:Operand,label:Label) -> Instruction
+        {
+        return(Instruction(.BRGT,operand1,operand2,.label(label)))
+        }
+        
+    public class func BRZ(operand1:Operand,label:Label) -> Instruction
+        {
+        return(Instruction(.BRZ,operand1,.label(label)))
+        }
+        
+    public class func BRNZ(operand1:Operand,label:Label) -> Instruction
+        {
+        return(Instruction(.BRNZ,operand1,.label(label)))
+        }
+        
+    public class func SLOTGET(instanceAddress:Address,slotOffset:Int) -> Instruction
+        {
+        return(Instruction(.SLOTGET,.addressLiteral,Operand.address(instanceAddress,.indirect),Operand.immediate(slotOffset)))
+        }
+        
+    public class func SLOTSET(instanceAddress:Address,slotOffset:Int,value:Address) -> Instruction
+        {
+        return(Instruction(.SLOTSET,.address(instanceAddress,.indirect),.immediate(slotOffset),.address(value,.direct)))
+        }
+        
+    public class func CALL(label:Label) -> Instruction
+        {
+        return(Instruction(.CALL,.label,.label(label)))
+        }
+        
+    public class func ENTER(parameterCount:Int,localCount:Int) -> Instruction
+        {
+        return(Instruction(.ENTER,.immediateImmediate,.immediate(parameterCount),.immediate(localCount)))
         }
         
     public class func LEAVE() -> Instruction
@@ -79,7 +204,7 @@ public class Instruction
     public typealias Address = Word
     public typealias Offset = Int
     public typealias Index = Word
-    public typealias Immediate = Int32
+    public typealias Immediate = Int
     
     public enum DirectIndirect
         {
@@ -106,6 +231,7 @@ public class Instruction
         case FDIV
         case ADD
         case FADD
+        case SADD
         case MOD
         case FMOD
         case AND
@@ -115,12 +241,14 @@ public class Instruction
         case DISP
         case NEXT
         case BR
-        case BRE
-        case BRNE
+        case BREQ
+        case BRNEQ
         case BRGT
-        case BRGTE
+        case BRGTEQ
         case BRLT
-        case BRLTE
+        case BRLTEQ
+        case BRZ
+        case BRNZ
         case SLOTGET
         case SLOTSET
         case CALL
@@ -140,7 +268,7 @@ public class Instruction
             }
         }
         
-    public enum Register:Int
+    public enum Register:Int,CaseIterable
         {
         public static let kRegister1Mask:Word = Word(255) << Word(39)
         public static let kRegister1Shift:Word = 39
@@ -170,6 +298,22 @@ public class Instruction
         case r13
         case r14
         case r15
+        case fr0
+        case fr1
+        case fr2
+        case fr3
+        case fr4
+        case fr5
+        case fr6
+        case fr7
+        case fr8
+        case fr9
+        case fr10
+        case fr11
+        case fr12
+        case fr13
+        case fr14
+        case fr15
         
         public var register1OrMask:Word
             {
@@ -212,7 +356,9 @@ public class Instruction
         
         case none = 0
         case address
+        case addressLiteral
         case immediate
+        case immediateImmediate
         case register
         case registerRegister
         case registerRegisterRegister
@@ -256,10 +402,11 @@ public class Instruction
         case string(String)
         case boolean(Bool)
         case byte(Argon.Byte)
+        case verge(VergePointer)
         case none
         }
         
-    public enum Operand
+    public indirect enum Operand
         {
         public static func stringAsMode(_ string:String) -> Mode
             {
@@ -298,11 +445,12 @@ public class Instruction
                 }
             }
             
-        case label(Int)
+        case label(Label)
         case immediate(Immediate)
         case address(Address,DirectIndirect)
         case register(Register,DirectIndirect)
         case literal(Literal)
+        case array([Operand])
         case none
         
     public func mode(with string:String) -> String
@@ -477,6 +625,15 @@ public class Instruction
         self.operand3 = .none
         }
         
+    public init(_ operation:Operation,_ mode:Mode,_ operand1:Operand,_ operand2:Operand)
+        {
+        self.operation = operation
+        self.mode = mode
+        self.operand2 = operand2
+        self.operand1 = operand1
+        self.operand3 = .none
+        }
+        
     public init(_ operation:Operation,_ operand1:Operand,_ operand2:Operand,_ operand3:Operand)
         {
         self.operation = operation
@@ -576,72 +733,6 @@ public class Instruction
         self.operand3 = .immediate(immediate)
         }
         
-    public init(word:Word,address1:Word,literal:Literal = .none,label:Int = 0)
-        {
-        self.operation = Operation(from: word)
-        self.mode = Mode(from: word)
-        switch(mode)
-            {
-            case .literal:
-                self.operand3 = .none
-                self.operand1 = .literal(literal)
-                    
-                self.operand2 = .none
-            case .literalAddress:
-                self.operand3 = .none
-                self.operand1 = .literal(literal)
-                self.operand2 = .address(address1,.indirect)
-            case .none:
-                self.operand3 = .none
-                self.operand1 = .none
-                self.operand2 = .none
-            case .immediate:
-                self.operand3 = .none
-                self.operand1 = .immediate(Immediate(from: word))
-                self.operand2 = .none
-            case .address:
-                self.operand3 = .none
-                self.operand1 = .address(Address(address1),.direct)
-                self.operand2 = .none
-            case .register:
-                self.operand1 = .register(Register(register1: word),.direct)
-                self.operand3 = .none
-                self.operand2 = .none
-            case .registerRegister:
-                self.operand1 = .register(Register(register1: word),.direct)
-                self.operand2 = .register(Register(register2: word),.direct)
-                self.operand3 = .none
-            case .registerAddress:
-                self.operand1 = .register(Register(register1: word),.direct)
-                self.operand3 = .address(address1,.direct)
-                self.operand2 = .none
-            case .registerRegisterImmediate:
-                self.operand1 = .register(Register(register1: word),.direct)
-                self.operand2 = .register(Register(register2: word),.direct)
-                self.operand3 = .immediate(Immediate(from: word))
-            case .registerRegisterRegister:
-                self.operand1 = .register(Register(register1: word),.direct)
-                self.operand2 = .register(Register(register2: word),.direct)
-                self.operand3 = .register(Register(register3: word),.direct)
-            case .addressRegister:
-                self.operand2 = .register(Register(register2: word),.direct)
-                self.operand3 = .none
-                self.operand1 = .none
-            case .registerAddressImmediate:
-                self.operand1 = .register(Register(register1: word),.direct)
-                self.operand3 = .immediate(Immediate(from: word))
-                self.operand2 = .address(address1,.direct)
-            case .immediateRegister:
-                self.operand2 = .register(Register(register2: word),.direct)
-                self.operand3 = .none
-                self.operand1 = .immediate(Immediate(from: word))
-            case .label:
-                self.operand2 = .none
-                self.operand3 = .none
-                self.operand1 = .label(label)
-            }
-        }
-        
     public func set(incomingLabel:Int)
         {
         self.incomingLabel = incomingLabel
@@ -652,12 +743,12 @@ public class Instruction
         self.outgoingLabels.append(outgoingLabel)
         }
         
-    @inline(__always)
-    private func encode(immediate:Immediate,into:inout Word)
-        {
-        let value = Word(UInt32(bitPattern: immediate))
-        into |= (value & 4294967295)
-        }
+//    @inline(__always)
+//    private func encode(immediate:Immediate,into:inout Word)
+//        {
+//        let value = Word(UInt32(bitPattern: immediate))
+//        into |= (value & 4294967295)
+//        }
         
     @inline(__always)
     private func encode(operand1:Register,into:inout Word)

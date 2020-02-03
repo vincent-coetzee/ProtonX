@@ -114,6 +114,11 @@ public class EnumerationCasePointer:ObjectPointer
     required public init(_ address: UnsafeMutableRawPointer?) {
         fatalError("init(_:) has not been implemented")
     }
+    
+    public required init(_ address: Instruction.Address)
+        {
+        super.init(address)
+        }
 }
     
 public class EnumerationPointer:TypePointer
@@ -183,5 +188,10 @@ public class EnumerationPointer:TypePointer
     required public init(_ address: UnsafeMutableRawPointer?)
         {
         fatalError("init(_:) has not been implemented")
+        }
+    
+    public required init(_ address: Instruction.Address)
+        {
+        super.init(address)
         }
 }

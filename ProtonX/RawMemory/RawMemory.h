@@ -287,5 +287,6 @@ Byte untaggedByteAtIndexAtPointer(SlotIndex index,void* pointer);
 Word untaggedAddressAtIndexAtPointer(SlotIndex index,void* pointer);
 Word wordAtIndexAtBitsPointer(SlotIndex index,void* pointer);
 void setWordAtIndexAtBitsPointer(Word word,SlotIndex index,void* pointer);
+Word addressOfIndexAtPointer(SlotIndex index,void* pointer);
 
 #endif /* RawMemory_h */

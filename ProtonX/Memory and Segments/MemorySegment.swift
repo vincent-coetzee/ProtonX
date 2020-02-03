@@ -47,6 +47,8 @@ public class MemorySegment:Equatable
         {
         Log.silent()
         Memory.initTypes()
+        print("STRIDE OF Int IS \(MemoryLayout<Int>.stride)")
+        print("STRIDE OF Int64 IS \(MemoryLayout<Int64>.stride)")
         self.testInstructions()
         self.testBitFieldMaskSections()
         self.testTrees()
@@ -93,7 +95,7 @@ public class MemorySegment:Equatable
         let string1 = ImmutableStringPointer("Test String 1")
         let string2 = ImmutableStringPointer("Test String 2")
         let codeBlock = CodeBlock()
-        codeBlock.appendInstruction(.ENTER(operand1: .immediate(8 * 3)))
+        codeBlock.appendInstruction(.ENTER(parameterCount:10,localCount:4))
         codeBlock.appendInstruction(.PUSH(operand: .address(string1.taggedAddress,.indirect)))
         codeBlock.appendInstruction(.PUSH(operand: .address(string2.taggedAddress,.indirect)))
         }
@@ -219,7 +221,7 @@ public class MemorySegment:Equatable
         
     public static func testTypes()
         {
-        let seamType = TypePointer("Seam",segment: .static)
+        let seamType = SeamPointer("Seam",segment: .static)
         var index:SlotIndex = .object
         seamType.appendSlot(name: "name",type: Memory.kTypeString,flags: 0,index: index++,segment: .static)
         }
@@ -466,10 +468,6 @@ public class MemorySegment:Equatable
         pointer.isMarked = true
         pointer.valueType = .typeType
         pointer.hasExtraSlotsAtEnd = false
-        pointer.parentArrayPointer = nil
-        pointer.parentCount = 0
-        pointer.slotArrayPointer = ArrayPointer(nil)
-        pointer.typeSlotCount = 0
         pointer.typePointer = Memory.kTypeType
         pointer.segment = self
         Log.log("ALLOCATED EMPTY TYPE AT \(pointer.hexString) TO \(self.highwaterMark.hexString)")
@@ -482,11 +480,7 @@ public class MemorySegment:Equatable
         pointer.isMarked = true
         pointer.valueType = .package
         pointer.hasExtraSlotsAtEnd = false
-        pointer.parentArrayPointer = nil
         pointer.packagePointer = nil
-        pointer.parentCount = 0
-        pointer.slotArrayPointer = ArrayPointer(nil)
-        pointer.typeSlotCount = 0
         pointer.typePointer = Memory.kTypePackage
         pointer.segment = self
         pointer.contentDictionaryPointer = self.allocateDictionary(chunkFactor: 1024)
@@ -502,10 +496,6 @@ public class MemorySegment:Equatable
         pointer.isMarked = true
         pointer.valueType = .typeType
         pointer.hasExtraSlotsAtEnd = false
-        pointer.parentArrayPointer = nil
-        pointer.parentCount = 0
-        pointer.slotArrayPointer = ArrayPointer(nil)
-        pointer.typeSlotCount = 0
         pointer.typePointer = Memory.kTypeType
         pointer.segment = self
         Log.log("ALLOCATED TYPE(\(named)) AT \(pointer.hexString)")
@@ -519,10 +509,6 @@ public class MemorySegment:Equatable
         pointer.isMarked = true
         pointer.valueType = .enumeration
         pointer.hasExtraSlotsAtEnd = false
-        pointer.parentArrayPointer = nil
-        pointer.parentCount = 0
-        pointer.slotArrayPointer = ArrayPointer(nil)
-        pointer.typeSlotCount = 0
         pointer.typePointer = Memory.kTypeEnumeration
         pointer.caseCount = cases.count
         pointer.segment = self
@@ -543,10 +529,6 @@ public class MemorySegment:Equatable
         pointer.isMarked = true
         pointer.valueType = type.valueType
         pointer.hasExtraSlotsAtEnd = false
-        pointer.parentArrayPointer = nil
-        pointer.parentCount = 0
-        pointer.slotArrayPointer = ArrayPointer(nil)
-        pointer.typeSlotCount = 0
         pointer.typePointer = Memory.kTypeScalarType
         pointer.scalarType = .none
         pointer.segment = self

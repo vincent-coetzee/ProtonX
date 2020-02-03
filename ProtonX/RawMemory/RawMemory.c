@@ -448,3 +448,8 @@ void setWordAtIndexAtBitsPointer(Word word,SlotIndex index,void* pointer)
     *bitsPointer++ = kTagBitsBits;
     *bitsPointer = *wordPointer;
     }
+    
+Word addressOfIndexAtPointer(SlotIndex index,void* pointer)
+    {
+    return(AsWord(AsWordPointer(pointer) + index.index));
+    }

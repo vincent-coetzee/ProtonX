@@ -83,10 +83,15 @@ public class ValuePointer:Pointer,Equatable
         return(self.pointer != nil)
         }
         
+    internal func initSlots()
+        {
+        }
+        
     public init()
         {
         self.pointer = nil
         self._index = Argon.nextIndex
+        self.initSlots()
         }
         
     public init(_ address:Instruction.Address)
@@ -94,12 +99,14 @@ public class ValuePointer:Pointer,Equatable
         assert(address != 7)
         self.pointer = untaggedAddressAsPointer(address)
         self._index = Argon.nextIndex
+        self.initSlots()
         }
         
     required public init(_ address:UnsafeMutableRawPointer?)
         {
         self.pointer = untaggedPointer(address)
         self._index = Argon.nextIndex
+        self.initSlots()
         }
         
 //    public convenience init(_ slotCount:Int,segment:MemorySegment = Memory.dataSegment)

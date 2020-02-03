@@ -51,7 +51,7 @@ public class CollectionPointer:ObjectPointer
         super.init(address)
         }
         
-    public override init(_ word:Instruction.Address)
+    public required init(_ word:Instruction.Address)
         {
         super.init(word)
         }

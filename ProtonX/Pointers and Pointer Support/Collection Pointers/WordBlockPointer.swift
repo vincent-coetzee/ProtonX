@@ -254,7 +254,7 @@ public class WordBlockPointer:CollectionPointer
         return(Argon.Pointer(bitPattern: Instruction.Address(bitPattern: pointer) + Word(MemoryLayout<Word>.stride * WordBlockPointer.kBufferElementsIndex.index)))
         }
         
-    public override init(_ address:Word)
+    public required init(_ address:Word)
         {
         super.init(address)
         }

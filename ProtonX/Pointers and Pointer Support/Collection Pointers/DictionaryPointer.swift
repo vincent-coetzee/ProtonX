@@ -99,7 +99,7 @@ public class DictionaryPointer:CollectionPointer
         return(DictionaryBucketNodePointer(bucketAddress).value(forKey: ValueHolder(key: key)))
         }
         
-    public override init(_ address:Instruction.Address)
+    public required init(_ address:Instruction.Address)
         {
         super.init(address)
         self.isMarked = true

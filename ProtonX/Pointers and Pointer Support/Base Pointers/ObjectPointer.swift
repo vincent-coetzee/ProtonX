@@ -9,7 +9,7 @@
 import Foundation
 import RawMemory
 
-public class ObjectPointer:ValuePointer,Headered,Value,Key
+public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
     {
     public var valueStride: Int
         {
@@ -18,7 +18,7 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key
         
     public var hashedValue:Int
         {
-        return(unsafeBitCast(self.taggedAddress,to: Int.self))
+        return(Int(Int64(bitPattern: self.taggedAddress)))
         }
     
     public var hashedValueIndex: SlotIndex
@@ -83,7 +83,9 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key
         return(Argon.ByteCount(2*MemoryLayout<Word>.stride))
         }
         
-    public override init(_ address:Instruction.Address)
+    private var pointerSlotCache:[SlotIndex:ObjectPointer] = [:]
+
+    public required override init(_ address:Instruction.Address)
         {
         super.init(address)
         self.isMarked = true
@@ -200,5 +202,23 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key
             return
             }
         value.store(atPointer: pointer + index)
+        }
+        
+    public func value<T>(of index: SlotIndex,as:T.Type) -> T  where T:CachedPointer
+        {
+        if let pointer = self.pointerSlotCache[index]
+            {
+            return(pointer as! T)
+            }
+        let pointer = T(untaggedAddressAtIndexAtPointer(index,self.pointer))
+        self.pointerSlotCache[index] = (pointer as! ObjectPointer)
+        return(pointer)
+        }
+        
+    public func setValue<T>(of index:SlotIndex,to:T) where T:CachedPointer
+        {
+        let objectPointer = (to as! ObjectPointer)
+        self.pointerSlotCache[index] = objectPointer
+        setAddressAtIndexAtPointer(objectPointer.taggedAddress,index,self.pointer)
         }
     }

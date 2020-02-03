@@ -9,7 +9,7 @@
 import Foundation
 import RawMemory
 
-extension SlotIndex:Equatable,ExpressibleByIntegerLiteral
+extension SlotIndex:Equatable,ExpressibleByIntegerLiteral,Hashable
     {
     public init(integerLiteral value: Int)
         {
@@ -160,4 +160,8 @@ extension SlotIndex:Equatable,ExpressibleByIntegerLiteral
         self.index = index
         }
 
+    public func hash(into hasher:inout Hasher)
+        {
+        hasher.combine(self.index)
+        }
     }
