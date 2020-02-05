@@ -9,11 +9,21 @@
 import Foundation
 import RawMemory
 
-public class CodeBlock
+public class CodeBlock:Collection
     {
     private var instructions:[Instruction] = []
     private var pendingLabel:Int?
-    
+
+    public var startIndex:Int
+        {
+        return(self.instructions.startIndex)
+        }
+        
+    public var endIndex:Int
+        {
+        return(self.instructions.endIndex)
+        }
+        
     public func decorateNextInstruction(withLabel:Int)
         {
         self.pendingLabel = withLabel
@@ -28,18 +38,26 @@ public class CodeBlock
             }
         self.instructions.append(instruction)
         }
+        
+    public func index(after:Int) -> Int
+        {
+        return(self.instructions.index(after: after))
+        }
+        
+    public subscript(_ index:Int) -> Instruction
+        {
+        return(self.instructions[index])
+        }
     }
     
 public class CodeBlockPointer:ObjectPointer
     {
-    public static let kCodeBlockCodeBufferIndex = SlotIndex.two
-    public static let kCodeBlockInstructionCountIndex = SlotIndex.three
-    public static let kCodeBlockBaseSlotCount = SlotIndex.four
-    public static let kCodeBlockInstructionsIndex = SlotIndex.five
+    public static let kCodeBlockInstructionCountIndex = SlotIndex.two
+    public static let kCodeBlockInstructionArrayIndex = SlotIndex.three
         
     public override class var totalSlotCount:Argon.SlotCount
         {
-        return(6)
+        return(4)
         }
         
     public var count:Int
@@ -54,43 +72,66 @@ public class CodeBlockPointer:ObjectPointer
             }
         }
         
-    public subscript(_ index:Int) -> Instruction
+    private var _instructionArrayPointer:ArrayPointer?
+    
+    public var instructionArrayPointer:ArrayPointer
         {
         get
             {
-            return(unsafeBitCast(wordAtIndexAtPointer(SlotIndex(index: index + Self.kCodeBlockInstructionsIndex.index),self.pointer),to: Instruction.self))
+            if let array = self._instructionArrayPointer
+                {
+                return(array)
+                }
+            self._instructionArrayPointer = ArrayPointer(untaggedPointerAtIndexAtPointer(Self.kCodeBlockInstructionArrayIndex,self.pointer))
+            return(self._instructionArrayPointer!)
             }
         set
             {
-            setWordAtIndexAtPointer(unsafeBitCast(newValue,to: Word.self),SlotIndex(index: index + Self.kCodeBlockInstructionsIndex.index),self.pointer)
+            self._instructionArrayPointer = newValue
+            tagAndSetPointerAtIndexAtPointer(newValue.pointer,Self.kCodeBlockInstructionArrayIndex,self.pointer)
             }
         }
         
-    public var instructionsAddress:Instruction.Address
+    private var _cachedInstructions:Array<Instruction>?
+    
+    public var instructions:Array<Instruction>
         {
-        return(addressOfIndexAtPointer(Self.kCodeBlockInstructionsIndex,self.pointer))
+        if self._cachedInstructions == nil
+            {
+            self.cacheInstructions()
+            }
+        return(self._cachedInstructions!)
         }
-
+        
     public init(instructions:InstructionVector,segment:MemorySegment = Memory.managedSegment)
         {
-        let wordSize = MemoryLayout<Word>.size
-        let bytesRequired = Argon.ByteCount((instructions.count + 20 + Self.kCodeBlockBaseSlotCount.index) * wordSize)
-        var newSlotCount = Argon.SlotCount(0)
-        super.init(segment.allocate(byteCount: bytesRequired,slotCount: &newSlotCount))
-        self.totalSlotCount = newSlotCount
-        self.valueType = .codeBlock
-        self.hasExtraSlotsAtEnd = false
-        self.isMarked = true
-        self.typePointer = Memory.kTypeCodeBlock
-        var index = Self.kCodeBlockInstructionsIndex
+        super.init(segment.allocateCodeBlock(initialSizeInWords: instructions.wordCount).pointer)
+        let array = self.instructionArrayPointer
+        var index = 0
         for instruction in instructions
             {
-            self[index.index] = instruction
+            let instructionWord = instruction.encoded
+            array[index] = instructionWord.instruction
             index += 1
+            if instructionWord.hasAddress
+                {
+                array[index] = instructionWord.address
+                index += 1
+                }
+            if instructionWord.hasImmediate
+                  {
+                  array[index] = instructionWord.immediate
+                  index += 1
+                  }
             }
-        self.count = index.index
+        self.count = instructions.count
         }
 
+    public var instructionAddress:Instruction.Address?
+        {
+        return(self.instructionArrayPointer.elementAddress)
+        }
+        
     required public init(_ address: UnsafeMutableRawPointer?)
         {
         super.init(address)
@@ -99,5 +140,55 @@ public class CodeBlockPointer:ObjectPointer
     public required init(_ address: Instruction.Address)
         {
         super.init(address)
+        }
+        
+    public func cacheInstructions()
+        {
+        var instructions = Array<Instruction>()
+        let array = self.instructionArrayPointer
+        let count = array.count
+        var index = 0
+        while index < count
+            {
+            let word = array[index]
+            index += 1
+            var addressWord:Word = 0
+            var immediate:Word = 0
+            if Instruction.instructionWordHasAddress(word)
+                {
+                addressWord = array[index]
+                index += 1
+                }
+            if Instruction.instructionWordHasImmediate(word)
+                {
+                immediate = array[index]
+                index += 1
+                }
+            instructions.append(Instruction.makeInstruction(from: word,with: addressWord,with: immediate))
+            }
+        self._cachedInstructions = instructions
+        }
+        
+    public func appendInstructions(_ block:CodeBlock)
+        {
+        for instruction in block
+            {
+            self.appendInstruction(instruction)
+            }
+        }
+        
+    public func appendInstruction(_ instruction:Instruction)
+        {
+        let encoding = instruction.encoded
+        self.instructionArrayPointer.append(encoding.instruction)
+        if instruction.hasAddress
+            {
+            self.instructionArrayPointer.append(encoding.address)
+            }
+        if instruction.hasImmediate
+            {
+            self.instructionArrayPointer.append(encoding.address)
+            }
+        self.count += 1
         }
 }

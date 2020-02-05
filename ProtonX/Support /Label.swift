@@ -26,7 +26,7 @@ public class Label
         return(Label(key: key))
         }
         
-    private let key:Int
+    public let key:Int
     
     public init(key:Int)
         {

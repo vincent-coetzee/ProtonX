@@ -81,6 +81,7 @@ public class Argon
     public static let kTypeListNode:Word = ValueType.listNode.rawValue
     public static let kTypeTreeNode:Word = ValueType.treeNode.rawValue
     public static let kTypeTree:Word = ValueType.tree.rawValue
+    public static let kTypeInstruction:Word = ValueType.instruction.rawValue
     
     public enum ValueType:Word
         {
@@ -123,6 +124,7 @@ public class Argon
         case bits
         case treeNode
         case listNode
+        case instruction
         }
         
     public enum HeaderTag:Word

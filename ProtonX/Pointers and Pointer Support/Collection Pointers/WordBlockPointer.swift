@@ -244,15 +244,15 @@ public class WordBlockPointer:CollectionPointer
             setWordAtIndexAtPointer(Word(newValue.count),Self.kBufferTotalElementByteCountIndex,self.pointer)
             }
         }
-        
-    private var elementsPointer:Argon.Pointer?
-        {
-        guard let pointer = self.pointer else
-            {
-            return(nil)
-            }
-        return(Argon.Pointer(bitPattern: Instruction.Address(bitPattern: pointer) + Word(MemoryLayout<Word>.stride * WordBlockPointer.kBufferElementsIndex.index)))
-        }
+//
+//    private var elementPointer:Argon.Pointer?
+//        {
+//        guard let pointer = self.pointer else
+//            {
+//            return(nil)
+//            }
+//        return(Argon.Pointer(bitPattern: Instruction.Address(bitPattern: pointer) + Word(MemoryLayout<Word>.stride * WordBlockPointer.kBufferElementsIndex.index)))
+//        }
         
     public required init(_ address:Word)
         {
@@ -296,6 +296,15 @@ public class WordBlockPointer:CollectionPointer
             return(nil)
             }
         return(pointer + SlotOffset(stride: self.elementStrideInBytes,index: atIndex))
+        }
+        
+    public var wordAddress:Instruction.Address?
+        {
+        guard let pointer = self.pointer else
+            {
+            return(nil)
+            }
+        return(UInt64(bitPattern: (pointer + Self.kBufferElementsIndex)))
         }
         
     public subscript(_ index:Int) -> Word

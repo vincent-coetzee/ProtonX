@@ -47,3 +47,11 @@ extension Int
         return(self & mask)
         }
     }
+
+extension Int:CachedPointer
+    {
+    public var taggedAddress: Instruction.Address
+        {
+        return(Instruction.Address(self))
+        }
+    }

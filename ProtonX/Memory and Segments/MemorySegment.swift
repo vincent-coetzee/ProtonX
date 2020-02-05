@@ -95,9 +95,24 @@ public class MemorySegment:Equatable
         let string1 = ImmutableStringPointer("Test String 1")
         let string2 = ImmutableStringPointer("Test String 2")
         let codeBlock = CodeBlock()
-        codeBlock.appendInstruction(.ENTER(parameterCount:10,localCount:4))
-        codeBlock.appendInstruction(.PUSH(operand: .address(string1.taggedAddress,.indirect)))
-        codeBlock.appendInstruction(.PUSH(operand: .address(string2.taggedAddress,.indirect)))
+        let anInstruction:Instruction = ENTERInstruction(immediate: 10)
+        codeBlock.appendInstruction(anInstruction)
+        print("ENTER ENCODED = 0x\(anInstruction.encoded.instruction.hexString)")
+        codeBlock.appendInstruction(PUSHInstruction(address: string1.taggedAddress))
+        codeBlock.appendInstruction(PUSHInstruction(address: string2.taggedAddress))
+        codeBlock.appendInstruction(PUSHInstruction(register:.bp))
+        codeBlock.appendInstruction(MOVInstruction(register1:.sp,register2:.bp))
+        codeBlock.appendInstruction(ADDInstruction(register1:.sp,immediate:24,register3:.sp))
+        codeBlock.appendInstruction(MOVInstruction(immediate:-10,register2:.r9))
+        codeBlock.appendInstruction(ADDInstruction(register1:.r9,immediate:100,register3:.r10))
+        let pointer = Memory.staticSegment.allocateCodeBlock(initialSizeInWords: 128)
+        pointer.appendInstructions(codeBlock)
+        let newPointer = CodeBlockPointer(pointer.pointer)
+        assert(newPointer.count == pointer.count)
+        for instruction in newPointer.instructions
+            {
+            print("\(instruction)")
+            }
         }
         
     public static func testTrees()
@@ -229,7 +244,7 @@ public class MemorySegment:Equatable
     public static func testInstructionBuffers()
         {
         let buffer = InstructionVector()
-        buffer.append(Instruction(.NOP))
+        buffer.append(NOPInstruction())
         }
         
     public static func testDictionaries()
@@ -499,6 +514,20 @@ public class MemorySegment:Equatable
         pointer.typePointer = Memory.kTypeType
         pointer.segment = self
         Log.log("ALLOCATED TYPE(\(named)) AT \(pointer.hexString)")
+        return(pointer)
+        }
+        
+    public func allocateCodeBlock(initialSizeInWords:Int) -> CodeBlockPointer
+        {
+        let pointer = CodeBlockPointer(self.allocate(slotCount: CodeBlockPointer.totalSlotCount))
+        pointer.isMarked = true
+        pointer.valueType = .typeType
+        pointer.hasExtraSlotsAtEnd = false
+        pointer.typePointer = Memory.kTypeType
+        pointer.segment = self
+        pointer.count = 0
+        pointer.instructionArrayPointer = self.allocateArray(count: initialSizeInWords * 3, elementType: Memory.kTypeInstruction!)
+        Log.log("ALLOCATED CODEBLOCK AT \(pointer.hexString)")
         return(pointer)
         }
         

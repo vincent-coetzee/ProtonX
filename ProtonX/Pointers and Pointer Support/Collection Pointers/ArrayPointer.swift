@@ -183,30 +183,44 @@ public class ArrayPointer:CollectionPointer
             }
         }
         
+    public var elementAddress:Instruction.Address?
+        {
+        return(self.bufferPointer.wordAddress)
+        }
+        
+    private var _bufferPointer = SlotValue<WordBlockPointer>(index: ArrayPointer.kArrayWordBufferPointerIndex)
+    
     public var bufferPointer:WordBlockPointer
         {
         get
             {
-            return(WordBlockPointer(untaggedPointerAtIndexAtPointer(Self.kArrayWordBufferPointerIndex,self.pointer)))
+            return(self._bufferPointer.value)
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue.pointer,Self.kArrayWordBufferPointerIndex,self.pointer)
+            self._bufferPointer.value = newValue
             }
         }
         
+    private var _maximumCount = SlotValue<Int>(index: ArrayPointer.kArrayMaximumCountIndex)
+    
     public var maximumCount:Int
         {
         get
             {
-            Log.log("GET Array Maximum Count Index = \(Self.kArrayMaximumCountIndex)")
-            return(Int(wordAtIndexAtPointer(Self.kArrayMaximumCountIndex,self.pointer)))
+            return(self._maximumCount.value)
             }
         set
             {
-            Log.log("SET Array Maximum Count Index = \(Self.kArrayMaximumCountIndex)")
-            setWordAtIndexAtPointer(Word(newValue),Self.kArrayMaximumCountIndex,self.pointer)
+            self._maximumCount.value = newValue
             }
+        }
+        
+    public override func initSlots()
+        {
+        super.initSlots()
+        self._bufferPointer.source = self
+        self._maximumCount.source = self
         }
         
     public required init(_ address:UnsafeMutableRawPointer)

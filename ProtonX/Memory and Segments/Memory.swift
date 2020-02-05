@@ -54,6 +54,7 @@ public class Memory
     public static var kTypeListNode:TypePointer?
     public static var kTypeTree:TypePointer?
     public static var kTypeTreeNode:TypePointer?
+    public static var kTypeInstruction:TypePointer?
     
     public static var kPackageArgon:PackagePointer?
         
@@ -201,5 +202,8 @@ public class Memory
         Self.kTypeTree = Self.staticSegment.allocateType(named: "Tree")
         Self.kTypeTree?.instanceType = Argon.kTypeTree
         Self.kPackageArgon!.append(Self.kTypeTree!)
+        Self.kTypeInstruction = Self.staticSegment.allocateType(named: "Instruction")
+        Self.kTypeInstruction?.instanceType = Argon.kTypeInstruction
+        Self.kPackageArgon!.append(Self.kTypeInstruction!)
         }
     }

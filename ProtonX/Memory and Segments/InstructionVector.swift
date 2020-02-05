@@ -33,6 +33,7 @@ public class InstructionVector:Collection
         }
         
     private var instructions:[Instruction] = []
+    public private(set) var wordCount = 0
     
     public func index(after:Int) -> Int
         {
@@ -47,5 +48,6 @@ public class InstructionVector:Collection
     public func append(_ rhs:Instruction)
         {
         self.instructions.append(rhs)
+        self.wordCount = rhs.hasAddress ? 2 : 1
         }
     }

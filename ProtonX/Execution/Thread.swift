@@ -70,17 +70,17 @@ public class Thread
         self.registers[.cp] = self.stack.pop()
         }
         
-    private func run()
+    private func execute()
         {
-        let instruction = Instruction(at: 
         }
         
-    public func call(codeBlock:CodeBlockPointer)
+    public func call(address:Instruction.Address)
         {
+        let codeBlock = CodeBlockPointer(address)
         self.saveExecutionContext()
         self.registers[.cp] = pointerAsAddress(codeBlock.pointer)
-        self.registers[.ip] = codeBlock.instructionsAddress
-        self.run()
+        self.registers[.ip] = 0
+        self.execute()
         self.restoreExecutionContext()
         }
         
