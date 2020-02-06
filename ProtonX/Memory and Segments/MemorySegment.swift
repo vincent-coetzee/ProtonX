@@ -47,6 +47,7 @@ public class MemorySegment:Equatable
         {
         Log.silent()
         Memory.initTypes()
+        self.testThreads()
         print("STRIDE OF Int IS \(MemoryLayout<Int>.stride)")
         print("STRIDE OF Int64 IS \(MemoryLayout<Int64>.stride)")
         self.testInstructions()
@@ -90,12 +91,41 @@ public class MemorySegment:Equatable
         print(bitSetPointer.bits)
         }
         
+    public static func testThreads()
+        {
+        let codeBlockAddress = self.makeCode()
+        let memory = Memory()
+        let thread = Thread(memory: memory)
+        thread.execute(codeBlockAddress: codeBlockAddress)
+        }
+        
+    public static func makeCode() -> Instruction.Address
+        {
+        let string1 = ImmutableStringPointer("Test String 1")
+        let string2 = ImmutableStringPointer("Test String 2")
+        let codeBlock = CodeBlock()
+        let anInstruction:Instruction = ENTERInstruction(byteCount: 10 * 8)
+        codeBlock.appendInstruction(anInstruction)
+        codeBlock.appendInstruction(PUSHInstruction(address: string1.taggedAddress))
+        codeBlock.appendInstruction(PUSHInstruction(address: string2.taggedAddress))
+        codeBlock.appendInstruction(PUSHInstruction(register:.bp))
+        codeBlock.appendInstruction(MOVInstruction(register1:.sp,register2:.bp))
+        codeBlock.appendInstruction(ADDInstruction(register1:.sp,immediate:24,register3:.sp))
+        codeBlock.appendInstruction(MOVInstruction(immediate:-10,register2:.r9))
+        codeBlock.appendInstruction(ADDInstruction(register1:.r9,immediate:100,register3:.r10))
+        codeBlock.appendInstruction(LEAVEInstruction(byteCount: 10 * 8))
+        codeBlock.appendInstruction(RETInstruction())
+        let pointer = Memory.staticSegment.allocateCodeBlock(initialSizeInWords: 128)
+        pointer.appendInstructions(codeBlock)
+        return(Instruction.Address(bitPattern: pointer.pointer!))
+        }
+        
     public static func testInstructions()
         {
         let string1 = ImmutableStringPointer("Test String 1")
         let string2 = ImmutableStringPointer("Test String 2")
         let codeBlock = CodeBlock()
-        let anInstruction:Instruction = ENTERInstruction(immediate: 10)
+        let anInstruction:Instruction = ENTERInstruction(byteCount: 10 * 8)
         codeBlock.appendInstruction(anInstruction)
         print("ENTER ENCODED = 0x\(anInstruction.encoded.instruction.hexString)")
         codeBlock.appendInstruction(PUSHInstruction(address: string1.taggedAddress))
@@ -105,13 +135,15 @@ public class MemorySegment:Equatable
         codeBlock.appendInstruction(ADDInstruction(register1:.sp,immediate:24,register3:.sp))
         codeBlock.appendInstruction(MOVInstruction(immediate:-10,register2:.r9))
         codeBlock.appendInstruction(ADDInstruction(register1:.r9,immediate:100,register3:.r10))
+        codeBlock.appendInstruction(LEAVEInstruction(byteCount: 10 * 8))
+        codeBlock.appendInstruction(RETInstruction())
         let pointer = Memory.staticSegment.allocateCodeBlock(initialSizeInWords: 128)
         pointer.appendInstructions(codeBlock)
         let newPointer = CodeBlockPointer(pointer.pointer)
         assert(newPointer.count == pointer.count)
         for instruction in newPointer.instructions
             {
-            print("\(instruction)")
+            print(instruction.displayString)
             }
         }
         

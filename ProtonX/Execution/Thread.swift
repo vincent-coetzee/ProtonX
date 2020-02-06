@@ -10,11 +10,11 @@ import Foundation
 
 import RawMemory
 
-public struct EnumeratedArray<Index,Element>:ExpressibleByArrayLiteral  where Index:RawRepresentable,Index.RawValue == Int
+public struct EnumeratedArray<Index,Element>:ExpressibleByArrayLiteral  where Index:RawRepresentable,Index.RawValue == Int,Index:CaseIterable
     {
     public typealias ArrayLiteralElement = Element
     
-    private var elements:[Element] = []
+    internal var elements:[Element] = []
     
     public init(arrayLiteral elements: Element...)
         {
@@ -47,15 +47,14 @@ public class Thread
     public let memory:Memory
     public var registers:EnumeratedArray<Instruction.Register,Word> = []
     public let stack:StackSegment
+    public let exceptionStack:StackSegment
     
     public init(memory:Memory)
         {
         self.memory = memory
-        self.stack = memory.makeStackSegment(sizeInMegabytes: 16)
-        for register in Instruction.Register.allCases
-            {
-            self.registers[register] = 0
-            }
+        self.stack = memory.makeStackSegment(sizeInMegabytes: 4)
+        self.exceptionStack = memory.makeStackSegment(sizeInMegabytes: 2)
+        self.registers.elements = Array<Word>(repeating: 0, count: Instruction.Register.allCases.reduce(0,{max($0,$1.rawValue)}))
         }
         
     private func saveExecutionContext()
@@ -70,8 +69,24 @@ public class Thread
         self.registers[.cp] = self.stack.pop()
         }
         
+    public func execute(codeBlockAddress:Instruction.Address)
+        {
+        self.stack.push(self.registers[.cp])
+        self.stack.push(self.registers[.ip])
+        self.registers[.cp] = codeBlockAddress
+        self.registers[.ip] = wordAtAddress(wordAtAddress(codeBlockAddress + Word(3 * MemoryLayout<Word>.stride)) + Word(5 * MemoryLayout<Word>.stride)) + Word(8 * MemoryLayout<Word>.stride)
+        self.execute()
+        self.registers[.ip] = self.stack.pop()
+        self.registers[.cp] = self.stack.pop()
+        }
+        
     private func execute()
         {
+        repeat
+            {
+            let instruction = Instruction.makeInstruction(atAddress: self.registers[.ip])
+            }
+        
         }
         
     public func call(address:Instruction.Address)

@@ -11,8 +11,7 @@ import RawMemory
 
 public class StackSegment:MemorySegment
     {
-    public var bp:Word
-    public var sp:Word
+    public var top:Word
     
     public override var identifier:Identifier
         {
@@ -21,40 +20,50 @@ public class StackSegment:MemorySegment
         
     public required init()
         {
-        self.bp = 0
-        self.sp = 0
+        self.top = 0
         super.init()
         }
         
     public override init(sizeInMegabytes:Int)
         {
-        self.bp = 0
-        self.sp = 0
+        self.top = 0
         super.init(sizeInMegabytes: sizeInMegabytes)
         let wordSize = MemoryLayout<Word>.size
-        self.sp = self.nextAddress + Word(self.sizeInBytes).aligned(to: wordSize) - Word(wordSize)
-        self.bp = sp
+        self.top = self.nextAddress + Word(self.sizeInBytes).aligned(to: wordSize) - Word(wordSize)
         }
         
     public func push(_ word:Word)
         {
-        setWordAtAddress(word,self.sp)
-        self.sp -= Word(MemoryLayout<Word>.size)
+        setWordAtAddress(word,self.top)
+        self.top -= Word(MemoryLayout<Word>.size)
         }
         
     public func pop() -> Word
         {
-        self.sp -= Word(MemoryLayout<Word>.size)
-        return(wordAtAddress(self.sp))
+        self.top -= Word(MemoryLayout<Word>.size)
+        return(wordAtAddress(self.top))
         }
         
-    public func frameRelativeValue(at offset:Word) -> Word
+    public func frameRelativeValue(on thread:Thread,at offset:Word) -> Word
         {
-        return(wordAtAddress(offset + self.bp))
+        return(wordAtAddress(offset + thread.registers[.bp]))
         }
         
-    public func setFrameRelativeValue(_ word:Word,at offset:Word)
+    public func setFrameRelativeValue(on thread:Thread,_ word:Word,at offset:Word)
         {
-        setWordAtAddress(word,offset + self.bp)
+        setWordAtAddress(word,offset + thread.registers[.bp])
+        }
+        
+    public func enterBlock(on thread: Thread,localsSizeInBytes size: Instruction.Operand)
+        {
+        self.push(thread.registers[.bp])
+        thread.registers[.bp] = thread.registers[.sp]
+        switch(size)
+            {
+            case .immediate(let value):
+                self.top -= Word(value)
+            default:
+                fatalError("Invalid operand sent to \(#function)")
+            }
         }
     }

@@ -11,6 +11,25 @@ import RawMemory
 
 public class Instruction
     {
+    public class func makeInstruction(atAddress:Address) -> Instruction
+        {
+        var address = atAddress
+        let word1 = wordAtAddress(address)
+        var word2:Word = 0
+        var word3:Word = 0
+        if Self.instructionWordHasAddress(word1)
+            {
+            address += Address(MemoryLayout<Word>.stride)
+            word2 = wordAtAddress(address)
+            }
+        if Self.instructionWordHasImmediate(word1)
+            {
+            address += Address(MemoryLayout<Word>.stride)
+            word3 = wordAtAddress(address)
+            }
+        return(self.makeInstruction(from: word1,with: word2,with: word3))
+        }
+        
     public class func makeInstruction(from word1:Word,with word2:Word,with word3:Word) -> Instruction
         {
         let operation = Operation(rawValue: (word1 & Self.Operation.kMask) >> Self.Operation.kShift)!
@@ -98,17 +117,98 @@ public class Instruction
     
     public struct InstructionWord
         {
-        var instruction:Word
-        var address:Word
-        var immediate:Word
-        var hasAddress = false
-        var hasImmediate = false
+        public var address:Word
+            {
+            get
+                {
+                return(self._address)
+                }
+            set
+                {
+                self.hasAddress = true
+                self._address = newValue
+                }
+            }
+            
+        public var immediate:Word
+            {
+            get
+                {
+                return(self._immediate)
+                }
+            set
+                {
+                self.hasImmediate = true
+                self._immediate = newValue
+                }
+            }
+            
+        public var operand1IsReference:Bool
+            {
+            get
+                {
+                return(self.instruction & Instruction.kOperand1IsReferenceMask == Instruction.kOperand1IsReferenceMask)
+                }
+            set
+                {
+                self.instruction &= ~Instruction.kOperand1IsReferenceMask
+                if newValue
+                    {
+                    self.instruction |= Instruction.kOperand1IsReferenceMask
+                    }
+                }
+            }
+            
+        public var operand2IsReference:Bool
+            {
+            get
+                {
+                return(self.instruction & Instruction.kOperand2IsReferenceMask == Instruction.kOperand2IsReferenceMask)
+                }
+            set
+                {
+                self.instruction &= ~Instruction.kOperand2IsReferenceMask
+                if newValue
+                    {
+                    self.instruction |= Instruction.kOperand2IsReferenceMask
+                    }
+                }
+            }
+            
+        public var operand3IsReference:Bool
+            {
+            get
+                {
+                return(self.instruction & Instruction.kOperand3IsReferenceMask == Instruction.kOperand3IsReferenceMask)
+                }
+            set
+                {
+                self.instruction &= ~Instruction.kOperand3IsReferenceMask
+                if newValue
+                    {
+                    self.instruction |= Instruction.kOperand3IsReferenceMask
+                    }
+                }
+            }
+            
+        public var instruction:Word
+        private var _address:Word
+        private var _immediate:Word
+        public var hasAddress = false
+        public var hasImmediate = false
+        
+        public init(instruction:Word,address:Word,immediate:Word)
+            {
+            self.instruction = instruction
+            self._address = address
+            self._immediate = immediate
+            }
         }
         
     public enum Operation:Word
         {
-        public static let kMask:Word = Word(4095) << Word(47)
-        public static let kShift:Word = 47
+        public static let kMask:Word = Word(4095) << Word(46)
+        public static let kShift:Word = 46
         
         case NOP = 0
         case PUSH
@@ -163,12 +263,12 @@ public class Instruction
         
     public enum Register:Int,CaseIterable
         {
-        public static let kRegister1Mask:Word = Word(255) << Word(39)
-        public static let kRegister1Shift:Word = 39
-        public static let kRegister2Mask:Word = Word(255) << Word(31)
-        public static let kRegister2Shift:Word = 31
-        public static let kRegister3Mask:Word = Word(255) << Word(23)
-        public static let kRegister3Shift:Word = 23
+        public static let kRegister1Mask:Word = Word(255) << Word(38)
+        public static let kRegister1Shift:Word = 38
+        public static let kRegister2Mask:Word = Word(255) << Word(30)
+        public static let kRegister2Shift:Word = 30
+        public static let kRegister3Mask:Word = Word(255) << Word(22)
+        public static let kRegister3Shift:Word = 22
         
         case none = 0
         case sp
@@ -244,8 +344,8 @@ public class Instruction
         
     public enum Mode:Word
         {
-        public static let kMask:Word = Word(15) << Word(59)
-        public static let kShift:Word = 59
+        public static let kMask:Word = Word(31) << Word(58)
+        public static let kShift:Word = 58
         
         public static func mode(of word:Word) -> Mode
             {
@@ -327,11 +427,14 @@ public class Instruction
             switch(self)
                 {
                 case .registerImmediateRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister3Mask) >> Register.kRegister3Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister3Mask) >> Register.kRegister3Shift))!
+                    return((word1 & kOperand3IsReferenceMask) == kOperand3IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .immediateRegisterRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister3Mask) >> Register.kRegister3Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister3Mask) >> Register.kRegister3Shift))!
+                    return((word1 & kOperand3IsReferenceMask) == kOperand3IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerRegisterRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister3Mask) >> Register.kRegister3Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister3Mask) >> Register.kRegister3Shift))!
+                    return((word1 & kOperand3IsReferenceMask) == kOperand3IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerRegisterImmediate:
                     return(.immediate(Immediate(bitPattern: word3)))
                 case .registerAddressImmediate:
@@ -357,35 +460,43 @@ public class Instruction
                 case .addressImmediate:
                     return(.immediate(Immediate(bitPattern: word3)))
                 case .registerRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerImmediateRegister:
                     return(.immediate(Immediate(bitPattern: word3)))
                 case .immediateRegisterRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerRegisterRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerAddress:
                     return(.address(word2))
                 case .addressRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!))
+                     let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .immediateRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerRegisterImmediate:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerAddressImmediate:
-                    return(.address(word2))
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceAddress(word2) : .address(word2))
                 case .stackRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerStack:
                     return(.stack(Int(Int64(bitPattern: word3))))
                 case .registerRegisterLabel:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerImmediateLabel:
                     return(.immediate(Immediate(bitPattern: word3)))
                 case .registerAddressLabel:
-                    return(.address(word2))
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceAddress(word2) : .address(word2))
                 case .immediateAddress:
-                    return(.address(word2))
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceAddress(word2) : .address(word2))
                 default:
                     break
                 }
@@ -399,66 +510,85 @@ public class Instruction
                 case .none:
                     return(.none)
                 case .address:
-                    return(.address(word2))
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceAddress(word2) : .address(word2))
                 case .addressImmediate:
-                    return(.address(word2))
+                   return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceAddress(word2) : .address(word2))
                 case .immediate:
                     return(.immediate(Immediate(bitPattern: word3)))
                 case .register:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!))
+                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerImmediateRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .immediateRegisterRegister:
                     return(.immediate(Immediate(bitPattern: word3)))
                 case .registerRegisterRegister:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerAddress:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .addressRegister:
                     return(.address(word2))
                 case .immediateRegister:
                     return(.immediate(Immediate(bitPattern: word3)))
-                case .registerRegisterImmediate:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!))
                 case .registerAddressImmediate:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .label:
                     return(.label(Label(key: Int(Immediate(bitPattern:word3)))))
                 case .stackRegister:
                     return(.stack(Int(Int64(bitPattern: word3))))
                 case .registerStack:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerRegisterLabel:
-                     return(.register(Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!))
+                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
+                     return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerImmediateLabel:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerAddressLabel:
-                    return(.register(Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!))
+                    let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .immediateAddress:
                     return(.immediate(Immediate(bitPattern: word3)))
-                default:
-                    break
+                case .registerRegisterImmediate:
+                    let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 }
-            return(.none)
             }
             
         public func encode(operand3: Operand,into instruction:inout InstructionWord)
             {
             switch(self,operand3)
                 {
+                case let(.registerAddress,.referenceAddress(value)):
+                    instruction.address = value
+                    instruction.operand3IsReference = true
                 case let(.registerAddress,.address(value)):
                     instruction.address = value
-                    instruction.hasAddress = true
+                    instruction.operand3IsReference = false
                 case let(.registerAddressImmediate,.immediate(value)):
                     instruction.immediate = UInt64(bitPattern: value)
-                    instruction.hasImmediate = true
                 case let(.registerRegisterRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister3Shift)
+                    instruction.operand3IsReference = false
+                case let(.registerRegisterRegister,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister3Shift)
+                    instruction.operand3IsReference = true
                 case let(.registerRegisterImmediate,.immediate(value)):
                     instruction.immediate = UInt64(bitPattern: value)
-                    instruction.hasImmediate = true
+                case let(.registerImmediateRegister,.register(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister3Shift)
+                    instruction.operand3IsReference = false
+                case let(.registerImmediateRegister,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister3Shift)
+                    instruction.operand3IsReference = true
                 default:
                     break
                 }
@@ -466,36 +596,65 @@ public class Instruction
 
         public func encode(operand1: Operand,into instruction:inout InstructionWord)
             {
+            instruction.operand1IsReference = false
             switch(self,operand1)
                 {
                 case let(.address,.address(value)):
                     instruction.address = value
-                    instruction.hasAddress = true
+                case let(.address,.referenceAddress(value)):
+                    instruction.address = value
+                    instruction.operand1IsReference = true
                 case let(.addressRegister,.address(value)):
                     instruction.address = value
-                    instruction.hasAddress = true
+                case let(.addressRegister,.referenceAddress(value)):
+                    instruction.address = value
+                    instruction.operand1IsReference = true
+                case let(.registerImmediateRegister,.register(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                case let(.registerImmediateRegister,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                    instruction.operand1IsReference = true
                 case let(.register,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                case let(.register,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                    instruction.operand1IsReference = true
                 case let(.registerRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                case let(.registerRegister,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                    instruction.operand1IsReference = true
                 case let(.registerRegisterRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                case let(.registerRegisterRegister,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                    instruction.operand1IsReference = true
                 case let(.registerRegisterImmediate,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                case let(.registerRegisterImmediate,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                    instruction.operand1IsReference = true
                 case let(.registerAddressImmediate,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                case let(.registerAddressImmediate,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                    instruction.operand1IsReference = true
                 case let(.registerAddress,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                case let(.registerAddress,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                    instruction.operand1IsReference = true
                 case let(.immediate,.immediate(value)):
                     instruction.immediate = UInt64(bitPattern: value)
-                    instruction.hasImmediate = true
                 case let(.immediateRegister,.immediate(value)):
                      instruction.immediate = UInt64(bitPattern: value)
-                     instruction.hasImmediate = true
                 case let(.label,.label(value)):
-                     instruction.instruction |= (Word(UInt32(value.key) & 4294967295))
+                     instruction.immediate = Word(UInt(bitPattern: value.key))
                 case let(.registerStack,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                case let(.registerStack,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
+                    instruction.operand1IsReference = true
                 case let(.stackRegister,.stack(value)):
                     let sign = value < 0 ? Word(2147483648) : Word(0)
                     let posValue = Word(abs(value))
@@ -513,26 +672,44 @@ public class Instruction
             {
             switch(self,operand2)
                 {
+                case let(.registerImmediateRegister,.immediate(value)):
+                    instruction.immediate = Word(bitPattern: value)
                 case let(.registerAddress,.address(value)):
                     instruction.address = value
-                    instruction.hasAddress = true
                 case let(.registerAddressImmediate,.address(value)):
                     instruction.address = value
-                    instruction.hasAddress = true
                 case let(.registerRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                case let(.registerRegister,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                    instruction.operand2IsReference = true
                 case let(.registerRegisterRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                case let(.registerRegisterRegister,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                    instruction.operand2IsReference = true
                 case let(.registerRegisterImmediate,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                case let(.registerRegisterImmediate,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                    instruction.operand2IsReference = true
                 case let(.addressRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                case let(.addressRegister,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                    instruction.operand2IsReference = true
                 case let(.immediateRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                case let(.immediateRegister,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                    instruction.operand2IsReference = true
                 case let(.registerStack,.stack(value)):
                     instruction.instruction |= (Word(UInt32(bitPattern: Int32(value)) & 4294967295))
                 case let(.stackRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                case let(.stackRegister,.referenceRegister(value)):
+                    instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
+                    instruction.operand2IsReference = true
                 default:
                     break
                 }
@@ -550,12 +727,12 @@ public class Instruction
             }
         }
         
-    public static let kOperand1IsReferenceMask:Word = Word(1) << Word(22)
-    public static let kOperand1IsReferenceShift:Word = 22
-    public static let kOperand2IsReferenceMask:Word = Word(1) << Word(21)
-    public static let kOperand2IsReferenceShift:Word = 21
-    public static let kOperand3IsReferenceMask:Word = Word(1) << Word(20)
-    public static let kOperand3IsReferenceShift:Word = 20
+    public static let kOperand1IsReferenceMask:Word = Word(1) << Word(21)
+    public static let kOperand1IsReferenceShift:Word = 21
+    public static let kOperand2IsReferenceMask:Word = Word(1) << Word(20)
+    public static let kOperand2IsReferenceShift:Word = 20
+    public static let kOperand3IsReferenceMask:Word = Word(1) << Word(19)
+    public static let kOperand3IsReferenceShift:Word = 19
     
     public var hasAddress:Bool
         {
@@ -607,6 +784,29 @@ public class Instruction
                 }
             }
             
+        public var displayString:String
+            {
+            switch(self)
+                {
+                case .label(let value):
+                    return("LABEL\(value.key)")
+                case .immediate(let value):
+                    return("\(value)")
+                case .address(let value):
+                    return("\(value)")
+                case .referenceAddress(let value):
+                    return("[\(value)]")
+                case .register(let value):
+                    return("\(value)")
+                case .referenceRegister(let value):
+                    return("[\(value)]")
+                case .stack(let value):
+                    return("BP[\(value)]")
+                case .none:
+                    return("NONE")
+                }
+            }
+            
         case label(Label)
         case immediate(Immediate)
         case address(Address)
@@ -627,14 +827,22 @@ public class Instruction
         
     public var sizeInWords:Int
         {
-        return(self.hasAddress ? 2 : 1)
+        var count = 1
+        count = self.hasAddress ? count + 1 : count
+        count = self.hasImmediate ? count + 1 : count
+        return(count)
+        }
+        
+    public var displayString:String
+        {
+        return(Line(.left("\(operation)",10),.space(1)).string)
         }
         
     public var operation:Operation
-    public let mode:Mode
+    public var mode:Mode
     public private(set) var incomingLabel:Int = 0
     public private(set) var outgoingLabels:[Int] = []
-    
+        
     public init(_ operation:Operation,_ mode:Mode)
         {
         self.operation = operation
@@ -880,7 +1088,7 @@ public class InstructionComposer
             self.instructionWord |= (newValue ? Word(1) : Word(0)) << Instruction.kOperand3IsReferenceShift
             }
         }
-        
+
     private var instructionWord:Word = 0
     private var addressWord:Word = 0
     private var immediateWord:Word = 0
@@ -905,6 +1113,11 @@ public class NOPInstruction:Instruction
     
 public class PUSHInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand.displayString)
+        }
+        
     private let operand:Operand
     
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
@@ -951,6 +1164,11 @@ public class PUSHInstruction:Instruction
 
 public class PUSHPARMInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand1.displayString + "," + self.operand2.displayString)
+        }
+        
     private let operand1:Operand
     private let operand2:Operand
     
@@ -998,6 +1216,11 @@ public class PUSHPARMInstruction:Instruction
 
 public class POPInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand.displayString)
+        }
+        
     private let operand:Operand
         
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
@@ -1038,6 +1261,11 @@ public class POPInstruction:Instruction
         
 public class MAKEInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString)
+        }
+        
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
         super.init(word1,word2,word3)
@@ -1049,11 +1277,16 @@ public class MAKEInstruction:Instruction
         }
     }
 
-public class ADDInstruction:Instruction
+public class ArithmeticInstruction:Instruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand1.displayString + "," + self.operand2.displayString + "," + self.operand3.displayString)
+        }
+        
+    internal var operand1:Operand
+    internal var operand2:Operand
+    internal var operand3:Operand
     
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
@@ -1063,28 +1296,34 @@ public class ADDInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(register1:Register,register2:Register,register3:Register)
+    public init(operation:Operation,register1:Register,register2:Register,register3:Register)
         {
         self.operand1 = .register(register1)
         self.operand2 = .register(register2)
         self.operand3 = .register(register3)
-        super.init(.ADD,.registerRegisterRegister)
+        super.init()
+        self.operation = operation
+        self.mode = .registerRegisterRegister
         }
         
-    public init(register1:Register,immediate:Immediate,register3:Register)
+    public init(operation:Operation,register1:Register,immediate:Immediate,register3:Register)
         {
         self.operand1 = .register(register1)
         self.operand2 = .immediate(immediate)
         self.operand3 = .register(register3)
-        super.init(.ADD,.registerImmediateRegister)
+        super.init()
+        self.operation = operation
+        self.mode = .registerImmediateRegister
         }
         
-    public init(immediate:Immediate,register2:Register,register3:Register)
+    public init(operation:Operation,immediate:Immediate,register2:Register,register3:Register)
         {
         self.operand1 = .immediate(immediate)
         self.operand2 = .register(register2)
         self.operand3 = .register(register3)
-        super.init(.ADD,.registerImmediateRegister)
+        super.init()
+        self.operation = operation
+        self.mode = .immediateRegisterRegister
         }
         
     internal override func encode(into words:inout InstructionWord)
@@ -1094,372 +1333,229 @@ public class ADDInstruction:Instruction
         self.mode.encode(operand3: self.operand3,into: &words)
         }
     }
-
-public class SUBInstruction:Instruction
+    
+public class ADDInstruction:ArithmeticInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.SUB,.registerRegisterRegister)
+        super.init(operation:.ADD,register1:register1,register2:register2,register3:register3)
         }
         
     public init(register1:Register,immediate:Immediate,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .immediate(immediate)
-        self.operand3 = .register(register3)
-        super.init(.SUB,.registerImmediateRegister)
+        super.init(operation:.ADD,register1:register1,immediate:immediate,register3:register3)
         }
         
     public init(immediate:Immediate,register2:Register,register3:Register)
         {
-        self.operand1 = .immediate(immediate)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.SUB,.registerImmediateRegister)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
+        super.init(operation:.ADD,immediate:immediate,register2:register2,register3:register3)
         }
     }
 
-
-public class MULInstruction:Instruction
+public class SUBInstruction:ArithmeticInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.MUL,.registerRegisterRegister)
+        super.init(operation:.SUB,register1:register1,register2:register2,register3:register3)
         }
         
     public init(register1:Register,immediate:Immediate,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .immediate(immediate)
-        self.operand3 = .register(register3)
-        super.init(.MUL,.registerImmediateRegister)
+        super.init(operation:.SUB,register1:register1,immediate:immediate,register3:register3)
         }
         
     public init(immediate:Immediate,register2:Register,register3:Register)
         {
-        self.operand1 = .immediate(immediate)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.MUL,.registerImmediateRegister)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
+        super.init(operation:.SUB,immediate:immediate,register2:register2,register3:register3)
         }
     }
 
 
-public class DIVInstruction:Instruction
+public class MULInstruction:ArithmeticInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.DIV,.registerRegisterRegister)
+        super.init(operation:.MUL,register1:register1,register2:register2,register3:register3)
         }
         
     public init(register1:Register,immediate:Immediate,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .immediate(immediate)
-        self.operand3 = .register(register3)
-        super.init(.DIV,.registerImmediateRegister)
+        super.init(operation:.MUL,register1:register1,immediate:immediate,register3:register3)
         }
         
     public init(immediate:Immediate,register2:Register,register3:Register)
         {
-        self.operand1 = .immediate(immediate)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.DIV,.registerImmediateRegister)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
+        super.init(operation:.MUL,immediate:immediate,register2:register2,register3:register3)
         }
     }
 
 
-public class MODInstruction:Instruction
+public class DIVInstruction:ArithmeticInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.MOD,.registerRegisterRegister)
+        super.init(operation:.DIV,register1:register1,register2:register2,register3:register3)
         }
         
     public init(register1:Register,immediate:Immediate,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .immediate(immediate)
-        self.operand3 = .register(register3)
-        super.init(.MOD,.registerImmediateRegister)
+        super.init(operation:.DIV,register1:register1,immediate:immediate,register3:register3)
         }
         
     public init(immediate:Immediate,register2:Register,register3:Register)
         {
-        self.operand1 = .immediate(immediate)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.MOD,.registerImmediateRegister)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
+        super.init(operation:.DIV,immediate:immediate,register2:register2,register3:register3)
         }
     }
 
 
-public class ANDInstruction:Instruction
+public class MODInstruction:ArithmeticInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.AND,.registerRegisterRegister)
+        super.init(operation:.MOD,register1:register1,register2:register2,register3:register3)
         }
         
     public init(register1:Register,immediate:Immediate,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .immediate(immediate)
-        self.operand3 = .register(register3)
-        super.init(.AND,.registerImmediateRegister)
+        super.init(operation:.MOD,register1:register1,immediate:immediate,register3:register3)
         }
         
     public init(immediate:Immediate,register2:Register,register3:Register)
         {
-        self.operand1 = .immediate(immediate)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.AND,.registerImmediateRegister)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
+        super.init(operation:.MOD,immediate:immediate,register2:register2,register3:register3)
         }
     }
 
 
-public class ORInstruction:Instruction
+public class ANDInstruction:ArithmeticInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.OR,.registerRegisterRegister)
+        super.init(operation:.AND,register1:register1,register2:register2,register3:register3)
         }
         
     public init(register1:Register,immediate:Immediate,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .immediate(immediate)
-        self.operand3 = .register(register3)
-        super.init(.OR,.registerImmediateRegister)
+        super.init(operation:.AND,register1:register1,immediate:immediate,register3:register3)
         }
         
     public init(immediate:Immediate,register2:Register,register3:Register)
         {
-        self.operand1 = .immediate(immediate)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.OR,.registerImmediateRegister)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
+        super.init(operation:.AND,immediate:immediate,register2:register2,register3:register3)
         }
     }
 
 
-public class XORInstruction:Instruction
+public class ORInstruction:ArithmeticInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.XOR,.registerRegisterRegister)
+        super.init(operation:.OR,register1:register1,register2:register2,register3:register3)
         }
         
     public init(register1:Register,immediate:Immediate,register3:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .immediate(immediate)
-        self.operand3 = .register(register3)
-        super.init(.XOR,.registerImmediateRegister)
+        super.init(operation:.OR,register1:register1,immediate:immediate,register3:register3)
         }
         
     public init(immediate:Immediate,register2:Register,register3:Register)
         {
-        self.operand1 = .immediate(immediate)
-        self.operand2 = .register(register2)
-        self.operand3 = .register(register3)
-        super.init(.XOR,.registerImmediateRegister)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
+        super.init(operation:.OR,immediate:immediate,register2:register2,register3:register3)
         }
     }
 
 
-public class NOTInstruction:Instruction
+public class XORInstruction:ArithmeticInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
+        super.init(word1,word2,word3)
+        }
+        
+    public init(register1:Register,register2:Register,register3:Register)
+        {
+        super.init(operation:.XOR,register1:register1,register2:register2,register3:register3)
+        }
+        
+    public init(register1:Register,immediate:Immediate,register3:Register)
+        {
+        super.init(operation:.XOR,register1:register1,immediate:immediate,register3:register3)
+        }
+        
+    public init(immediate:Immediate,register2:Register,register3:Register)
+        {
+        super.init(operation:.XOR,immediate:immediate,register2:register2,register3:register3)
+        }
+    }
+
+
+public class NOTInstruction:ArithmeticInstruction
+    {
+    public override init(_ word1:Word,_ word2:Word,_ word3:Word)
+        {
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        super.init(.NOT,.registerRegister)
+        super.init(operation:.NOT,register1:register1,register2:register2,register3:.none)
         }
         
-    public init(immediate:Immediate,register1:Register)
+    public init(register1:Register,immediate:Immediate,register3:Register)
         {
-        self.operand2 = .register(register1)
-        self.operand1 = .immediate(immediate)
-        super.init(.NOT,.immediateRegister)
+        super.init(operation:.MUL,register1:register1,immediate:immediate,register3:.none)
         }
         
-    internal override func encode(into words:inout InstructionWord)
+    public init(immediate:Immediate,register2:Register,register3:Register)
         {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
+        super.init(operation:.MUL,immediate:immediate,register2:register2,register3:.none)
         }
     }
 
 
 public class MOVInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand1.displayString + "," + self.operand2.displayString)
+        }
+        
     private var operand1:Operand = .none
     private var operand2:Operand = .none
     
@@ -1479,7 +1575,7 @@ public class MOVInstruction:Instruction
         
     public init(immediate:Immediate,register2:Register)
         {
-        super.init(.MOV,.registerImmediateRegister)
+        super.init(.MOV,.immediateRegister)
         self.operand1 = .immediate(immediate)
         self.operand2 = .register(register2)
         }
@@ -1522,6 +1618,11 @@ public class MOVInstruction:Instruction
 
 public class BRInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand.displayString)
+        }
+        
     private let operand:Operand
 
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
@@ -1542,12 +1643,16 @@ public class BRInstruction:Instruction
         }
     }
 
-
-public class BREQInstruction:Instruction
+public class ConditionalBranchInstruction:Instruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand1.displayString + "," + self.operand2.displayString + "," + self.operand3.displayString)
+        }
+        
+    private var operand1:Operand
+    private var operand2:Operand
+    private var operand3:Operand
     
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
@@ -1557,169 +1662,28 @@ public class BREQInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(register1:Register,register2:Register,label:Label)
+    public init(operation:Operation,register1:Register,register2:Register,label:Label)
         {
         self.operand1 = .register(register1)
         self.operand2 = .register(register2)
         self.operand3 = .label(label)
-        super.init(.BREQ,.registerRegisterLabel)
+        super.init(operation,.registerRegisterLabel)
         }
         
-    public init(register1:Register,immediate:Immediate,label:Label)
+    public init(operation:Operation,register1:Register,immediate:Immediate,label:Label)
         {
         self.operand2 = .immediate(immediate)
         self.operand1 = .register(register1)
         self.operand3 = .label(label)
-        super.init(.BREQ,.registerImmediateRegister)
+        super.init(operation,.registerImmediateRegister)
         }
         
-    public init(register1:Register,referenceAddress:Address,label:Label)
+    public init(operation:Operation,register1:Register,referenceAddress:Address,label:Label)
         {
         self.operand2 = .referenceAddress(referenceAddress)
         self.operand1 = .register(register1)
         self.operand3 = .label(label)
-        super.init(.BREQ,.registerAddressLabel)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
-        }
-    }
-
-
-public class BRNEQInstruction:Instruction
-    {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-    
-    public override init(_ word1:Word,_ word2:Word,_ word3:Word)
-        {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
-        super.init(word1,word2,word3)
-        }
-        
-    public init(register1:Register,register2:Register,label:Label)
-        {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .label(label)
-        super.init(.BRNEQ,.registerRegisterLabel)
-        }
-        
-    public init(register1:Register,immediate:Immediate,label:Label)
-        {
-        self.operand2 = .immediate(immediate)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRNEQ,.registerImmediateRegister)
-        }
-        
-    public init(register1:Register,referenceAddress:Address,label:Label)
-        {
-        self.operand2 = .referenceAddress(referenceAddress)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRNEQ,.registerAddressLabel)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
-        }
-    }
-
-
-public class BRZInstruction:Instruction
-    {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-    
-    public override init(_ word1:Word,_ word2:Word,_ word3:Word)
-        {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
-        super.init(word1,word2,word3)
-        }
-        
-    public init(register1:Register,register2:Register,label:Label)
-        {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .label(label)
-        super.init(.BRZ,.registerRegisterLabel)
-        }
-        
-    public init(register1:Register,immediate:Immediate,label:Label)
-        {
-        self.operand2 = .immediate(immediate)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRZ,.registerImmediateRegister)
-        }
-        
-    public init(register1:Register,referenceAddress:Address,label:Label)
-        {
-        self.operand2 = .referenceAddress(referenceAddress)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRZ,.registerAddressLabel)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
-        }
-    }
-
-
-public class BRNZInstruction:Instruction
-    {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-    
-    public override init(_ word1:Word,_ word2:Word,_ word3:Word)
-        {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
-        super.init(word1,word2,word3)
-        }
-        
-    public init(register1:Register,register2:Register,label:Label)
-        {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .label(label)
-        super.init(.BRNZ,.registerRegisterLabel)
-        }
-        
-    public init(register1:Register,immediate:Immediate,label:Label)
-        {
-        self.operand2 = .immediate(immediate)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRNZ,.registerImmediateRegister)
-        }
-        
-    public init(register1:Register,referenceAddress:Address,label:Label)
-        {
-        self.operand2 = .referenceAddress(referenceAddress)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRNZ,.registerAddressLabel)
+        super.init(operation,.registerAddressLabel)
         }
         
     internal override func encode(into words:inout InstructionWord)
@@ -1730,197 +1694,205 @@ public class BRNZInstruction:Instruction
         }
     }
     
-
-public class BRGTInstruction:Instruction
+public class BREQInstruction:ConditionalBranchInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-    
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register,label:Label)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .label(label)
-        super.init(.BRGT,.registerRegisterLabel)
+        super.init(operation:.BREQ,register1:register1,register2:register2,label:label)
         }
         
     public init(register1:Register,immediate:Immediate,label:Label)
         {
-        self.operand2 = .immediate(immediate)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRGT,.registerImmediateRegister)
+        super.init(operation:.BREQ,register1:register1,immediate:immediate,label:label)
         }
         
     public init(register1:Register,referenceAddress:Address,label:Label)
         {
-        self.operand2 = .referenceAddress(referenceAddress)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRGT,.registerAddressLabel)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
+        super.init(operation:.BREQ,register1:register1,referenceAddress:referenceAddress,label:label)
         }
     }
 
 
-public class BRGTEQInstruction:Instruction
+public class BRNEQInstruction:ConditionalBranchInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-    
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register,label:Label)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .label(label)
-        super.init(.BRGTEQ,.registerRegisterLabel)
+        super.init(operation:.BRNEQ,register1:register1,register2:register2,label:label)
         }
         
     public init(register1:Register,immediate:Immediate,label:Label)
         {
-        self.operand2 = .immediate(immediate)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRGTEQ,.registerImmediateRegister)
+        super.init(operation:.BRNEQ,register1:register1,immediate:immediate,label:label)
         }
         
     public init(register1:Register,referenceAddress:Address,label:Label)
         {
-        self.operand2 = .referenceAddress(referenceAddress)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRGTEQ,.registerAddressLabel)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
+        super.init(operation:.BRNEQ,register1:register1,referenceAddress:referenceAddress,label:label)
         }
     }
 
 
-public class BRLTInstruction:Instruction
+public class BRZInstruction:ConditionalBranchInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-    
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register,label:Label)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .label(label)
-        super.init(.BRLT,.registerRegisterLabel)
+        super.init(operation:.BRZ,register1:register1,register2:register2,label:label)
         }
         
     public init(register1:Register,immediate:Immediate,label:Label)
         {
-        self.operand2 = .immediate(immediate)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRLT,.registerImmediateRegister)
+        super.init(operation:.BRZ,register1:register1,immediate:immediate,label:label)
         }
         
     public init(register1:Register,referenceAddress:Address,label:Label)
         {
-        self.operand2 = .referenceAddress(referenceAddress)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRLT,.registerAddressLabel)
-        }
-        
-    internal override func encode(into words:inout InstructionWord)
-        {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
+        super.init(operation:.BRZ,register1:register1,referenceAddress:referenceAddress,label:label)
         }
     }
 
 
-public class BRLTEQInstruction:Instruction
+public class BRNZInstruction:ConditionalBranchInstruction
     {
-    private let operand1:Operand
-    private let operand2:Operand
-    private let operand3:Operand
-    
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
     public init(register1:Register,register2:Register,label:Label)
         {
-        self.operand1 = .register(register1)
-        self.operand2 = .register(register2)
-        self.operand3 = .label(label)
-        super.init(.BRLTEQ,.registerRegisterLabel)
+        super.init(operation:.BRNZ,register1:register1,register2:register2,label:label)
         }
         
     public init(register1:Register,immediate:Immediate,label:Label)
         {
-        self.operand2 = .immediate(immediate)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRLTEQ,.registerImmediateRegister)
+        super.init(operation:.BRNZ,register1:register1,immediate:immediate,label:label)
         }
         
     public init(register1:Register,referenceAddress:Address,label:Label)
         {
-        self.operand2 = .referenceAddress(referenceAddress)
-        self.operand1 = .register(register1)
-        self.operand3 = .label(label)
-        super.init(.BRLTEQ,.registerAddressLabel)
+        super.init(operation:.BRNZ,register1:register1,referenceAddress:referenceAddress,label:label)
+        }
+    }
+    
+
+public class BRGTInstruction:ConditionalBranchInstruction
+    {
+    public override init(_ word1:Word,_ word2:Word,_ word3:Word)
+        {
+        super.init(word1,word2,word3)
         }
         
-    internal override func encode(into words:inout InstructionWord)
+    public init(register1:Register,register2:Register,label:Label)
         {
-        self.mode.encode(operand1: self.operand1,into: &words)
-        self.mode.encode(operand2: self.operand2,into: &words)
-        self.mode.encode(operand3: self.operand3,into: &words)
+        super.init(operation:.BRGT,register1:register1,register2:register2,label:label)
+        }
+        
+    public init(register1:Register,immediate:Immediate,label:Label)
+        {
+        super.init(operation:.BRGT,register1:register1,immediate:immediate,label:label)
+        }
+        
+    public init(register1:Register,referenceAddress:Address,label:Label)
+        {
+        super.init(operation:.BRGT,register1:register1,referenceAddress:referenceAddress,label:label)
+        }
+    }
+
+
+public class BRGTEQInstruction:ConditionalBranchInstruction
+    {
+    public override init(_ word1:Word,_ word2:Word,_ word3:Word)
+        {
+        super.init(word1,word2,word3)
+        }
+        
+    public init(register1:Register,register2:Register,label:Label)
+        {
+        super.init(operation:.BRGTEQ,register1:register1,register2:register2,label:label)
+        }
+        
+    public init(register1:Register,immediate:Immediate,label:Label)
+        {
+        super.init(operation:.BRGTEQ,register1:register1,immediate:immediate,label:label)
+        }
+        
+    public init(register1:Register,referenceAddress:Address,label:Label)
+        {
+        super.init(operation:.BRGTEQ,register1:register1,referenceAddress:referenceAddress,label:label)
+        }
+    }
+
+
+public class BRLTInstruction:ConditionalBranchInstruction
+    {
+    public override init(_ word1:Word,_ word2:Word,_ word3:Word)
+        {
+        super.init(word1,word2,word3)
+        }
+        
+    public init(register1:Register,register2:Register,label:Label)
+        {
+        super.init(operation:.BRLT,register1:register1,register2:register2,label:label)
+        }
+        
+    public init(register1:Register,immediate:Immediate,label:Label)
+        {
+        super.init(operation:.BRLT,register1:register1,immediate:immediate,label:label)
+        }
+        
+    public init(register1:Register,referenceAddress:Address,label:Label)
+        {
+        super.init(operation:.BRLT,register1:register1,referenceAddress:referenceAddress,label:label)
+        }
+    }
+
+
+public class BRLTEQInstruction:ConditionalBranchInstruction
+    {
+    public override init(_ word1:Word,_ word2:Word,_ word3:Word)
+        {
+        super.init(word1,word2,word3)
+        }
+        
+    public init(register1:Register,register2:Register,label:Label)
+        {
+        super.init(operation:.BRLTEQ,register1:register1,register2:register2,label:label)
+        }
+        
+    public init(register1:Register,immediate:Immediate,label:Label)
+        {
+        super.init(operation:.BRLTEQ,register1:register1,immediate:immediate,label:label)
+        }
+        
+    public init(register1:Register,referenceAddress:Address,label:Label)
+        {
+        super.init(operation:.BRLTEQ,register1:register1,referenceAddress:referenceAddress,label:label)
         }
     }
 
 
 public class SLOTGETInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand1.displayString + "," + self.operand2.displayString)
+        }
+        
     private let operand1:Operand
     private let operand2:Operand
     private let operand3:Operand
@@ -1960,6 +1932,11 @@ public class SLOTGETInstruction:Instruction
 
 public class SLOTSETInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand1.displayString + "," + self.operand2.displayString)
+        }
+        
     private let operand1:Operand
     private let operand2:Operand
     private let operand3:Operand
@@ -1999,6 +1976,11 @@ public class SLOTSETInstruction:Instruction
 
 public class CALLInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand1.displayString)
+        }
+        
     private let operand1:Operand
     
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
@@ -2028,6 +2010,11 @@ public class CALLInstruction:Instruction
 
 public class ENTERInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand1.displayString)
+        }
+        
     private let operand1:Operand
     
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
@@ -2036,9 +2023,9 @@ public class ENTERInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(immediate:Immediate)
+    public init(byteCount:Immediate)
         {
-        self.operand1 = .immediate(immediate)
+        self.operand1 = .immediate(byteCount)
         super.init(.ENTER,.immediate)
         }
         
@@ -2046,19 +2033,38 @@ public class ENTERInstruction:Instruction
         {
         self.mode.encode(operand1: self.operand1,into: &words)
         }
+        
+    public override func execute(on thread:Thread) throws
+        {
+        thread.stack.enterBlock(on: thread,localsSizeInBytes: self.operand1)
+        }
     }
 
 
 public class LEAVEInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand.displayString)
+        }
+        
+    private let operand:Operand
+    
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
         {
+        self.operand = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
         super.init(word1,word2,word3)
         }
         
-    public init(immediate:Immediate)
+    public init(byteCount:Immediate)
         {
-        super.init(.LEAVE,.none)
+        self.operand = .immediate(byteCount)
+        super.init(.LEAVE,.immediate)
+        }
+        
+    internal override func encode(into words:inout InstructionWord)
+        {
+        self.mode.encode(operand1: self.operand,into: &words)
         }
     }
 
@@ -2079,6 +2085,11 @@ public class RETInstruction:Instruction
 
 public class DISPInstruction:Instruction
     {
+    public override var displayString:String
+        {
+        return(super.displayString + self.operand.displayString)
+        }
+        
     private let operand:Operand
     
     public override init(_ word1:Word,_ word2:Word,_ word3:Word)
@@ -2087,10 +2098,10 @@ public class DISPInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(immediate:Immediate)
+    public init(address:Address)
         {
-        self.operand = .immediate(immediate)
-        super.init(.DISP,.immediate)
+        self.operand = .referenceAddress(address)
+        super.init(.DISP,.address)
         }
         
     internal override func encode(into words:inout InstructionWord)

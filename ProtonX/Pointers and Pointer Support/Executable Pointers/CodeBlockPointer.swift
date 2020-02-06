@@ -187,7 +187,7 @@ public class CodeBlockPointer:ObjectPointer
             }
         if instruction.hasImmediate
             {
-            self.instructionArrayPointer.append(encoding.address)
+            self.instructionArrayPointer.append(encoding.immediate)
             }
         self.count += 1
         }
