@@ -27,7 +27,7 @@ extension String:HashableValue,Key
             {
             return(false)
             }
-        guard let charPointer = charPointerToIndexAtPointer(StringPointer.kStringBytesIndex,aStringPointer.pointer) else
+        guard let charPointer = charPointerToIndexAtAddress(StringPointer.kStringBytesIndex,aStringPointer.address) else
             {
             return(false)
             }
@@ -72,15 +72,15 @@ extension String:HashableValue,Key
         return(MemoryLayout<Word>.stride)
         }
         
-    public func store(atPointer:Argon.Pointer?)
+    public func store(atAddress:Argon.Address)
         {
-        let address = Instruction.Address(bitPattern: ImmutableStringPointer(self).pointer!)
-        setTaggedObjectAddressAtIndexAtPointer(address,.zero,atPointer)
+        let address = ImmutableStringPointer(self).address
+        setAddressAtIndexAtAddress(address,.zero,atAddress)
         }
         
-    public init(atPointer:Argon.Pointer?)
+    public init(atAddress:Argon.Address)
         {
-        self.init(ImmutableStringPointer(untaggedPointer(atPointer)).string)
+        self.init(ImmutableStringPointer(atAddress).string)
         }
     
     public var hashedValue:Int
@@ -105,7 +105,7 @@ extension String:HashableValue,Key
         return(SlotIndex(index: self.linkingHash))
         }
     
-    public var taggedAddress: Instruction.Address
+    public var taggedAddress: Argon.Address
         {
         let stringPointer = ImmutableStringPointer(self)
         return(stringPointer.taggedAddress)
@@ -180,10 +180,5 @@ extension String:HashableValue,Key
             return(self < (value as! String))
             }
         return(false)
-        }
-        
-    public func store(atPointer pointer:Argon.Pointer)
-        {
-        setAddressAtPointer(self.taggedAddress,pointer)
         }
     }

@@ -44,25 +44,25 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
         return(2)
         }
         
-    public override var taggedAddress:Instruction.Address
+    public override var taggedAddress:Argon.Address
         {
-        return(taggedObject(self.pointer))
+        return((self.address & ~(Argon.kTagBitsMask << Argon.kTagBitsShift)) | (Argon.kTagBitsAddress << Argon.kTagBitsShift))
         }
         
-    public override var untaggedAddress:Instruction.Address
+    public override var untaggedAddress:Argon.Address
         {
-        return(untaggedPointerAsAddress(self.pointer))
+        return(self.address & ~(Argon.kTagBitsMask << Argon.kTagBitsShift))
         }
         
     public var typePointer:TypePointer?
         {
         get
             {
-            return(TypePointer(untaggedPointerAtIndexAtPointer(Self.kObjectTypeIndex,self.pointer)))
+            return(TypePointer(addressAtIndexAtAddress(Self.kObjectTypeIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(taggedObject(newValue?.pointer),Self.kObjectTypeIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue?.address ?? 0,Self.kObjectTypeIndex,self.address)
             }
         }
         
@@ -70,11 +70,11 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
         {
         get
             {
-            return(wordAtIndexAtPointer(Self.kObjectHeaderIndex,self.pointer))
+            return(wordAtIndexAtAddress(Self.kObjectHeaderIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue,Self.kObjectHeaderIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue,Self.kObjectHeaderIndex,self.address)
             }
         }
     
@@ -85,13 +85,7 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
         
     private var pointerSlotCache:[SlotIndex:ObjectPointer] = [:]
 
-    public required override init(_ address:Instruction.Address)
-        {
-        super.init(address)
-        self.isMarked = true
-        }
-    
-    required public init(_ address: UnsafeMutableRawPointer?)
+    public required init(_ address:Argon.Address)
         {
         super.init(address)
         self.isMarked = true
@@ -104,18 +98,14 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
         
     private func dumpHeader()
         {
-        guard let pointer = self.pointer else
-            {
-            return
-            }
-        Log.log(.natural("0x\(pointer.hexString):"),.space(1),.natural("\(self.headerWord.bitString)"),.space(1),.natural("HEADER(TYPE=\(self.valueType),SLOTS=\(self.totalSlotCount),EXTRA=\(self.hasExtraSlotsAtEnd),FORWARD=\(self.isForwarded))"))
+        Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(self.headerWord.bitString)"),.space(1),.natural("HEADER(TYPE=\(self.valueType),SLOTS=\(self.totalSlotCount),EXTRA=\(self.hasExtraSlotsAtEnd),FORWARD=\(self.isForwarded))"))
         }
         
-    private func dumpWord(_ slotWord:Word,at address:Instruction.Address)
+    private func dumpWord(_ slotWord:Word,at address:Argon.Address)
         {
         switch(slotWord.tag)
             {
-            case Argon.kTagBitsObject:
+            case Argon.kTagBitsAddress:
                 let objectHeader = HeaderPointer(RawMemory.untaggedAddress(slotWord))
                 let type = objectHeader.valueType
                 let stringValue = type == .string ? "\"" + ImmutableStringPointer(RawMemory.untaggedAddress(slotWord)).string + "\"" : ""
@@ -150,8 +140,8 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
         for index in 1..<Self.totalSlotCount.count
             {
             let slotIndex = SlotIndex(index: index)
-            let word = wordAtIndexAtPointer(slotIndex,self.pointer)
-            self.dumpWord(word,at: Instruction.Address(bitPattern: self.pointer! + slotIndex))
+            let word = wordAtIndexAtAddress(slotIndex,self.address)
+            self.dumpWord(word,at: self.address + slotIndex)
             }
         }
         
@@ -169,39 +159,24 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
         return(false)
         }
         
-    public func store(atPointer pointer:Argon.Pointer)
+    public func store(atAddress address:Argon.Address)
         {
-        setAddressAtPointer(self.taggedAddress,pointer)
+        setAddressAtAddress(self.address,address)
         }
         
     public func store(contentsOf holder:inout ValueHolder,atIndex index:SlotIndex)
         {
-        guard let pointer = self.pointer else
-            {
-            Log.log("Null pointer in \(#function), unable to write valueHolder contents")
-            return
-            }
-        holder.store(atIndex: index, atPointer: pointer)
+        holder.store(atIndex: index, atAddress: self.address)
         }
         
     public func store<K>(key:K,atIndex index:SlotIndex) where K:Key
         {
-        guard let pointer = self.pointer else
-            {
-            Log.log("Null pointer in \(#function), unable to write key contents")
-            return
-            }
-        key.store(atPointer: pointer + index)
+        key.store(atAddress: self.address + index)
         }
         
     public func store(value:Value,atIndex index:SlotIndex)
         {
-        guard let pointer = self.pointer else
-            {
-            Log.log("Null pointer in \(#function), unable to write key contents")
-            return
-            }
-        value.store(atPointer: pointer + index)
+        value.store(atAddress: self.address + index)
         }
         
     public func value<T>(of index: SlotIndex,as:T.Type) -> T  where T:CachedPointer
@@ -210,7 +185,7 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
             {
             return(pointer as! T)
             }
-        let pointer = T(untaggedAddressAtIndexAtPointer(index,self.pointer))
+        let pointer = T(addressAtIndexAtAddress(index,self.address))
         self.pointerSlotCache[index] = (pointer as! ObjectPointer)
         return(pointer)
         }
@@ -219,6 +194,6 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
         {
         let objectPointer = (to as! ObjectPointer)
         self.pointerSlotCache[index] = objectPointer
-        setAddressAtIndexAtPointer(objectPointer.taggedAddress,index,self.pointer)
+        setAddressAtIndexAtAddress(objectPointer.address,index,self.address)
         }
     }

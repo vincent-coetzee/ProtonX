@@ -70,7 +70,7 @@ public class Memory
         return(segment)
         }
         
-    public class func segmentContaining(address:Instruction.Address) -> MemorySegment?
+    public class func segmentContaining(address:Argon.Address) -> MemorySegment?
         {
         for segment in segmentsKeyedByIndex.values
             {
@@ -96,17 +96,18 @@ public class Memory
         {
         Self.kTypePackage = Self.staticSegment.allocateEmptyType()
         Self.kPackageArgon = Self.staticSegment.allocateEmptyPackage()
-        Self.kPackageArgon!.name = "Argon"
         Self.kTypeNone = Self.staticSegment.allocateEmptyType()
         Self.kTypeType = Self.staticSegment.allocateEmptyType()
-        Self.kPackageArgon!.append(Self.kTypeType!)
         Self.kTypeString = Self.staticSegment.allocateEmptyType()
-        Self.kPackageArgon!.append(Self.kTypeString!)
-        Self.kPackageArgon!.append(Self.kTypePackage!)
         Self.kTypeType?.name = "Type"
         Self.kTypeNone?.name = "None"
         Self.kTypePackage?.name = "Package"
         Self.kTypeString?.name = "String"
+        Self.kPackageArgon!.name = "Argon"
+        Self.kTypePackage!.name = "Package"
+        Self.kPackageArgon!.append(Self.kTypeString!)
+        Self.kPackageArgon!.append(Self.kTypePackage!)
+        Self.kPackageArgon!.append(Self.kTypeType!)
         Self.kTypeObject = Self.staticSegment.allocateEmptyType()
         Self.kTypeObject?.name = "Object"
         Self.kPackageArgon!.append(Self.kTypeObject!)

@@ -92,11 +92,14 @@
 		BF3C475623E8C615008BCF13 /* Method.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C475523E8C615008BCF13 /* Method.swift */; };
 		BF3C475823E8C621008BCF13 /* MethodInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C475723E8C621008BCF13 /* MethodInstance.swift */; };
 		BF3C475A23E8C634008BCF13 /* MethodDispatchGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C475923E8C634008BCF13 /* MethodDispatchGraph.swift */; };
+		BF5DEF0B23F00F910010D55D /* WordPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5DEF0A23F00F910010D55D /* WordPointer.swift */; };
+		BF5DEF0D23F022A40010D55D /* Mutex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5DEF0C23F022A40010D55D /* Mutex.swift */; };
 		BF71F56923E827A90016ED08 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56823E827A90016ED08 /* Label.swift */; };
 		BF71F56C23E83C570016ED08 /* SeamPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56B23E83C570016ED08 /* SeamPointer.swift */; };
 		BF71F56E23E83EFE0016ED08 /* VisibilityModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56D23E83EFE0016ED08 /* VisibilityModifier.swift */; };
 		BF71F57023E840B90016ED08 /* VergePointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56F23E840B90016ED08 /* VergePointer.swift */; };
 		BF71F57423E87CDB0016ED08 /* CachedPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F57323E87CDB0016ED08 /* CachedPointer.swift */; };
+		BF805E4623F81B6400960CF2 /* RecursiveLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF805E4523F81B6400960CF2 /* RecursiveLock.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -190,11 +193,14 @@
 		BF3C475523E8C615008BCF13 /* Method.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Method.swift; sourceTree = "<group>"; };
 		BF3C475723E8C621008BCF13 /* MethodInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MethodInstance.swift; sourceTree = "<group>"; };
 		BF3C475923E8C634008BCF13 /* MethodDispatchGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MethodDispatchGraph.swift; sourceTree = "<group>"; };
+		BF5DEF0A23F00F910010D55D /* WordPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordPointer.swift; sourceTree = "<group>"; };
+		BF5DEF0C23F022A40010D55D /* Mutex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mutex.swift; sourceTree = "<group>"; };
 		BF71F56823E827A90016ED08 /* Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
 		BF71F56B23E83C570016ED08 /* SeamPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeamPointer.swift; sourceTree = "<group>"; };
 		BF71F56D23E83EFE0016ED08 /* VisibilityModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisibilityModifier.swift; sourceTree = "<group>"; };
 		BF71F56F23E840B90016ED08 /* VergePointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergePointer.swift; sourceTree = "<group>"; };
 		BF71F57323E87CDB0016ED08 /* CachedPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedPointer.swift; sourceTree = "<group>"; };
+		BF805E4523F81B6400960CF2 /* RecursiveLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecursiveLock.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -291,6 +297,7 @@
 				BF00458023E5596F00F07111 /* Instruction.Address + Extensions.swift */,
 				BF00458123E5596F00F07111 /* SlotIndex+Extensions.swift */,
 				BF00458223E5596F00F07111 /* Word+Extensions.swift */,
+				BF5DEF0A23F00F910010D55D /* WordPointer.swift */,
 			);
 			path = "System Type Extensions";
 			sourceTree = "<group>";
@@ -336,6 +343,8 @@
 				BF00459523E5597000F07111 /* EnglishWord.swift */,
 				BF71F56823E827A90016ED08 /* Label.swift */,
 				BF71F56D23E83EFE0016ED08 /* VisibilityModifier.swift */,
+				BF5DEF0C23F022A40010D55D /* Mutex.swift */,
+				BF805E4523F81B6400960CF2 /* RecursiveLock.swift */,
 			);
 			path = "Support ";
 			sourceTree = "<group>";
@@ -574,10 +583,12 @@
 				BF00460423E5597100F07111 /* DictionaryBucketNodePointer.swift in Sources */,
 				BF0045C923E5597000F07111 /* Header.swift in Sources */,
 				BF0045C323E5597000F07111 /* StackSegment.swift in Sources */,
+				BF5DEF0B23F00F910010D55D /* WordPointer.swift in Sources */,
 				BF0045D923E5597000F07111 /* IndexVector.swift in Sources */,
 				BF0045E423E5597100F07111 /* Timer.swift in Sources */,
 				BF0045C423E5597000F07111 /* CodeSegment.swift in Sources */,
 				BF0045E723E5597100F07111 /* Argon.swift in Sources */,
+				BF5DEF0D23F022A40010D55D /* Mutex.swift in Sources */,
 				BF0045F623E5597100F07111 /* ListPointer.swift in Sources */,
 				BF0045EE23E5597100F07111 /* ObjectPointer.swift in Sources */,
 				BF0045E023E5597100F07111 /* Key.swift in Sources */,
@@ -586,6 +597,7 @@
 				BF0045C723E5597000F07111 /* DataSegment.swift in Sources */,
 				BF0045F423E5597100F07111 /* ObjectTypePointer.swift in Sources */,
 				BF3C475423E8BF29008BCF13 /* Thread.swift in Sources */,
+				BF805E4623F81B6400960CF2 /* RecursiveLock.swift in Sources */,
 				BF0045F123E5597100F07111 /* SystemSlotPointer.swift in Sources */,
 				BF0045D123E5597000F07111 /* Float64+Extensions.swift in Sources */,
 				BF0045DC23E5597100F07111 /* ScalarValue.swift in Sources */,

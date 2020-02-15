@@ -132,21 +132,26 @@ public class Argon
         case integer = 0
         case uinteger = 1
         case float32 = 2
-        case float64 = 3
-        case boolean = 4
-        case byte = 5
-        case object = 6
-        case bits = 7
+        case boolean = 3
+        case byte = 4
+        case address = 5
+        case bits = 6
+        case persistent = 7
         }
         
     public static let kTagBitsUInteger:Word = HeaderTag.uinteger.rawValue
     public static let kTagBitsInteger:Word = HeaderTag.integer.rawValue
     public static let kTagBitsFloat32:Word = HeaderTag.float32.rawValue
     public static let kTagBitsBoolean:Word = HeaderTag.boolean.rawValue
-    public static let kTagBitsObject:Word = HeaderTag.object.rawValue
+    public static let kTagBitsAddress:Word = HeaderTag.address.rawValue
     public static let kTagBitsByte:Word = HeaderTag.byte.rawValue
-    public static let kTagBitsFloat64:Word = HeaderTag.float64.rawValue
     public static let kTagBitsBits:Word = HeaderTag.bits.rawValue
+    public static let kTagBitsPersistent:Word = HeaderTag.persistent.rawValue
+    
+    public static let kPageMask:Word = 1099511627775
+    public static let kPageShift:Word = 16
+    public static let kOffsetMask:Word = 65535
+    public static let kOffsetShift:Word = 0
     
     public static let kTagBitsMask:Word = 7
     public static let kTagBitsShift:Word = 60
@@ -178,7 +183,6 @@ public class Argon
         
     private static var _nextIndex:Word = 1
     
-    public typealias Pointer = UnsafeMutableRawPointer
     public typealias WordPointer = UnsafeMutablePointer<Word>
     public typealias Float32 = Float
     public typealias Integer = Int64
@@ -186,7 +190,10 @@ public class Argon
     public typealias Boolean = Bool
     public typealias Byte = UInt8
     public typealias Float64 = PrivateFloat64
-        
+    public typealias Address = Word
+    public typealias Immediate = Int64
+    public typealias Index = Int
+    
     public struct ByteCount
         {
         public static func +(lhs:ByteCount,rhs:SlotCount) -> ByteCount
@@ -394,8 +401,6 @@ public class Argon
                     self = .byte
                 case .float32:
                     self = .float32
-                case .float64:
-                    self = .float64
                 default:
                     self = .none
                 }
@@ -436,3 +441,13 @@ public class Argon
     }
 
 
+extension Argon.Immediate
+    {
+    public init(from: Word)
+        {
+        let sign = (from & 2147483648 == 2147483648) ? Int32(-1) : Int32(1)
+        let mask:Word = ~2147483648
+        let newValue = from & mask
+        self.init(Int32(Int(newValue & Word(4294967295))) * sign)
+        }
+    }

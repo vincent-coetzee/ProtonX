@@ -69,33 +69,36 @@ public class Thread
         self.registers[.cp] = self.stack.pop()
         }
         
-    public func execute(codeBlockAddress:Instruction.Address)
+    public func execute(codeBlockAddress:Argon.Address) throws
         {
         self.stack.push(self.registers[.cp])
         self.stack.push(self.registers[.ip])
         self.registers[.cp] = codeBlockAddress
         self.registers[.ip] = wordAtAddress(wordAtAddress(codeBlockAddress + Word(3 * MemoryLayout<Word>.stride)) + Word(5 * MemoryLayout<Word>.stride)) + Word(8 * MemoryLayout<Word>.stride)
-        self.execute()
+        try self.execute()
         self.registers[.ip] = self.stack.pop()
         self.registers[.cp] = self.stack.pop()
         }
         
-    private func execute()
+    private func execute() throws
         {
-        repeat
+        var address = self.registers[.ip]
+        var instruction = Instruction.makeInstruction(atAddress: address)
+        while instruction.operation != .RET
             {
-            let instruction = Instruction.makeInstruction(atAddress: self.registers[.ip])
+            try instruction.execute(on: self)
+            address +=  instruction.totalByteCount
+            instruction = Instruction.makeInstruction(atAddress: address)
             }
-        
         }
         
-    public func call(address:Instruction.Address)
+    public func call(address:Argon.Address) throws
         {
         let codeBlock = CodeBlockPointer(address)
         self.saveExecutionContext()
-        self.registers[.cp] = pointerAsAddress(codeBlock.pointer)
+        self.registers[.cp] = codeBlock.address
         self.registers[.ip] = 0
-        self.execute()
+        try self.execute()
         self.restoreExecutionContext()
         }
         

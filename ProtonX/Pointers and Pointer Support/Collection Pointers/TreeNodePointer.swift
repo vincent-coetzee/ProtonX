@@ -30,18 +30,14 @@ public class TreeNodePointer:ObjectPointer
             {
             if cachedKeyHolder == nil
                 {
-                cachedKeyHolder = ValueHolder(word: wordAtIndexAtPointer(Self.kTreeNodeKeyIndex,self.pointer))
+                cachedKeyHolder = ValueHolder(word: wordAtIndexAtAddress(Self.kTreeNodeKeyIndex,self.address))
                 }
             return(cachedKeyHolder!)
             }
         set
             {
-            guard let pointer = self.pointer else
-                {
-                return
-                }
             var mutableValue:ValueHolder? = newValue
-            mutableValue?.store(atPointer: pointer + Self.kTreeNodeKeyIndex)
+            mutableValue?.store(atAddress: self.address + Self.kTreeNodeKeyIndex)
             }
         }
         
@@ -53,78 +49,74 @@ public class TreeNodePointer:ObjectPointer
             {
             if cachedValueHolder == nil
                 {
-                cachedValueHolder = ValueHolder(word: wordAtIndexAtPointer(Self.kTreeNodeValueIndex,self.pointer))
+                cachedValueHolder = ValueHolder(word: wordAtIndexAtAddress(Self.kTreeNodeValueIndex,self.address))
                 }
             return(cachedValueHolder!)
             }
         set
             {
-            guard let pointer = self.pointer else
-                {
-                return
-                }
             var mutableValue:ValueHolder? = newValue
-            mutableValue?.store(atPointer: pointer + Self.kTreeNodeValueIndex)
+            mutableValue?.store(atAddress: self.address + Self.kTreeNodeValueIndex)
             }
         }
         
-    public var keyAddress:Instruction.Address
+    public var keyAddress:Argon.Address
         {
         get
             {
-            return(wordAtIndexAtPointer(Self.kTreeNodeKeyIndex,self.pointer))
+            return(wordAtIndexAtAddress(Self.kTreeNodeKeyIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue,Self.kTreeNodeKeyIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue,Self.kTreeNodeKeyIndex,self.address)
             }
         }
 
-    public var valueAddress:Instruction.Address
+    public var valueAddress:Argon.Address
         {
         get
             {
-            return(wordAtIndexAtPointer(Self.kTreeNodeValueIndex,self.pointer))
+            return(wordAtIndexAtAddress(Self.kTreeNodeValueIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue,Self.kTreeNodeValueIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue,Self.kTreeNodeValueIndex,self.address)
             }
         }
         
-    public var leftNodeAddress:Instruction.Address
+    public var leftNodeAddress:Argon.Address
         {
         get
             {
-            return(untaggedAddressAtIndexAtPointer(Self.kTreeNodeLeftNodeIndex,self.pointer))
+            return(addressAtIndexAtAddress(Self.kTreeNodeLeftNodeIndex,self.address))
             }
         set
             {
-            tagAndSetAddressAtIndexAtPointer(newValue,Self.kTreeNodeLeftNodeIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue,Self.kTreeNodeLeftNodeIndex,self.address)
             }
         }
         
-    public var parentNodeAddress:Instruction.Address
+    public var parentNodeAddress:Argon.Address
         {
         get
             {
-            return(wordAtIndexAtPointer(Self.kTreeNodeParentNodeIndex,self.pointer))
+            return(wordAtIndexAtAddress(Self.kTreeNodeParentNodeIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue,Self.kTreeNodeParentNodeIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue,Self.kTreeNodeParentNodeIndex,self.address)
             }
         }
         
-    public var rightNodeAddress:Instruction.Address
+    public var rightNodeAddress:Argon.Address
         {
         get
             {
-            return(untaggedAddressAtIndexAtPointer(Self.kTreeNodeRightNodeIndex,self.pointer))
+            return(addressAtIndexAtAddress(Self.kTreeNodeRightNodeIndex,self.address))
             }
         set
             {
-            tagAndSetAddressAtIndexAtPointer(newValue,Self.kTreeNodeRightNodeIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue,Self.kTreeNodeRightNodeIndex,self.address)
             }
         }
         
@@ -137,7 +129,7 @@ public class TreeNodePointer:ObjectPointer
             }
         set
             {
-            self.leftNodeAddress = taggedObject(newValue?.pointer)
+            self.leftNodeAddress = RawMemory.taggedAddress(newValue?.address ?? 0)
             }
         }
         
@@ -150,7 +142,7 @@ public class TreeNodePointer:ObjectPointer
             }
         set
             {
-            self.rightNodeAddress = taggedObject(newValue?.pointer)
+            self.rightNodeAddress = RawMemory.taggedAddress(newValue?.address ?? 0)
             }
         }
         
@@ -163,7 +155,7 @@ public class TreeNodePointer:ObjectPointer
             }
         set
             {
-            self.parentNodeAddress = taggedObject(newValue?.pointer)
+            self.parentNodeAddress = RawMemory.taggedAddress(newValue?.address ?? 0)
             }
         }
         
@@ -213,7 +205,7 @@ public class TreeNodePointer:ObjectPointer
         return(node!)
         }
         
-    public func findValue<K>(forKey:K) -> Instruction.Address? where K:Key
+    public func findValue<K>(forKey:K) -> Argon.Address? where K:Key
         {
         return(self.findNode(forKey: forKey)?.valueAddress)
         }

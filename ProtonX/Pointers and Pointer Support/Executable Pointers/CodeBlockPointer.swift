@@ -64,11 +64,11 @@ public class CodeBlockPointer:ObjectPointer
         {
         get
             {
-            return(Int(untaggedWordAtIndexAtPointer(Self.kCodeBlockInstructionCountIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kCodeBlockInstructionCountIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kCodeBlockInstructionCountIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kCodeBlockInstructionCountIndex,self.address)
             }
         }
         
@@ -82,13 +82,13 @@ public class CodeBlockPointer:ObjectPointer
                 {
                 return(array)
                 }
-            self._instructionArrayPointer = ArrayPointer(untaggedPointerAtIndexAtPointer(Self.kCodeBlockInstructionArrayIndex,self.pointer))
+            self._instructionArrayPointer = ArrayPointer(addressAtIndexAtAddress(Self.kCodeBlockInstructionArrayIndex,self.address))
             return(self._instructionArrayPointer!)
             }
         set
             {
             self._instructionArrayPointer = newValue
-            tagAndSetPointerAtIndexAtPointer(newValue.pointer,Self.kCodeBlockInstructionArrayIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue.address,Self.kCodeBlockInstructionArrayIndex,self.address)
             }
         }
         
@@ -105,7 +105,7 @@ public class CodeBlockPointer:ObjectPointer
         
     public init(instructions:InstructionVector,segment:MemorySegment = Memory.managedSegment)
         {
-        super.init(segment.allocateCodeBlock(initialSizeInWords: instructions.wordCount).pointer)
+        super.init(segment.allocateCodeBlock(initialSizeInWords: instructions.wordCount).address)
         let array = self.instructionArrayPointer
         var index = 0
         for instruction in instructions
@@ -127,17 +127,12 @@ public class CodeBlockPointer:ObjectPointer
         self.count = instructions.count
         }
 
-    public var instructionAddress:Instruction.Address?
+    public var instructionAddress:Argon.Address?
         {
         return(self.instructionArrayPointer.elementAddress)
         }
-        
-    required public init(_ address: UnsafeMutableRawPointer?)
-        {
-        super.init(address)
-        }
     
-    public required init(_ address: Instruction.Address)
+    public required init(_ address: Argon.Address)
         {
         super.init(address)
         }

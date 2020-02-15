@@ -10,6 +10,6 @@ import Foundation
 
 public protocol Pointer
     {
-    var pointer:UnsafeMutableRawPointer? { get }
-    init(_ address:UnsafeMutableRawPointer?)
+    var address:Argon.Address { get }
+    init(_ address:Argon.Address)
     }

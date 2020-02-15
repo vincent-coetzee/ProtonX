@@ -72,11 +72,11 @@ public class TypePointer:PackageElementPointer
         {
         get
             {
-            return(VisibilityModifier(rawValue: untaggedWordAtIndexAtPointer(Self.kTypeVisibilityModifierIndex,self.pointer))!)
+            return(VisibilityModifier(rawValue: wordAtIndexAtAddress(Self.kTypeVisibilityModifierIndex,self.address))!)
             }
         set
             {
-            setWordAtIndexAtPointer(newValue.rawValue,Self.kTypeVisibilityModifierIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue.rawValue,Self.kTypeVisibilityModifierIndex,self.address)
             }
         }
         
@@ -84,11 +84,11 @@ public class TypePointer:PackageElementPointer
         {
         get
             {
-            return(untaggedWordAtIndexAtPointer(Self.kTypeInstanceTypeIndex,self.pointer))
+            return(wordAtIndexAtAddress(Self.kTypeInstanceTypeIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue,Self.kTypeInstanceTypeIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue,Self.kTypeInstanceTypeIndex,self.address)
             }
         }
         
@@ -96,11 +96,11 @@ public class TypePointer:PackageElementPointer
         {
         get
             {
-            return(untaggedWordAtIndexAtPointer(Self.kTypeFlagsIndex,self.pointer))
+            return(wordAtIndexAtAddress(Self.kTypeFlagsIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue,Self.kTypeFlagsIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue,Self.kTypeFlagsIndex,self.address)
             }
         }
         
@@ -111,9 +111,9 @@ public class TypePointer:PackageElementPointer
         return(Argon.ByteCount(0))
         }
         
-    public override var taggedAddress:Instruction.Address
+    public override var taggedAddress:Argon.Address
         {
-        return(taggedObject(self.pointer))
+        return(RawMemory.taggedAddress(self.address))
         }
         
     public convenience init(_ name:String,segment:MemorySegment = Memory.staticSegment)
@@ -136,34 +136,15 @@ public class TypePointer:PackageElementPointer
 //        self.name = name
         }
         
-    public required init(_ pointer:Argon.Pointer)
+    public init(_ name:String,_ address:Argon.Address)
         {
-        super.init(pointer)
-        }
-        
-    public init(_ name:String,_ pointer:Argon.Pointer)
-        {
-        super.init(pointer)
+        super.init(address)
         self.name = name
         }
         
-    public required  init(_ address:Instruction.Address)
-        {
-        super.init(untaggedAddressAsPointer(address))
-        }
-    
-    required public init(_ address: UnsafeMutableRawPointer?)
+    public required  init(_ address:Argon.Address)
         {
         super.init(address)
-        }
-    
-    public func storeObject(_ instance:ObjectPointer?,at:Argon.Pointer)
-        {
-        }
-        
-    public func loadObject(at:Argon.Pointer) -> ObjectPointer?
-        {
-        return(nil)
         }
         
     public func typedValue(of word:Word) -> Value?
@@ -171,7 +152,7 @@ public class TypePointer:PackageElementPointer
         return(Argon.UInteger(word))
         }
         
-    public override func makeInstance(in segment:MemorySegment = Memory.managedSegment) -> Argon.Pointer?
+    public override func makeInstance(in segment:MemorySegment = Memory.managedSegment) -> Argon.Address
         {
         fatalError("A type itself should not be making instances")
         }

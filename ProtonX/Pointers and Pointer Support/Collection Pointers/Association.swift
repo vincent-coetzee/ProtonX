@@ -18,16 +18,16 @@ public struct Association
         
     public static let stride = Word.stride * 2
     
-    internal let keyPointer:Argon.Pointer
-    internal let valuePointer:Argon.Pointer
+    internal let keyPointer:Argon.Address
+    internal let valuePointer:Argon.Address
     internal let keyType:TypePointer?
     internal let valueType:TypePointer?
     
-    public init(atPointer:Argon.Pointer,keyType:TypePointer?,valueType:TypePointer?)
+    public init(atAddress:Argon.Address,keyType:TypePointer?,valueType:TypePointer?)
         {
         self.keyType = keyType
         self.valueType = valueType
-        self.keyPointer = pointerAtPointer(atPointer)
-        self.valuePointer = pointerAtPointer(atPointer + 1)
+        self.keyPointer = addressAtAddress(atAddress)
+        self.valuePointer = addressAtAddress(atAddress + 1)
         }
     }

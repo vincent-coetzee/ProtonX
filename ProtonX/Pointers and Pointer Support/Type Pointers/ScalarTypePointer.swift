@@ -22,32 +22,32 @@ public class ScalarTypePointer:TypePointer
         {
         get
             {
-            return(Argon.ScalarType(rawValue: wordAtIndexAtPointer(Self.kScalarTypeIndex,self.pointer))!)
+            return(Argon.ScalarType(rawValue: wordAtIndexAtAddress(Self.kScalarTypeIndex,self.address))!)
             }
         set
             {
-            setWordAtIndexAtPointer(newValue.rawValue,Self.kScalarTypeIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue.rawValue,Self.kScalarTypeIndex,self.address)
             }
         }
         
-    public func makeInstance() -> Argon.Pointer?
+    public func makeInstance() -> Argon.Address
         {
         switch(self.scalarType)
             {
             case .bits:
-                return(Argon.Pointer(taggedBits(0)))
+                return(taggedBits(0))
             case .integer:
-                return(Argon.Pointer(taggedInteger(0)))
+                return(taggedInteger(0))
             case .uinteger:
-                return(Argon.Pointer(taggedUInteger(0)))
+                return(taggedUInteger(0))
             case .boolean:
-                return(Argon.Pointer(taggedBoolean(false)))
+                return(taggedBoolean(false))
             case .byte:
-                return(Argon.Pointer(taggedByte(0)))
+                return(taggedByte(0))
             case .none:
-                return(Argon.Pointer.null)
+                return(0)
             case .float32:
-                return(Argon.Pointer(taggedFloat32(0.0)))
+                return(taggedFloat32(0.0))
             case .float64:
                 fatalError("You need to think this through")
             }

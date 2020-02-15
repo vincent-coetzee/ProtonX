@@ -168,27 +168,22 @@ public class Header:Headered
 
 public class HeaderPointer:Headered
     {
-    private let pointer:Argon.Pointer?
+    private let address:Argon.Address
     
     public var headerWord:Word
         {
         get
             {
-            return(wordAtIndexAtPointer(.zero,self.pointer))
+            return(wordAtIndexAtAddress(.zero,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue,.zero,self.pointer)
+            setWordAtIndexAtAddress(newValue,.zero,self.address)
             }
         }
         
-    public init(_ pointer:Argon.Pointer)
+    public init(_ address:Argon.Address)
         {
-        self.pointer = pointer
-        }
-        
-    public init(_ address:Instruction.Address)
-        {
-        self.pointer = Argon.Pointer(bitPattern: UInt(untaggedAddress(address)))
+        self.address = address
         }
     }

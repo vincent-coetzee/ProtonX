@@ -25,7 +25,7 @@ extension Argon.Integer:Value
         return(String(string.reversed()))
         }
         
-    public var taggedAddress:Instruction.Address
+    public var taggedAddress:Argon.Address
         {
         return(taggedInteger(self))
         }
@@ -68,9 +68,9 @@ extension Argon.Integer:Value
         return(Word(bitPattern: self))
         }
         
-    public func store(atPointer pointer:Argon.Pointer)
+    public func store(atAddress pointer:Argon.Address)
         {
-        setAddressAtPointer(self.taggedAddress,pointer)
+        setAddressAtAddress(self.taggedAddress,pointer)
         }
         
     public func withTagBitsZeroed() -> Argon.Integer
@@ -88,7 +88,7 @@ extension Argon.Integer:Value
     
 extension Argon.UInteger
     {
-    public var taggedAddress:Instruction.Address
+    public var taggedAddress:Argon.Address
         {
         return(taggedUInteger(self))
         }
@@ -121,9 +121,9 @@ extension Argon.UInteger
         return(false)
         }
         
-    public func store(atPointer pointer:Argon.Pointer)
+    public func store(atAddress pointer:Argon.Address)
         {
-        setAddressAtPointer(self.taggedAddress,pointer)
+        setAddressAtAddress(self.taggedAddress,pointer)
         }
         
     public func withTagBitsZeroed() -> Argon.UInteger
@@ -134,7 +134,7 @@ extension Argon.UInteger
 
 extension Argon.Boolean:Value
     {
-    public var taggedAddress:Instruction.Address
+    public var taggedAddress:Argon.Address
         {
         return(taggedBoolean(self))
         }
@@ -178,9 +178,9 @@ extension Argon.Boolean:Value
         return(false)
         }
         
-    public func store(atPointer pointer:Argon.Pointer)
+    public func store(atAddress pointer:Argon.Address)
         {
-        setAddressAtPointer(self.taggedAddress,pointer)
+        setAddressAtAddress(self.taggedAddress,pointer)
         }
         
     public func withTagBitsZeroed() -> Argon.Boolean
@@ -206,7 +206,7 @@ extension Argon.Float32:Value
         return(String(string.reversed()))
         }
         
-    public var taggedAddress:Instruction.Address
+    public var taggedAddress:Argon.Address
         {
         return(taggedFloat32(self))
         }
@@ -254,9 +254,9 @@ extension Argon.Float32:Value
         return(false)
         }
         
-    public func store(atPointer pointer:Argon.Pointer)
+    public func store(atAddress pointer:Argon.Address)
         {
-        setAddressAtPointer(self.taggedAddress,pointer)
+        setAddressAtAddress(self.taggedAddress,pointer)
         }
         
     public func withTagBitsZeroed() -> Argon.Float32
@@ -272,7 +272,7 @@ extension Argon.Float64:Value
         return(lhs.float64 == rhs.float64)
         }
         
-    public var taggedAddress:Instruction.Address
+    public var taggedAddress:Argon.Address
         {
         return(0)
         }
@@ -320,9 +320,9 @@ extension Argon.Float64:Value
         return(false)
         }
         
-    public func store(atPointer pointer:Argon.Pointer)
+    public func store(atAddress pointer:Argon.Address)
         {
-        setAddressAtPointer(self.taggedAddress,pointer)
+        setAddressAtAddress(self.taggedAddress,pointer)
         }
         
     public func withTagBitsZeroed() -> Argon.Float64
@@ -333,7 +333,7 @@ extension Argon.Float64:Value
 
 extension Argon.Byte:Value
     {
-    public var taggedAddress:Instruction.Address
+    public var taggedAddress:Argon.Address
         {
         return(taggedByte(self))
         }
@@ -353,9 +353,9 @@ extension Argon.Byte:Value
 //        return(Word(self))
 //        }
         
-    public func store(atPointer pointer:Argon.Pointer)
+    public func store(atAddress pointer:Argon.Address)
         {
-        setAddressAtPointer(self.taggedAddress,pointer)
+        setAddressAtAddress(self.taggedAddress,pointer)
         }
         
     public func equals(_ value:Value) -> Bool

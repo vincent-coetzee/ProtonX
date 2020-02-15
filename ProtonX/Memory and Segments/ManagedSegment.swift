@@ -10,8 +10,4 @@ import Foundation
 
 public class ManagedSegment:MemorySegment
     {
-    public override var identifier:Identifier
-        {
-        return(.managed)
-        }
     }

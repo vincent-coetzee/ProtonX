@@ -93,13 +93,20 @@ public class MemorySegment:Equatable
         
     public static func testThreads()
         {
-        let codeBlockAddress = self.makeCode()
-        let memory = Memory()
-        let thread = Thread(memory: memory)
-        thread.execute(codeBlockAddress: codeBlockAddress)
+        do
+            {
+            let codeBlockAddress = self.makeCode()
+            let memory = Memory()
+            let thread = Thread(memory: memory)
+            try thread.execute(codeBlockAddress: codeBlockAddress)
+            }
+        catch(let error)
+            {
+            print(error)
+            }
         }
         
-    public static func makeCode() -> Instruction.Address
+    public static func makeCode() -> Argon.Address
         {
         let string1 = ImmutableStringPointer("Test String 1")
         let string2 = ImmutableStringPointer("Test String 2")
@@ -117,7 +124,7 @@ public class MemorySegment:Equatable
         codeBlock.appendInstruction(RETInstruction())
         let pointer = Memory.staticSegment.allocateCodeBlock(initialSizeInWords: 128)
         pointer.appendInstructions(codeBlock)
-        return(Instruction.Address(bitPattern: pointer.pointer!))
+        return(pointer.address)
         }
         
     public static func testInstructions()
@@ -139,7 +146,7 @@ public class MemorySegment:Equatable
         codeBlock.appendInstruction(RETInstruction())
         let pointer = Memory.staticSegment.allocateCodeBlock(initialSizeInWords: 128)
         pointer.appendInstructions(codeBlock)
-        let newPointer = CodeBlockPointer(pointer.pointer)
+        let newPointer = CodeBlockPointer(pointer.address)
         assert(newPointer.count == pointer.count)
         for instruction in newPointer.instructions
             {
@@ -252,7 +259,7 @@ public class MemorySegment:Equatable
     public static func testStrings()
         {
         let string1 = ImmutableStringPointer("This is a string of some length that has a fair number of letters and some special %$$^&&*%^ charecters and some 1284795950 digits", segment: .static)
-        let string2 = ImmutableStringPointer(string1.pointer)
+        let string2 = ImmutableStringPointer(string1.address)
         assert(string1.string == string2.string)
         let string3 = ImmutableStringPointer("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",segment: .static)
         Log.log("STRING 3 COUNT = \(string3.count)")
@@ -350,7 +357,7 @@ public class MemorySegment:Equatable
 //        let words = ["hello","vincent","123","aleph","zeta","beta","growth","hedonsitically right as hell","sustainable","perfect","elementally sound","0000"]
 //        for index in 0..<words.count
 //            {
-//            dict[words[index]] = Instruction.Address(index)
+//            dict[words[index]] = Argon.Address(index)
 //            }
 //        var index:Word = 0
 //        for word in words
@@ -401,7 +408,7 @@ public class MemorySegment:Equatable
                 {
                 Log.log("halt")
                 }
-            array.append(Word(index) + 6)
+            array.append(Word(index + 6))
             assert(array.count == 7 + index)
             }
         Log.log("ARRAY AFTER GROW COUNT IS \(array.count)")
@@ -437,27 +444,12 @@ public class MemorySegment:Equatable
             }
         return(true)
         }
-        
-    public enum Identifier:Int,Equatable
-        {
-        case none = 0
-        case code = 1
-        case data = 2
-        case `static` = 3
-        case stack = 4
-        case managed = 5
-        }
-    
+
     public var isZeroSegment:Bool
         {
         return(self.sizeInBytes == 0 && self.baseAddress == 0 && self.nextAddress == 0)
         }
-        
-    public var identifier:Identifier
-        {
-        return(.none)
-        }
-        
+
     private let baseAddress:Word
     private let topAddress:Word
     internal var nextAddress:Word
@@ -466,6 +458,7 @@ public class MemorySegment:Equatable
     public let index = Argon.nextIndex
     private let roundToPageSize = true
     public private(set) var highwaterMark:Word
+    private var lock = RecursiveLock()
     
     public init(sizeInMegabytes:Int)
         {
@@ -489,20 +482,25 @@ public class MemorySegment:Equatable
         self.highwaterMark = 0
         }
         
-    public func contains(address:Instruction.Address) -> Bool
+    public func contains(address:Argon.Address) -> Bool
         {
         return(self.baseAddress <= address && address <= self.topAddress)
         }
         
-    public func allocate(byteCount count:Argon.ByteCount,slotCount:inout Argon.SlotCount) -> Argon.Pointer?
+    public func allocate(byteCount count:Argon.ByteCount,slotCount:inout Argon.SlotCount) -> Argon.Address
         {
+        self.lock.lock()
+        defer
+            {
+            self.lock.unlock()
+            }
         // round the byte count up to the nearest word count
         let wordSize = MemoryLayout<Word>.size
         let byteCount = Argon.ByteCount(Argon.SlotCount(count) + 1)
-        let address = Argon.Pointer(bitPattern: self.nextAddress)
+        let address = self.nextAddress
         let alignedCount = byteCount.aligned(to: wordSize) + Argon.SlotCount(1)
         slotCount = Argon.SlotCount(alignedCount)
-        memset(address,0,alignedCount.count)
+        memset(UnsafeMutableRawPointer(bitPattern: Int(Int64(bitPattern: address))),0,alignedCount.count)
         self.nextAddress += alignedCount
         self.highwaterMark  = self.nextAddress > self.highwaterMark ? self.nextAddress : self.highwaterMark
         return(address)
@@ -531,7 +529,6 @@ public class MemorySegment:Equatable
         pointer.typePointer = Memory.kTypePackage
         pointer.segment = self
         pointer.contentDictionaryPointer = self.allocateDictionary(chunkFactor: 1024)
-        pointer.name = "Package"
         Log.log("ALLOCATED EMPTY PACKAGE AT \(pointer.hexString) TO \(self.highwaterMark.hexString)")
         return(pointer)
         }
@@ -563,7 +560,7 @@ public class MemorySegment:Equatable
         return(pointer)
         }
         
-    public func allocateEnumeration(named:String,cases:[EnumerationCasePointer.EnumerationCase]) -> Argon.Pointer?
+    public func allocateEnumeration(named:String,cases:[EnumerationCasePointer.EnumerationCase]) -> EnumerationPointer
         {
         let pointer = EnumerationPointer(self.allocate(slotCount: EnumerationPointer.totalSlotCount + cases.count))
         pointer.name = named
@@ -577,11 +574,11 @@ public class MemorySegment:Equatable
         for aCase in cases
             {
             let casePointer = EnumerationCasePointer(aCase)
-            setObjectPointerAtIndexAtPointer(casePointer.pointer,EnumerationPointer.kEnumerationCasesIndex + index,pointer.pointer)
+            setAddressAtIndexAtAddress(casePointer.address,EnumerationPointer.kEnumerationCasesIndex + index,pointer.address)
             index += 1
             }
         Log.log("ALLOCATED ENUMERATION(\(named)) AT \(pointer.hexString)")
-        return(pointer.pointer)
+        return(pointer)
         }
         
     public func allocateEmptyScalarType(_ type:Argon.ScalarType) -> ScalarTypePointer
@@ -598,8 +595,13 @@ public class MemorySegment:Equatable
         return(pointer)
         }
         
-    public func allocate(slotCount:Argon.SlotCount) -> Argon.Pointer?
+    public func allocate(slotCount:Argon.SlotCount) -> Argon.Address
         {
+        self.lock.lock()
+        defer
+            {
+            self.lock.unlock()
+            }
         let byteCount = Argon.ByteCount(slotCount)
         var newSlotCount = Argon.SlotCount(0)
         let pointer = self.allocate(byteCount: byteCount,slotCount: &newSlotCount)
@@ -626,7 +628,7 @@ public class MemorySegment:Equatable
         array.count = elements.count
         array.maximumCount = allocationSlotCount
         array.segment = self
-        tagAndSetPointerAtIndexAtPointer(bufferPointer.pointer,ArrayPointer.kArrayWordBufferPointerIndex,array.pointer)
+        setAddressAtIndexAtAddress(bufferPointer.address,ArrayPointer.kArrayWordBufferPointerIndex,array.address)
         if !elements.isEmpty
             {
             var index = 0
@@ -659,7 +661,7 @@ public class MemorySegment:Equatable
         return(bitSet)
         }
         
-    public func allocateList(elements:Array<Instruction.Address> = []) -> ListPointer
+    public func allocateList(elements:Array<Argon.Address> = []) -> ListPointer
         {
         let byteCount = Argon.ByteCount(ListPointer.totalSlotCount)
         var newSlotCount = Argon.SlotCount(0)
@@ -703,7 +705,7 @@ public class MemorySegment:Equatable
         return(tree)
         }
         
-    public func allocateTreeNode<K>(key:K,value:Value,left:Instruction.Address = 0,right:Instruction.Address = 0) -> TreeNodePointer where K:Key
+    public func allocateTreeNode<K>(key:K,value:Value,left:Argon.Address = 0,right:Argon.Address = 0) -> TreeNodePointer where K:Key
         {
         let byteCount = Argon.ByteCount(TreeNodePointer.totalSlotCount)
         var newSlotCount = Argon.SlotCount(0)
@@ -723,7 +725,7 @@ public class MemorySegment:Equatable
         return(node)
         }
         
-    public func allocateListNode(element:Value,previous:Instruction.Address = 0,next:Instruction.Address = 0) -> ListNodePointer
+    public func allocateListNode(element:Value,previous:Argon.Address = 0,next:Argon.Address = 0) -> ListNodePointer
         {
         let byteCount = Argon.ByteCount(ListNodePointer.totalSlotCount)
         var newSlotCount = Argon.SlotCount(0)
@@ -734,7 +736,7 @@ public class MemorySegment:Equatable
         node.hasExtraSlotsAtEnd = false
         node.totalSlotCount = newSlotCount
         node.typePointer = Memory.kTypeListNode
-        element.store(atPointer: Argon.Pointer(address)! + ListNodePointer.kListElementPointerIndex)
+        element.store(atAddress: address + ListNodePointer.kListElementPointerIndex)
         node.segment = self
         node.nextNodeAddress = next
         node.previousNodeAddress = next
@@ -760,7 +762,7 @@ public class MemorySegment:Equatable
         return(dictionary)
         }
         
-    public func allocateStringConstant(_ contents:String,segment:MemorySegment = .managed) -> Argon.Pointer?
+    public func allocateStringConstant(_ contents:String,segment:MemorySegment = .managed) -> ImmutableStringPointer
         {
         let size = MemoryLayout<Word>.size
         let byteCount = ImmutableStringPointer.storageBytesRequired(for: contents)
@@ -777,7 +779,7 @@ public class MemorySegment:Equatable
         pointer.segment = self
         Log.log("ALLOCATED STRING CONSTANT AT \(pointer.hexString) TO \(self.highwaterMark.hexString) WITH \(newSlotCount) SLOTS \(byteCount) BYTES")
         self.dump(baseAddress: pointer.untaggedAddress, nextAddress: self.highwaterMark)
-        return(pointer.pointer)
+        return(pointer)
         }
         
     public func dump()
@@ -803,7 +805,7 @@ public class MemorySegment:Equatable
                     let slotWord = wordAtAddress(address)
                     switch(slotWord.tag)
                         {
-                        case Argon.kTagBitsObject:
+                        case Argon.kTagBitsAddress:
                             let objectHeader = HeaderPointer(untaggedAddress(slotWord))
                             let type = objectHeader.valueType
                             let stringValue = type == .string ? "\"" + ImmutableStringPointer(untaggedAddress(slotWord)).string + "\"" : ""
@@ -853,9 +855,9 @@ public class MemorySegment:Equatable
 //            }
         }
         
-    public func dumpObjectContents(at address:inout Instruction.Address)
+    public func dumpObjectContents(at address:inout Argon.Address)
         {
-        let header = HeaderPointer(Argon.Pointer(address))
+        let header = HeaderPointer(address)
         let slotCount = header.totalSlotCount
         address++
         for index in 1..<slotCount.count
@@ -864,16 +866,16 @@ public class MemorySegment:Equatable
             }
         }
         
-    private func dumpInstance(at address:inout Instruction.Address)
+    private func dumpInstance(at address:inout Argon.Address)
         {
-        let header = HeaderPointer(Argon.Pointer(address))
+        let header = HeaderPointer(address)
         let type = TypePointer(untaggedAddress(wordAtIndexAtAddress(.one,address)))
         let typeName = type.name
         Log.log(.right("OBJECT(\(header.valueType)) ",Self.kLabelWidth),.natural(": 0x\(address.hexString) : "),.natural("SLOT-COUNT(\(header.totalSlotCount))"),.space(1),.natural("HAS-EXTRA-SLOTS(\(header.hasExtraSlotsAtEnd))"),.space(1),.natural("IS-FORWARDED(\(header.isForwarded))"),.space(1),.left(typeName,30))
         self.dumpObjectContents(at: &address)
         }
         
-    private func dumpStringInstance(at address:inout Instruction.Address)
+    private func dumpStringInstance(at address:inout Argon.Address)
         {
         let headerWord = wordAtAddress(address)
         let header = Header(headerWord)
@@ -901,7 +903,7 @@ public class MemorySegment:Equatable
             }
         }
         
-    private func dumpSlot(at address:inout Instruction.Address,index:Int)
+    private func dumpSlot(at address:inout Argon.Address,index:Int)
         {
         let indexString = String(format: "[%04d]",index)
         let word = wordAtAddress(untaggedAddress(address))
@@ -912,9 +914,9 @@ public class MemorySegment:Equatable
             return
             }
         let header = Header(word)
-        if header.tag == .object
+        if header.tag == .address
             {
-            let valueType = ObjectPointer(untaggedPointerAtAddress(address)).valueType
+            let valueType = ObjectPointer(addressAtAddress(address)).valueType
             if valueType == .string
                 {
                 Log.log(.right("STRING PTR ",Self.kLabelWidth),.natural(": 0x\(address.hexString)\(indexString) "),.natural(word.bitString),.space(1),.left(address.addressedString,30))

@@ -13,8 +13,8 @@ public enum ValueHolder:Comparable
     {
     private static func objectValue(for word:Word) -> ValueHolder
         {
-        let pointer = untaggedWordAsPointer(word)
-        let headerWord = wordAtPointer(pointer)
+        let pointer = RawMemory.untaggedAddress(word)
+        let headerWord = wordAtAddress(pointer)
         switch(headerWord.valueType)
             {
         case .none:
@@ -372,22 +372,24 @@ public enum ValueHolder:Comparable
                 case .float32:
                     let u32 = UInt32(word &  4294967295)
                     self = .float32(Float(bitPattern: u32))
-                case .float64:
+//                case .float64:
     //                return(lhs.word == rhs.word)
                     self = .float64(0)
                 case .boolean:
                     self = .boolean(word == 1)
                 case .byte:
                     self = .byte(UInt8(word & 255))
-                case .object:
+                case .address:
                     self = ValueHolder.objectValue(for: word)
                 case .bits:
                     self = .bits(word & ~Argon.kTagBitsMask)
+                case .persistent:
+                    fatalError("This should have been implemented")
                 }
             }
         }
         
-    public func copyAddress() -> Instruction.Address
+    public func copyAddress() -> Argon.Address
         {
         switch(self)
             {
@@ -396,73 +398,74 @@ public enum ValueHolder:Comparable
             case .stringReference(let value):
                 if value.isNull
                     {
-                    return(taggedObjectAddress(0))
+                    return(taggedAddress(0))
                     }
                 return(ImmutableStringPointer(value.string).taggedAddress)
             default:
-                return(taggedObjectAddress(0))
+                return(taggedAddress(0))
             }
         }
         
     @inline(__always)
-    public mutating func store(atIndex index:SlotIndex,atPointer:Argon.Pointer)
+    public mutating func store(atIndex index:SlotIndex,atAddress:Argon.Address)
         {
-        self.store(atPointer: atPointer + index)
+        self.store(atAddress: atAddress + index)
         }
         
     @inline(__always)
-    public mutating func store(atIndex index:Int,atPointer:Argon.Pointer)
+    public mutating func store(atIndex index:Int,atAddress:Argon.Address)
         {
-        self.store(atPointer: atPointer + SlotIndex(index: index))
+        self.store(atAddress: atAddress + SlotIndex(index: index))
         }
         
     @inline(__always)
-    public mutating func store(atPointer pointer:Argon.Pointer)
+    public mutating func store(atAddress address:Argon.Address)
         {
         switch(self)
             {
             case .key(let key):
-                key.store(atPointer: pointer)
+                key.store(atAddress: address)
             case .value(let value):
-                value.store(atPointer: pointer)
+                value.store(atAddress: address)
             case .null:
-                setWordAtPointer(0,pointer)
+                setWordAtAddress(0,address)
             case .none:
-                setWordAtPointer(0,pointer)
+                setWordAtAddress(0,address)
             case .integer(let int):
-                setWordAtPointer(taggedInteger(int),pointer)
+                setIntegerAtAddress(int,address)
             case .uinteger(let uint):
-                setWordAtPointer(taggedUInteger(uint),pointer)
+                setUIntegerAtAddress(uint,address)
             case .float32(let value):
-                setWordAtPointer(taggedFloat32(value),pointer)
+                setFloat32AtAddress(value,address)
             case .float64:
+                break
 //                let header = Header(slotCount: 2, valueType: .float64, hasExtraSlotsAtEnd: false)
 //                header.tag = .float64
 //                header.valueType = .float64
 //                let float64 = taggedFloat64(header.headerWord,value)
-                setWordAtPointer(0,pointer)
+//                setWordAtPointer(0,pointer)
             case .boolean(let value):
-                setWordAtPointer(taggedBoolean(value),pointer)
+                setBooleanAtAddress(value,address)
             case .byte(let value):
-                setWordAtPointer(taggedByte(value),pointer)
+                setByteAtAddress(value,address)
             case .string(let value):
                 let immutableString = ImmutableStringPointer(value)
                 self = .stringReference(immutableString)
-                setWordAtPointer(immutableString.taggedAddress,pointer)
+                setAddressAtAddress(immutableString.address,address)
             case .stringReference(let value):
-                setWordAtPointer(value.taggedAddress,pointer)
+                setAddressAtAddress(value.address,address)
             case .slot(let value):
-                setWordAtPointer(value.taggedAddress,pointer)
+                setAddressAtAddress(value.address,address)
             case .enumerationCase(let value):
-                setWordAtPointer(value.taggedAddress,pointer)
+                setAddressAtAddress(value.address,address)
             case .enumeration(let value):
-                setWordAtPointer(value.taggedAddress,pointer)
+                setAddressAtAddress(value.address,address)
             case .bits(let value):
-                setWordAtPointer(taggedBits(value),pointer)
+                setBitsAtAddress(value,address)
             case .type(let value):
-                setWordAtPointer(value.taggedAddress,pointer)
+                setAddressAtAddress(value.address,address)
             case .package(let value):
-                setWordAtPointer(value.taggedAddress,pointer)
+                setAddressAtAddress(value.address,address)
             }
         }
     }

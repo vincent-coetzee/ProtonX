@@ -9,131 +9,6 @@
 import Foundation
 import RawMemory
 
-public protocol WordStorable
-    {
-    static var instanceStrideInBytes:Int { get }
-    func store(atPointer:Argon.Pointer?)
-    init?(atPointer:Argon.Pointer?)
-    }
-    
-//public struct StringWordAssociation:WordVectorConvertible
-//    {
-//    public let stringPointer:StringPointer
-//    public let word:Word
-//
-//    public var stride:Int
-//        {
-//        return(MemoryLayout<Self>.stride)
-//        }
-//
-//    public static var wordCount:Int
-//        {
-//        return(2)
-//        }
-//
-//    public var wordVector:WordVector
-//        {
-//        return(WordVector(self.stringPointer.taggedAddress,self.word))
-//        }
-//
-//    public init(_ string:String,_ word:Word)
-//        {
-//        self.stringPointer = StringPointer(string)
-//        self.word = word
-//        }
-//
-//    public init(_ vector:WordVector)
-//        {
-//        self.stringPointer = StringPointer(untaggedAddress(vector[0]))
-//        self.word = vector[1]
-//        }
-//    }
-    
-//public struct WordVector:Collection
-//    {
-//    private var words:[Word] = []
-//
-//    public var startIndex:Int
-//        {
-//        return(self.words.startIndex)
-//        }
-//
-//    public var endIndex:Int
-//        {
-//        return(self.words.endIndex)
-//        }
-//
-//    public var count:Int
-//        {
-//        return(self.words.count)
-//        }
-//
-//    public init(_ words:Word...)
-//        {
-//        self.words = words
-//        }
-//
-//    public init(_ count:Int)
-//        {
-//        self.words = Array<Word>(repeating: 0, count: count)
-//        }
-//
-//    public init(at pointer:Argon.Pointer?)
-//        {
-//        self.words = []
-//        if pointer != nil
-//            {
-//            var index = 0
-//            let count = Int(wordAtIndexAtPointer(index++,pointer))
-//            self.words = []
-//            for _ in 0..<count
-//                {
-//                self.words.append(wordAtIndexAtPointer(index++,pointer))
-//                }
-//            }
-//        }
-//
-//    public init(at address:Instruction.Address)
-//        {
-//        self.words = []
-//        if address != 0
-//            {
-//            var index = 0
-//            let count = Int(wordAtIndexAtAddress(index++,address))
-//            for _ in 0..<count
-//                {
-//                self.words.append(wordAtIndexAtAddress(index++,address))
-//                }
-//            }
-//        }
-//
-//    public func index(after:Int) -> Int
-//        {
-//        return(self.words.index(after: after))
-//        }
-//
-//    public subscript(_ index:Int) -> Word
-//        {
-//        get
-//            {
-//            return(self.words[index])
-//            }
-//        set
-//            {
-//            self.words[index] = newValue
-//            }
-//        }
-//
-//    public func setAtAddress(_ inAddress:Instruction.Address)
-//        {
-//        var address = inAddress
-//        setWordAtAddress(Word(self.words.count),address++)
-//        for word in self.words
-//            {
-//            setWordAtAddress(word,address++)
-//            }
-//        }
-//    }
     
 public class WordBlockPointer:CollectionPointer
     {
@@ -177,35 +52,15 @@ public class WordBlockPointer:CollectionPointer
         return(9)
         }
         
-//    public subscript<T:Value>(_ index:SlotIndex) -> T? where T:Equatable
-//        {
-//        get
-//            {
-//            guard let pointer = self.pointer else
-//                {
-//                return(nil)
-//                }
-//            return(self.elementTypePointer?.typedValue(of: wordAtIndexAtPointer(index,pointer)) as? T)
-//            }
-//        set
-//            {
-//            guard let pointer = self.pointer else
-//                {
-//                return
-//                }
-//            setWordAtIndexAtPointer(newValue?.taggedAddress ?? 0,index,pointer)
-//            }
-//        }
-        
     public var totalByteCount:Argon.ByteCount
         {
         get
             {
-            return(Argon.ByteCount(wordAtIndexAtPointer(Self.kBufferTotalByteCountIndex,self.pointer)))
+            return(Argon.ByteCount(wordAtIndexAtAddress(Self.kBufferTotalByteCountIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kBufferTotalByteCountIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kBufferTotalByteCountIndex,self.address)
             }
         }
         
@@ -213,11 +68,11 @@ public class WordBlockPointer:CollectionPointer
         {
         get
             {
-            return(Int(wordAtIndexAtPointer(Self.kBufferMaximumElementCountIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kBufferMaximumElementCountIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kBufferMaximumElementCountIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kBufferMaximumElementCountIndex,self.address)
             }
         }
         
@@ -225,11 +80,11 @@ public class WordBlockPointer:CollectionPointer
         {
         get
             {
-            return(Int(wordAtIndexAtPointer(Self.kBufferElementStrideIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kBufferElementStrideIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kBufferElementStrideIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kBufferElementStrideIndex,self.address)
             }
         }
         
@@ -237,22 +92,13 @@ public class WordBlockPointer:CollectionPointer
         {
         get
             {
-            return(Argon.ByteCount(wordAtIndexAtPointer(Self.kBufferTotalElementByteCountIndex,self.pointer)))
+            return(Argon.ByteCount(wordAtIndexAtAddress(Self.kBufferTotalElementByteCountIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue.count),Self.kBufferTotalElementByteCountIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue.count),Self.kBufferTotalElementByteCountIndex,self.address)
             }
         }
-//
-//    private var elementPointer:Argon.Pointer?
-//        {
-//        guard let pointer = self.pointer else
-//            {
-//            return(nil)
-//            }
-//        return(Argon.Pointer(bitPattern: Instruction.Address(bitPattern: pointer) + Word(MemoryLayout<Word>.stride * WordBlockPointer.kBufferElementsIndex.index)))
-//        }
         
     public required init(_ address:Word)
         {
@@ -283,46 +129,33 @@ public class WordBlockPointer:CollectionPointer
         Log.log("ALLOCATED WORDBUFFER AT \(self.hexString)")
         }
         
-    required public init(_ somePointer: Argon.Pointer?)
-        {
-        super.init(somePointer)
-        }
-        
     @inline(__always)
-    public func pointerToElement(atIndex:SlotIndex) -> Argon.Pointer?
+    public func addressOfElement(atIndex:SlotIndex) -> Argon.Address
         {
-        guard let pointer = self.pointer else
-            {
-            return(nil)
-            }
-        return(pointer + SlotOffset(stride: self.elementStrideInBytes,index: atIndex))
+        return(self.address + SlotOffset(stride: self.elementStrideInBytes,index: atIndex))
         }
         
-    public var wordAddress:Instruction.Address?
+    public var wordAddress:Argon.Address
         {
-        guard let pointer = self.pointer else
-            {
-            return(nil)
-            }
-        return(UInt64(bitPattern: (pointer + Self.kBufferElementsIndex)))
+        return(self.address + Self.kBufferElementsIndex)
         }
         
     public subscript(_ index:Int) -> Word
         {
         get
             {
-            return(wordAtPointer(self.pointerToElement(atIndex: SlotIndex(index: index))))
+            return(wordAtAddress(self.addressOfElement(atIndex: SlotIndex(index: index))))
             }
         set
             {
-            setWordAtPointer(newValue,self.pointerToElement(atIndex: SlotIndex(index: index)))
+            setWordAtAddress(newValue,self.addressOfElement(atIndex: SlotIndex(index: index)))
             }
         }
         
-    public func copy(from buffer: Argon.Pointer?,elementCount:Int)
+    public func copy(from buffer: Argon.Address,elementCount:Int)
         {
         let totalBytes = (elementCount + WordBlockPointer.totalSlotCount.count) * MemoryLayout<Word>.stride
-        memcpy(self.pointer,buffer,totalBytes)
+        memcpy(UnsafeMutableRawPointer(bitPattern: UInt(self.address)),UnsafeMutableRawPointer(bitPattern: UInt(self.address)),totalBytes)
         self.count = elementCount
         }
     }

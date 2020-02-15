@@ -18,15 +18,15 @@ public class TreePointer:CollectionPointer
         return(6)
         }
         
-    public var nodeAddress:Instruction.Address
+    public var nodeAddress:Argon.Address
         {
         get
             {
-            return(wordAtIndexAtPointer(Self.kTreeNodeIndex,self.pointer))
+            return(wordAtIndexAtAddress(Self.kTreeNodeIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue,Self.kTreeNodeIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue,Self.kTreeNodeIndex,self.address)
             }
         }
         
@@ -34,7 +34,7 @@ public class TreePointer:CollectionPointer
         {
         get
             {
-            let address = untaggedAddressAtIndexAtPointer(Self.kTreeNodeIndex,self.pointer)
+            let address = addressAtIndexAtAddress(Self.kTreeNodeIndex,self.address)
             if address == 0
                 {
                 return(nil)
@@ -43,7 +43,7 @@ public class TreePointer:CollectionPointer
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kTreeNodeIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue?.address ?? 0,Self.kTreeNodeIndex,self.address)
             }
         }
         
@@ -105,7 +105,7 @@ public class TreePointer:CollectionPointer
             }
         }
         
-    public func value<T>(forKey key:T) -> Instruction.Address? where T:Key
+    public func value<T>(forKey key:T) -> Argon.Address? where T:Key
         {
         if let nodePointer = self.nodePointer
             {

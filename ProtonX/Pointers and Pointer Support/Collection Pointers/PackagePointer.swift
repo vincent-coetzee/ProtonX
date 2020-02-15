@@ -23,11 +23,11 @@ public class PackagePointer:TypePointer
         {
         get
             {
-            return(DictionaryPointer(untaggedAddressAtIndexAtPointer(Self.kPackageContentDictionaryIndex,self.pointer)))
+            return(DictionaryPointer(addressAtIndexAtAddress(Self.kPackageContentDictionaryIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue.taggedAddress,Self.kPackageContentDictionaryIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue.taggedAddress,Self.kPackageContentDictionaryIndex,self.address)
             }
         }
         

@@ -10,8 +10,4 @@ import Foundation
 
 public class StaticSegment:MemorySegment
     {
-    public override var identifier:Identifier
-        {
-        return(.static)
-        }
     }

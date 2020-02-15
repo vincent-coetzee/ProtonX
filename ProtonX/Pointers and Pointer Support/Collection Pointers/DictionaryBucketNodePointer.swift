@@ -40,11 +40,11 @@ public class DictionaryBucketNodePointer:ObjectPointer
         {
         get
             {
-            return(DictionaryBucketNodePointer(untaggedPointerAtIndexAtPointer(Self.kDictionaryBucketNodeNextNodeIndex,self.pointer)))
+            return(DictionaryBucketNodePointer(addressAtIndexAtAddress(Self.kDictionaryBucketNodeNextNodeIndex,self.address)))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kDictionaryBucketNodeNextNodeIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue?.address ?? 0,Self.kDictionaryBucketNodeNextNodeIndex,self.address)
             }
         }
         
@@ -52,11 +52,11 @@ public class DictionaryBucketNodePointer:ObjectPointer
         {
         get
             {
-            return(untaggedAddressAtIndexAtPointer(Self.kDictionaryBucketNodeNextNodeIndex,self.pointer))
+            return(addressAtIndexAtAddress(Self.kDictionaryBucketNodeNextNodeIndex,self.address))
             }
         set
             {
-            return(setWordAtIndexAtPointer(newValue,Self.kDictionaryBucketNodeNextNodeIndex,self.pointer))
+            return(setWordAtIndexAtAddress(newValue,Self.kDictionaryBucketNodeNextNodeIndex,self.address))
             }
         }
         
@@ -64,11 +64,11 @@ public class DictionaryBucketNodePointer:ObjectPointer
         {
         get
             {
-            return(untaggedAddressAtIndexAtPointer(Self.kDictionaryBucketNodePreviousNodeIndex,self.pointer))
+            return(addressAtIndexAtAddress(Self.kDictionaryBucketNodePreviousNodeIndex,self.address))
             }
         set
             {
-            return(setWordAtIndexAtPointer(newValue,Self.kDictionaryBucketNodePreviousNodeIndex,self.pointer))
+            return(setWordAtIndexAtAddress(newValue,Self.kDictionaryBucketNodePreviousNodeIndex,self.address))
             }
         }
         
@@ -76,11 +76,11 @@ public class DictionaryBucketNodePointer:ObjectPointer
         {
         get
             {
-            return(DictionaryBucketNodePointer(untaggedPointerAtIndexAtPointer(Self.kDictionaryBucketNodePreviousNodeIndex,self.pointer)))
+            return(DictionaryBucketNodePointer(addressAtIndexAtAddress(Self.kDictionaryBucketNodePreviousNodeIndex,self.address)))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kDictionaryBucketNodePreviousNodeIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue?.address ?? 0,Self.kDictionaryBucketNodePreviousNodeIndex,self.address)
             }
         }
         
@@ -88,11 +88,11 @@ public class DictionaryBucketNodePointer:ObjectPointer
         {
         get
             {
-            return(wordAtIndexAtPointer(Self.kDictionaryBucketNodeKeyIndex,self.pointer))
+            return(wordAtIndexAtAddress(Self.kDictionaryBucketNodeKeyIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue,Self.kDictionaryBucketNodeKeyIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue,Self.kDictionaryBucketNodeKeyIndex,self.address)
             }
         }
         
@@ -100,19 +100,19 @@ public class DictionaryBucketNodePointer:ObjectPointer
         {
         get
             {
-            return(wordAtIndexAtPointer(Self.kDictionaryBucketNodeValueIndex,self.pointer))
+            return(wordAtIndexAtAddress(Self.kDictionaryBucketNodeValueIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue,Self.kDictionaryBucketNodeValueIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue,Self.kDictionaryBucketNodeValueIndex,self.address)
             }
         }
         
-    public init<K>(key:K,value:Value,previous:Instruction.Address = 0,next:Instruction.Address = 0,segment:MemorySegment = .managed) where K:Key
+    public init<K>(key:K,value:Value,previous:Argon.Address = 0,next:Argon.Address = 0,segment:MemorySegment = .managed) where K:Key
         {
         super.init(segment.allocate(slotCount: Self.totalSlotCount))
-        key.store(atPointer: self.pointer! + DictionaryBucketNodePointer.kDictionaryBucketNodeKeyIndex)
-        value.store(atPointer: self.pointer! + DictionaryBucketNodePointer.kDictionaryBucketNodeValueIndex)
+        key.store(atAddress: self.address + DictionaryBucketNodePointer.kDictionaryBucketNodeKeyIndex)
+        value.store(atAddress: self.address + DictionaryBucketNodePointer.kDictionaryBucketNodeValueIndex)
         self.nextNodeValue = next
         self.previousNodeValue = previous
         Log.log("ALLOCATED DICTIONARY BUCKET NODE AT \(self.hexString)")
@@ -122,14 +122,14 @@ public class DictionaryBucketNodePointer:ObjectPointer
         {
         if let node = self.previousNodePointer,node == dictionaryPointer
             {
-            setWordAtIndexAtPointer(self.nextNodeValue,index,dictionaryPointer.pointer)
+            setWordAtIndexAtAddress(self.nextNodeValue,index,dictionaryPointer.address)
             return
             }
         self.nextNodePointer?.previousNodeValue = self.previousNodeValue
         self.previousNodePointer?.nextNodeValue = self.nextNodeValue
         }
         
-    public func addressOfBucket(forKey:ValueHolder) -> Instruction.Address
+    public func addressOfBucket(forKey:ValueHolder) -> Argon.Address
         {
         if forKey == ValueHolder(word: self.keyValue)
             {
@@ -165,7 +165,7 @@ public class DictionaryBucketNodePointer:ObjectPointer
             }
         }
     
-    public required init(_ address: Instruction.Address)
+    public required init(_ address: Argon.Address)
         {
         super.init(address)
         }

@@ -32,7 +32,7 @@ public class ArrayPointer:CollectionPointer
     public enum ArrayIndex
         {
         case none
-        case enumeration(Instruction.Address)
+        case enumeration(Argon.Address)
         case fixed(Word)
         case range(Int)
         case vector(Word)
@@ -41,9 +41,9 @@ public class ArrayPointer:CollectionPointer
     public enum ArrayIndexType
         {
         case none
-        case enumeration(Instruction.Address,Word,Word)
+        case enumeration(Argon.Address,Word,Word)
         case fixed(Word)
-        case range(Instruction.Address,Int,Int)
+        case range(Argon.Address,Int,Int)
         case vector
         
         public var rawValue:Int
@@ -127,28 +127,28 @@ public class ArrayPointer:CollectionPointer
         {
         get
             {
-            let type = wordAtIndexAtPointer(Self.kArrayRangeTypeIndex,self.pointer)
+            let type = wordAtIndexAtAddress(Self.kArrayRangeTypeIndex,self.address)
             if type == ArrayPointer.kArrayRangeTypeNone
                 {
                 return(.none)
                 }
             else if type == ArrayPointer.kArrayRangeTypeEnumeration
                 {
-                let enumAddress = untaggedWordAtIndexAtPointer(ArrayPointer.kArrayRangeEnumerationIndex,self.pointer)
-                let lower = wordAtIndexAtPointer(ArrayPointer.kArrayRangeLowerBoundIndex,self.pointer)
-                let upper = wordAtIndexAtPointer(ArrayPointer.kArrayRangeUpperBoundIndex,self.pointer)
+                let enumAddress = wordAtIndexAtAddress(ArrayPointer.kArrayRangeEnumerationIndex,self.address)
+                let lower = wordAtIndexAtAddress(ArrayPointer.kArrayRangeLowerBoundIndex,self.address)
+                let upper = wordAtIndexAtAddress(ArrayPointer.kArrayRangeUpperBoundIndex,self.address)
                 return(.enumeration(enumAddress,lower,upper))
                 }
             else if type == ArrayPointer.kArrayRangeTypeFixed
                 {
-                let size = wordAtIndexAtPointer(ArrayPointer.kArrayRangeLowerBoundIndex,self.pointer)
+                let size = wordAtIndexAtAddress(ArrayPointer.kArrayRangeLowerBoundIndex,self.address)
                 return(.fixed(size))
                 }
             else if type == ArrayPointer.kArrayRangeTypeRange
                 {
-                let typeAddress = untaggedWordAtIndexAtPointer(ArrayPointer.kArrayRangeEnumerationIndex,self.pointer)
-                let lower = wordAtIndexAtPointer(ArrayPointer.kArrayRangeLowerBoundIndex,self.pointer)
-                let upper = wordAtIndexAtPointer(ArrayPointer.kArrayRangeUpperBoundIndex,self.pointer)
+                let typeAddress = wordAtIndexAtAddress(ArrayPointer.kArrayRangeEnumerationIndex,self.address)
+                let lower = wordAtIndexAtAddress(ArrayPointer.kArrayRangeLowerBoundIndex,self.address)
+                let upper = wordAtIndexAtAddress(ArrayPointer.kArrayRangeUpperBoundIndex,self.address)
                 return(.range(typeAddress,Int(Int64(bitPattern: lower)),Int(Int64(bitPattern: upper))))
                 }
             else if type == ArrayPointer.kArrayRangeTypeVector
@@ -162,28 +162,28 @@ public class ArrayPointer:CollectionPointer
             switch(newValue)
                 {
                 case .none:
-                    setWordAtIndexAtPointer(Word(ArrayPointer.kArrayRangeTypeNone),ArrayPointer.kArrayRangeTypeIndex,self.pointer)
+                    setWordAtIndexAtAddress(Word(ArrayPointer.kArrayRangeTypeNone),ArrayPointer.kArrayRangeTypeIndex,self.address)
                     break
                 case .enumeration(let address,let lower,let upper):
-                    setWordAtIndexAtPointer(Word(ArrayPointer.kArrayRangeTypeEnumeration),ArrayPointer.kArrayRangeTypeIndex,self.pointer)
-                    tagAndSetAddressAtIndexAtPointer(address,ArrayPointer.kArrayRangeEnumerationIndex,self.pointer)
-                    setWordAtIndexAtPointer(lower,ArrayPointer.kArrayRangeLowerBoundIndex,self.pointer)
-                    setWordAtIndexAtPointer(upper,ArrayPointer.kArrayRangeUpperBoundIndex,self.pointer)
+                    setWordAtIndexAtAddress(Word(ArrayPointer.kArrayRangeTypeEnumeration),ArrayPointer.kArrayRangeTypeIndex,self.address)
+                    setAddressAtIndexAtAddress(address,ArrayPointer.kArrayRangeEnumerationIndex,self.address)
+                    setWordAtIndexAtAddress(lower,ArrayPointer.kArrayRangeLowerBoundIndex,self.address)
+                    setWordAtIndexAtAddress(upper,ArrayPointer.kArrayRangeUpperBoundIndex,self.address)
                 case .fixed(let size):
-                    setWordAtIndexAtPointer(Word(ArrayPointer.kArrayRangeTypeFixed),ArrayPointer.kArrayRangeTypeIndex,self.pointer)
-                    setWordAtIndexAtPointer(size,ArrayPointer.kArrayRangeLowerBoundIndex,self.pointer)
+                    setWordAtIndexAtAddress(Word(ArrayPointer.kArrayRangeTypeFixed),ArrayPointer.kArrayRangeTypeIndex,self.address)
+                    setWordAtIndexAtAddress(size,ArrayPointer.kArrayRangeLowerBoundIndex,self.address)
                 case .range(let address,let lower,let upper):
-                    setWordAtIndexAtPointer(Word(ArrayPointer.kArrayRangeTypeRange),ArrayPointer.kArrayRangeTypeIndex,self.pointer)
-                    tagAndSetAddressAtIndexAtPointer(address,ArrayPointer.kArrayRangeEnumerationIndex,self.pointer)
-                    setInt64AtIndexAtPointer(Int64(lower),ArrayPointer.kArrayRangeLowerBoundIndex,self.pointer)
-                    setInt64AtIndexAtPointer(Int64(upper),ArrayPointer.kArrayRangeUpperBoundIndex,self.pointer)
+                    setWordAtIndexAtAddress(Word(ArrayPointer.kArrayRangeTypeRange),ArrayPointer.kArrayRangeTypeIndex,self.address)
+                    setAddressAtIndexAtAddress(address,ArrayPointer.kArrayRangeEnumerationIndex,self.address)
+                    setIntegerAtIndexAtAddress(Int64(lower),ArrayPointer.kArrayRangeLowerBoundIndex,self.address)
+                    setIntegerAtIndexAtAddress(Int64(upper),ArrayPointer.kArrayRangeUpperBoundIndex,self.address)
                 case .vector:
-                    setWordAtIndexAtPointer(Word(ArrayPointer.kArrayRangeTypeVector),ArrayPointer.kArrayRangeTypeIndex,self.pointer)
+                    setWordAtIndexAtAddress(Word(ArrayPointer.kArrayRangeTypeVector),ArrayPointer.kArrayRangeTypeIndex,self.address)
                 }
             }
         }
         
-    public var elementAddress:Instruction.Address?
+    public var elementAddress:Argon.Address?
         {
         return(self.bufferPointer.wordAddress)
         }
@@ -223,11 +223,6 @@ public class ArrayPointer:CollectionPointer
         self._maximumCount.source = self
         }
         
-    public required init(_ address:UnsafeMutableRawPointer)
-        {
-        super.init(address)
-        }
-        
     public func initializeInstance(type:TypePointer,arrayIndexType:ArrayIndexType,elementType:TypePointer,segment:MemorySegment)
         {
         self.isMarked = true
@@ -251,7 +246,7 @@ public class ArrayPointer:CollectionPointer
         self.bufferPointer = buffer
         for index in 0..<count
             {
-            buffer[index] = taggedObject(elementType.makeInstance(in: segment))
+            buffer[index] = RawMemory.taggedAddress(elementType.makeInstance(in: segment))
             }
         }
         
@@ -263,7 +258,7 @@ public class ArrayPointer:CollectionPointer
                 {
                 fatalError("Attempt to access element with index \(index) of array with count \(self.count)")
                 }
-            return(wordAtIndexAtPointer(WordBlockPointer.kBufferElementsIndex + index,untaggedPointerAtIndexAtPointer(Self.kArrayWordBufferPointerIndex,self.pointer)))
+            return(wordAtIndexAtAddress(WordBlockPointer.kBufferElementsIndex + index,addressAtIndexAtAddress(Self.kArrayWordBufferPointerIndex,self.address)))
             }
         set
             {
@@ -271,7 +266,7 @@ public class ArrayPointer:CollectionPointer
                 {
                 fatalError("Attempt to set element with index \(index) of array with count \(self.count)")
                 }
-            setWordAtIndexAtPointer(newValue,WordBlockPointer.kBufferElementsIndex + index,untaggedPointerAtIndexAtPointer(Self.kArrayWordBufferPointerIndex,self.pointer))
+            setWordAtIndexAtAddress(newValue,WordBlockPointer.kBufferElementsIndex + index,addressAtIndexAtAddress(Self.kArrayWordBufferPointerIndex,self.address))
             }
         }
         
@@ -279,8 +274,8 @@ public class ArrayPointer:CollectionPointer
         {
         let newCount = self.maximumCount * 2
         let newBuffer = WordBlockPointer(elementCount: newCount,elementType: self.elementTypePointer!,segment: .managed)
-        newBuffer.copy(from: untaggedPointerAtIndexAtPointer(Self.kArrayWordBufferPointerIndex,self.pointer),elementCount: self.maximumCount)
-        setPointerAtIndexAtPointer(newBuffer.pointer,Self.kArrayWordBufferPointerIndex,self.pointer)
+        newBuffer.copy(from: addressAtIndexAtAddress(Self.kArrayWordBufferPointerIndex,self.address),elementCount: self.maximumCount)
+        setAddressAtIndexAtAddress(newBuffer.address,Self.kArrayWordBufferPointerIndex,self.address)
         self.maximumCount = newCount
         }
         
@@ -295,23 +290,13 @@ public class ArrayPointer:CollectionPointer
             {
             fatalError("Internal error : \(#function) : Unable to grow array for some reason, may be short of memory, this should not happen")
             }
-        setWordAtIndexAtPointer(word,WordBlockPointer.kBufferElementsIndex + aCount,untaggedPointerAtIndexAtPointer(Self.kArrayWordBufferPointerIndex,self.pointer))
+        setWordAtIndexAtAddress(word,WordBlockPointer.kBufferElementsIndex + aCount,addressAtIndexAtAddress(Self.kArrayWordBufferPointerIndex,self.address))
         self.count += 1
         }
         
-    public func append(_ pointer:Argon.Pointer)
-        {
-        self.append(pointerAsWord(pointer))
-        }
-        
-    public required init(_ word:Instruction.Address)
+    public required init(_ word:Argon.Address)
         {
         super.init(word)
-        }
-        
-    required public init(_ address: UnsafeMutableRawPointer?)
-        {
-        super.init(address)
         }
     }
 

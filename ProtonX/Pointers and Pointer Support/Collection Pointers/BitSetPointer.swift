@@ -508,11 +508,11 @@ public class BitSetPointer:CollectionPointer
         {
         get
             {
-            return(Int(wordAtIndexAtPointer(Self.kBitSetCountIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kBitSetCountIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kBitSetCountIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kBitSetCountIndex,self.address)
             }
         }
         
@@ -520,11 +520,11 @@ public class BitSetPointer:CollectionPointer
         {
         get
             {
-            return(Int(wordAtIndexAtPointer(Self.kBitSetWordCountIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kBitSetWordCountIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kBitSetWordCountIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kBitSetWordCountIndex,self.address)
             }
         }
         
@@ -572,11 +572,11 @@ public class BitSetPointer:CollectionPointer
         {
         get
             {
-            return(wordAtIndexAtBitsPointer(Self.kBitSetWordsIndex + index,self.pointer))
+            return(bitWordAtIndexAtAddress(Self.kBitSetWordsIndex + index,self.address))
             }
         set
             {
-            setWordAtIndexAtBitsPointer(newValue,Self.kBitSetWordsIndex + index,self.pointer)
+            setBitWordAtIndexAtAddress(newValue,Self.kBitSetWordsIndex + index,self.address)
             }
         }
         

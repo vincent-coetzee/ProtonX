@@ -23,11 +23,11 @@ public class DictionaryPointer:CollectionPointer
         {
         get
             {
-            return(Int(wordAtIndexAtPointer(Self.kDictionaryChunkFactorIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kDictionaryChunkFactorIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kDictionaryChunkFactorIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kDictionaryChunkFactorIndex,self.address)
             }
         }
         
@@ -39,20 +39,15 @@ public class DictionaryPointer:CollectionPointer
         Log.log("ALLOCATED DICTIONARY AT \(self.hexString)")
         }
     
-    public required init(_ address: UnsafeMutableRawPointer?)
-        {
-        super.init(address)
-        }
-    
     public func setBucketPointerValue(_ value:Word,atIndex:SlotIndex)
         {
-        setWordAtIndexAtPointer(value,atIndex,self.pointer)
+        setWordAtIndexAtAddress(value,atIndex,self.address)
         }
         
     public func setValue<K>(_ value:Value?,forKey key:K) where K:Key
         {
         let index = Self.kDictionaryBucketsIndex + Int(key.hashedValue % self.chunkFactor)
-        let bucketAddress = wordAtIndexAtPointer(index,self.pointer)
+        let bucketAddress = wordAtIndexAtAddress(index,self.address)
         let forKey = key is String ? ValueHolder(string: (key as! String)) : ValueHolder(key: key)
         if value == nil && bucketAddress.isNull
             {
@@ -60,7 +55,7 @@ public class DictionaryPointer:CollectionPointer
             }
         else if value != nil && bucketAddress.isNull
             {
-            setWordAtIndexAtPointer(DictionaryBucketNodePointer(key: key, value: value!,previous: self.taggedAddress,segment: self.segment).taggedAddress,index,self.pointer)
+            setWordAtIndexAtAddress(DictionaryBucketNodePointer(key: key, value: value!,previous: self.taggedAddress,segment: self.segment).taggedAddress,index,self.address)
             self.count += 1
             return
             }
@@ -80,18 +75,18 @@ public class DictionaryPointer:CollectionPointer
             let targetBucketAddress = DictionaryBucketNodePointer(bucketAddress).addressOfBucket(forKey: forKey)
             if targetBucketAddress.isNull
                 {
-                setWordAtIndexAtPointer(DictionaryBucketNodePointer(key: key, value: value!,previous: self.taggedAddress,next: bucketAddress,segment: self.segment).taggedAddress,index,self.pointer)
+                setWordAtIndexAtAddress(DictionaryBucketNodePointer(key: key, value: value!,previous: self.taggedAddress,next: bucketAddress,segment: self.segment).taggedAddress,index,self.address)
                 self.count += 1
                 return
                 }
-            value?.store(atPointer: Argon.Pointer(targetBucketAddress) + DictionaryBucketNodePointer.kDictionaryBucketNodeValueIndex)
+            value?.store(atAddress: targetBucketAddress + DictionaryBucketNodePointer.kDictionaryBucketNodeValueIndex)
             }
         }
         
     public func value<T>(forKey key:T) -> Word? where T:Key
         {
         let index = Self.kDictionaryBucketsIndex + Int(key.hashedValue % self.chunkFactor)
-        let bucketAddress = untaggedAddressAtIndexAtPointer(index,self.pointer)
+        let bucketAddress = addressAtIndexAtAddress(index,self.address)
         guard bucketAddress.isNotNull else
             {
             return(nil)
@@ -99,7 +94,7 @@ public class DictionaryPointer:CollectionPointer
         return(DictionaryBucketNodePointer(bucketAddress).value(forKey: ValueHolder(key: key)))
         }
         
-    public required init(_ address:Instruction.Address)
+    public required init(_ address:Argon.Address)
         {
         super.init(address)
         self.isMarked = true
@@ -107,12 +102,12 @@ public class DictionaryPointer:CollectionPointer
         
     public func print()
         {
-        Log.log("DICTIONARY @ 0x\(self.pointer?.hexString ?? "0000000000")")
+        Log.log("DICTIONARY @ 0x\(self.address.hexString)")
         Log.log("COUNT : \(self.count)")
         for index in 0..<self.chunkFactor
             {
             let entryIndex = Self.kDictionaryBucketsIndex + index
-            let bucketAddress = untaggedAddressAtIndexAtPointer(entryIndex,self.pointer)
+            let bucketAddress = addressAtIndexAtAddress(entryIndex,self.address)
             if bucketAddress != 0
                 {
                 Log.log("\tINDEX : \(entryIndex.index)")

@@ -36,11 +36,11 @@ public class MethodInstancePointer:CodeBlockPointer
         {
         get
             {
-            return(ImmutableStringPointer(untaggedPointerAtIndexAtPointer(Self.kMethodInstanceNameIndex,self.pointer)))
+            return(ImmutableStringPointer(addressAtIndexAtAddress(Self.kMethodInstanceNameIndex,self.address)))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue.pointer,Self.kMethodInstanceNameIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue.address,Self.kMethodInstanceNameIndex,self.address)
             }
         }
     
@@ -55,14 +55,9 @@ public class MethodInstancePointer:CodeBlockPointer
         self.valueType = .methodInstance
         self.hasExtraSlotsAtEnd = false
         self.namePointer = ImmutableStringPointer(name)
-        }
+        }   
     
-    required public init(_ address: UnsafeMutableRawPointer?)
-        {
-        super.init(address)
-        }        
-    
-    public required init(_ address: Instruction.Address)
+    public required init(_ address: Argon.Address)
         {
         super.init(address)
         }

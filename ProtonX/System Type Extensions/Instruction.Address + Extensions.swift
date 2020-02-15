@@ -1,5 +1,5 @@
 //
-//  Instruction.Address + Extensions.swift
+//  Argon.Address + Extensions.swift
 //  argon
 //
 //  Created by Vincent Coetzee on 18/01/2020.
@@ -11,32 +11,37 @@ import RawMemory
 
 postfix operator ++
 
-extension Instruction.Address
+extension Argon.Address
     {
+    public static func +(lhs:Argon.Address,rhs:SlotIndex) -> Self
+        {
+        return(lhs + Argon.Address(rhs.index * MemoryLayout<Word>.stride))
+        }
+        
     @discardableResult
     public static postfix func ++(lhs:inout Self) -> Self
         {
         let before = lhs
-        lhs += Instruction.Address(MemoryLayout<Self>.size)
+        lhs += Argon.Address(MemoryLayout<Self>.size)
         return(before)
         }
         
-    public static func +(lhs:inout Self,rhs:SlotOffset) -> Self
+    public static func +(lhs:Self,rhs:SlotOffset) -> Self
         {
-        return(lhs + Instruction.Address(rhs.offset))
+        return(lhs + Argon.Address(rhs.offset))
         }
         
     public static let zero = 0
 
     public var addressesInstancePointer:Bool
         {
-        return(wordAtAddress(untaggedAddress(self)).tag == Argon.kTagBitsObject)
+        return(wordAtAddress(untaggedAddress(self)).tag == Argon.kTagBitsAddress)
         }
         
     public var addressesStringPointer:Bool
         {
         let word = wordAtAddress(untaggedAddress(self))
-        if word.tag != Argon.kTagBitsObject
+        if word.tag != Argon.kTagBitsAddress
             {
             return(false)
             }
@@ -60,7 +65,7 @@ extension Instruction.Address
         
     public var isInstancePointer:Bool
         {
-        return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.HeaderTag.object.rawValue)
+        return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.HeaderTag.address.rawValue)
         }
         
     public var isInteger:Bool
@@ -83,10 +88,10 @@ extension Instruction.Address
         return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.kTagBitsFloat32)
         }
         
-    public var isDouble:Bool
-        {
-        return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.kTagBitsFloat64)
-        }
+//    public var isDouble:Bool
+//        {
+//        return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.kTagBitsFloat64)
+//        }
 
     public var isByte:Bool
         {

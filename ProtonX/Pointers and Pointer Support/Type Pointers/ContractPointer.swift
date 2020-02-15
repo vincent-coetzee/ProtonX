@@ -23,11 +23,11 @@ public class ContractPointer:TypePointer
         {
         get
             {
-            return(ArrayPointer(untaggedPointerAtIndexAtPointer(Self.kContractMethodArrayIndex,self.pointer)))
+            return(ArrayPointer(addressAtIndexAtAddress(Self.kContractMethodArrayIndex,self.address)))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue.pointer,Self.kContractMethodArrayIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue.address,Self.kContractMethodArrayIndex,self.address)
             }
         }
         
@@ -35,11 +35,11 @@ public class ContractPointer:TypePointer
         {
         get
             {
-            return(ArrayPointer(untaggedPointerAtIndexAtPointer(Self.kContractConstantSlotArrayIndex,self.pointer)))
+            return(ArrayPointer(addressAtIndexAtAddress(Self.kContractConstantSlotArrayIndex,self.address)))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue.pointer,Self.kContractConstantSlotArrayIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue.address,Self.kContractConstantSlotArrayIndex,self.address)
             }
         }
     }

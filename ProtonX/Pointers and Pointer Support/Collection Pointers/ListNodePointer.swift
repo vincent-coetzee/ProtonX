@@ -25,15 +25,15 @@ public class ListNodePointer:ObjectPointer
         return(ValueHolder(word: self.valueAddress))
         }
         
-    public var valueAddress:Instruction.Address
+    public var valueAddress:Argon.Address
         {
         get
             {
-            return(wordAtIndexAtPointer(Self.kListElementPointerIndex,self.pointer))
+            return(wordAtIndexAtAddress(Self.kListElementPointerIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(newValue,Self.kListElementPointerIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue,Self.kListElementPointerIndex,self.address)
             }
         }
 
@@ -41,7 +41,7 @@ public class ListNodePointer:ObjectPointer
         {
         get
             {
-            let address = untaggedAddressAtIndexAtPointer(Self.kListNextNodePointerIndex,self.pointer)
+            let address = addressAtIndexAtAddress(Self.kListNextNodePointerIndex,self.address)
             if address == 0
                 {
                 return(nil)
@@ -50,7 +50,7 @@ public class ListNodePointer:ObjectPointer
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kListNextNodePointerIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue?.address ?? 0,Self.kListNextNodePointerIndex,self.address)
             }
         }
         
@@ -58,7 +58,7 @@ public class ListNodePointer:ObjectPointer
         {
         get
             {
-            let address = untaggedAddressAtIndexAtPointer(Self.kListPreviousNodePointerIndex,self.pointer)
+            let address = addressAtIndexAtAddress(Self.kListPreviousNodePointerIndex,self.address)
             if address == 0
                 {
                 return(nil)
@@ -67,31 +67,30 @@ public class ListNodePointer:ObjectPointer
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kListPreviousNodePointerIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue?.address ?? 0,Self.kListPreviousNodePointerIndex,self.address)
             }
         }
         
-    public var nextNodeAddress:Instruction.Address
+    public var nextNodeAddress:Argon.Address
         {
         get
             {
-            return(untaggedAddressAtIndexAtPointer(Self.kListNextNodePointerIndex,self.pointer))
+            return(addressAtIndexAtAddress(Self.kListNextNodePointerIndex,self.address))
             }
         set
             {
-            tagAndSetAddressAtIndexAtPointer(newValue,Self.kListNextNodePointerIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue,Self.kListNextNodePointerIndex,self.address)
             }
         }
         
-    public var previousNodeAddress:Instruction.Address
+    public var previousNodeAddress:Argon.Address
         {
         get
             {
-            return(untaggedAddressAtIndexAtPointer(Self.kListPreviousNodePointerIndex,self.pointer))
+            return(addressAtIndexAtAddress(Self.kListPreviousNodePointerIndex,self.address))
             }
         set
-            {
-            tagAndSetAddressAtIndexAtPointer(newValue,Self.kListPreviousNodePointerIndex,self.pointer)
+            {setAddressAtIndexAtAddress(newValue,Self.kListPreviousNodePointerIndex,self.address)
             }
         }
         

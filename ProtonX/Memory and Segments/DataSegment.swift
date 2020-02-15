@@ -10,8 +10,4 @@ import Foundation
 
 public class DataSegment:MemorySegment
     {
-    public override var identifier:Identifier
-        {
-        return(.data)
-        }
     }

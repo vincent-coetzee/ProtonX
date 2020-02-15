@@ -11,7 +11,7 @@ import RawMemory
 
 public class Instruction
     {
-    public class func makeInstruction(atAddress:Address) -> Instruction
+    public class func makeInstruction(atAddress:Argon.Address) -> Instruction
         {
         var address = atAddress
         let word1 = wordAtAddress(address)
@@ -19,12 +19,12 @@ public class Instruction
         var word3:Word = 0
         if Self.instructionWordHasAddress(word1)
             {
-            address += Address(MemoryLayout<Word>.stride)
+            address += Argon.Address(MemoryLayout<Word>.stride)
             word2 = wordAtAddress(address)
             }
         if Self.instructionWordHasImmediate(word1)
             {
-            address += Address(MemoryLayout<Word>.stride)
+            address += Argon.Address(MemoryLayout<Word>.stride)
             word3 = wordAtAddress(address)
             }
         return(self.makeInstruction(from: word1,with: word2,with: word3))
@@ -109,11 +109,6 @@ public class Instruction
         {
         return(Mode(from: word).hasImmediate)
         }
-        
-    public typealias Address = Word
-    public typealias Offset = Int
-    public typealias Index = Word
-    public typealias Immediate = Int64
     
     public struct InstructionWord
         {
@@ -436,15 +431,15 @@ public class Instruction
                     let register = Register(rawValue: Int((word1 & Register.kRegister3Mask) >> Register.kRegister3Shift))!
                     return((word1 & kOperand3IsReferenceMask) == kOperand3IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerRegisterImmediate:
-                    return(.immediate(Immediate(bitPattern: word3)))
+                    return(.immediate(Argon.Immediate(bitPattern: word3)))
                 case .registerAddressImmediate:
-                    return(.immediate(Immediate(bitPattern: word3)))
+                    return(.immediate(Argon.Immediate(bitPattern: word3)))
                 case .registerRegisterLabel:
-                    return(.label(Label(key: Int(Immediate(bitPattern:word3)))))
+                    return(.label(Label(key: Int(Argon.Immediate(bitPattern:word3)))))
                 case .registerImmediateLabel:
-                    return(.label(Label(key: Int(Immediate(bitPattern:word3)))))
+                    return(.label(Label(key: Int(Argon.Immediate(bitPattern:word3)))))
                 case .registerAddressLabel:
-                    return(.label(Label(key: Int(Immediate(bitPattern:word3)))))
+                    return(.label(Label(key: Int(Argon.Immediate(bitPattern:word3)))))
                 default:
                     break
                 }
@@ -458,12 +453,12 @@ public class Instruction
                 case .none:
                     return(.none)
                 case .addressImmediate:
-                    return(.immediate(Immediate(bitPattern: word3)))
+                    return(.immediate(Argon.Immediate(bitPattern: word3)))
                 case .registerRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
                     return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerImmediateRegister:
-                    return(.immediate(Immediate(bitPattern: word3)))
+                    return(.immediate(Argon.Immediate(bitPattern: word3)))
                 case .immediateRegisterRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
                     return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
@@ -492,7 +487,7 @@ public class Instruction
                     let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
                     return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .registerImmediateLabel:
-                    return(.immediate(Immediate(bitPattern: word3)))
+                    return(.immediate(Argon.Immediate(bitPattern: word3)))
                 case .registerAddressLabel:
                     return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceAddress(word2) : .address(word2))
                 case .immediateAddress:
@@ -514,7 +509,7 @@ public class Instruction
                 case .addressImmediate:
                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceAddress(word2) : .address(word2))
                 case .immediate:
-                    return(.immediate(Immediate(bitPattern: word3)))
+                    return(.immediate(Argon.Immediate(bitPattern: word3)))
                 case .register:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
                     return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
@@ -525,7 +520,7 @@ public class Instruction
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
                     return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .immediateRegisterRegister:
-                    return(.immediate(Immediate(bitPattern: word3)))
+                    return(.immediate(Argon.Immediate(bitPattern: word3)))
                 case .registerRegisterRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
                     return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
@@ -535,12 +530,12 @@ public class Instruction
                 case .addressRegister:
                     return(.address(word2))
                 case .immediateRegister:
-                    return(.immediate(Immediate(bitPattern: word3)))
+                    return(.immediate(Argon.Immediate(bitPattern: word3)))
                 case .registerAddressImmediate:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
                     return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .label:
-                    return(.label(Label(key: Int(Immediate(bitPattern:word3)))))
+                    return(.label(Label(key: Int(Argon.Immediate(bitPattern:word3)))))
                 case .stackRegister:
                     return(.stack(Int(Int64(bitPattern: word3))))
                 case .registerStack:
@@ -556,7 +551,7 @@ public class Instruction
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
                     return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
                 case .immediateAddress:
-                    return(.immediate(Immediate(bitPattern: word3)))
+                    return(.immediate(Argon.Immediate(bitPattern: word3)))
                 case .registerRegisterImmediate:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
                     return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
@@ -808,9 +803,9 @@ public class Instruction
             }
             
         case label(Label)
-        case immediate(Immediate)
-        case address(Address)
-        case referenceAddress(Address)
+        case immediate(Argon.Immediate)
+        case address(Argon.Address)
+        case referenceAddress(Argon.Address)
         case register(Register)
         case referenceRegister(Register)
         case stack(Int)
@@ -838,6 +833,14 @@ public class Instruction
         return(Line(.left("\(operation)",10),.space(1)).string)
         }
         
+    public var totalByteCount:Word
+        {
+        var count = 1
+        count += self.hasAddress ? 1 : 0
+        count += self.hasImmediate ? 1 : 0
+        return(Word(count * MemoryLayout<Word>.stride))
+        }
+        
     public var operation:Operation
     public var mode:Mode
     public private(set) var incomingLabel:Int = 0
@@ -849,13 +852,13 @@ public class Instruction
         self.mode = mode
         }
 
-//    public convenience init(atAddress:Address)
+//    public convenience init(atAddress:Argon.Address)
 //        {
 //        let instructionWord = wordAtAddress(atAddress)
 //        var address:Word = 0
 //        if Mode(from:instructionWord).hasAddress
 //            {
-//            address = wordAtAddress(atAddress + Instruction.Address(MemoryLayout<Word>.stride))
+//            address = wordAtAddress(atAddress + Argon.Address(MemoryLayout<Word>.stride))
 //            }
 //        self.init(instruction: instructionWord,address: address)
 //        }
@@ -903,17 +906,6 @@ public class Instruction
         }
     }
 
-extension Instruction.Immediate
-    {
-    public init(from: Word)
-        {
-        let sign = (from & 2147483648 == 2147483648) ? Int32(-1) : Int32(1)
-        let mask:Word = ~2147483648
-        let newValue = from & mask
-        self.init(Int32(Int(newValue & Word(4294967295))) * sign)
-        }
-    }
-
 //case NOP = 0
 //case PUSH
 //case PUSHPARM
@@ -955,7 +947,7 @@ extension Instruction.Immediate
 
 public class InstructionComposer
     {
-    public var address:Instruction.Address
+    public var address:Argon.Address
         {
         get
             {
@@ -968,7 +960,7 @@ public class InstructionComposer
             }
         }
         
-    public var immediate:Instruction.Immediate
+    public var immediate:Argon.Immediate
         {
         get
             {
@@ -1126,19 +1118,19 @@ public class PUSHInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(immediate:Immediate)
+    public init(immediate:Argon.Immediate)
         {
         self.operand = .immediate(immediate)
         super.init(.PUSH,.immediate)
         }
         
-    public init(address:Address)
+    public init(address:Argon.Address)
         {
         self.operand = .address(address)
         super.init(.PUSH,.address)
         }
         
-    public init(referenceAddress address:Address)
+    public init(referenceAddress address:Argon.Address)
         {
         self.operand = .referenceAddress(address)
         super.init(.PUSH,.address)
@@ -1160,6 +1152,11 @@ public class PUSHInstruction:Instruction
         {
         self.mode.encode(operand1: self.operand,into: &doubleWord)
         }
+        
+    public override func execute(on thread:Thread) throws
+        {
+        thread.stack.push(self.operand,on: thread)
+        }
     }
 
 public class PUSHPARMInstruction:Instruction
@@ -1179,21 +1176,21 @@ public class PUSHPARMInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(immediate:Immediate,register:Register)
+    public init(immediate:Argon.Immediate,register:Register)
         {
         self.operand1 = .immediate(immediate)
         self.operand2 = .register(register)
         super.init(.PUSHPARM,.immediateRegister)
         }
         
-    public init(immediate:Immediate,address:Address)
+    public init(immediate:Argon.Immediate,address:Argon.Address)
         {
         self.operand1 = .immediate(immediate)
         self.operand2 = .address(address)
         super.init(.PUSHPARM,.immediateAddress)
         }
         
-    public init(immediate:Immediate,referenceAddress address:Address)
+    public init(immediate:Argon.Immediate,referenceAddress address:Argon.Address)
         {
         self.operand2 = .referenceAddress(address)
         self.operand1 = .immediate(immediate)
@@ -1229,13 +1226,13 @@ public class POPInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(address:Address)
+    public init(address:Argon.Address)
         {
         self.operand = .address(address)
         super.init(.POP,.address)
         }
         
-    public init(referenceAddress address:Address)
+    public init(referenceAddress address:Argon.Address)
         {
         self.operand = .referenceAddress(address)
         super.init(.PUSH,.address)
@@ -1306,7 +1303,7 @@ public class ArithmeticInstruction:Instruction
         self.mode = .registerRegisterRegister
         }
         
-    public init(operation:Operation,register1:Register,immediate:Immediate,register3:Register)
+    public init(operation:Operation,register1:Register,immediate:Argon.Immediate,register3:Register)
         {
         self.operand1 = .register(register1)
         self.operand2 = .immediate(immediate)
@@ -1316,7 +1313,7 @@ public class ArithmeticInstruction:Instruction
         self.mode = .registerImmediateRegister
         }
         
-    public init(operation:Operation,immediate:Immediate,register2:Register,register3:Register)
+    public init(operation:Operation,immediate:Argon.Immediate,register2:Register,register3:Register)
         {
         self.operand1 = .immediate(immediate)
         self.operand2 = .register(register2)
@@ -1346,12 +1343,12 @@ public class ADDInstruction:ArithmeticInstruction
         super.init(operation:.ADD,register1:register1,register2:register2,register3:register3)
         }
         
-    public init(register1:Register,immediate:Immediate,register3:Register)
+    public init(register1:Register,immediate:Argon.Immediate,register3:Register)
         {
         super.init(operation:.ADD,register1:register1,immediate:immediate,register3:register3)
         }
         
-    public init(immediate:Immediate,register2:Register,register3:Register)
+    public init(immediate:Argon.Immediate,register2:Register,register3:Register)
         {
         super.init(operation:.ADD,immediate:immediate,register2:register2,register3:register3)
         }
@@ -1369,12 +1366,12 @@ public class SUBInstruction:ArithmeticInstruction
         super.init(operation:.SUB,register1:register1,register2:register2,register3:register3)
         }
         
-    public init(register1:Register,immediate:Immediate,register3:Register)
+    public init(register1:Register,immediate:Argon.Immediate,register3:Register)
         {
         super.init(operation:.SUB,register1:register1,immediate:immediate,register3:register3)
         }
         
-    public init(immediate:Immediate,register2:Register,register3:Register)
+    public init(immediate:Argon.Immediate,register2:Register,register3:Register)
         {
         super.init(operation:.SUB,immediate:immediate,register2:register2,register3:register3)
         }
@@ -1393,12 +1390,12 @@ public class MULInstruction:ArithmeticInstruction
         super.init(operation:.MUL,register1:register1,register2:register2,register3:register3)
         }
         
-    public init(register1:Register,immediate:Immediate,register3:Register)
+    public init(register1:Register,immediate:Argon.Immediate,register3:Register)
         {
         super.init(operation:.MUL,register1:register1,immediate:immediate,register3:register3)
         }
         
-    public init(immediate:Immediate,register2:Register,register3:Register)
+    public init(immediate:Argon.Immediate,register2:Register,register3:Register)
         {
         super.init(operation:.MUL,immediate:immediate,register2:register2,register3:register3)
         }
@@ -1417,12 +1414,12 @@ public class DIVInstruction:ArithmeticInstruction
         super.init(operation:.DIV,register1:register1,register2:register2,register3:register3)
         }
         
-    public init(register1:Register,immediate:Immediate,register3:Register)
+    public init(register1:Register,immediate:Argon.Immediate,register3:Register)
         {
         super.init(operation:.DIV,register1:register1,immediate:immediate,register3:register3)
         }
         
-    public init(immediate:Immediate,register2:Register,register3:Register)
+    public init(immediate:Argon.Immediate,register2:Register,register3:Register)
         {
         super.init(operation:.DIV,immediate:immediate,register2:register2,register3:register3)
         }
@@ -1441,12 +1438,12 @@ public class MODInstruction:ArithmeticInstruction
         super.init(operation:.MOD,register1:register1,register2:register2,register3:register3)
         }
         
-    public init(register1:Register,immediate:Immediate,register3:Register)
+    public init(register1:Register,immediate:Argon.Immediate,register3:Register)
         {
         super.init(operation:.MOD,register1:register1,immediate:immediate,register3:register3)
         }
         
-    public init(immediate:Immediate,register2:Register,register3:Register)
+    public init(immediate:Argon.Immediate,register2:Register,register3:Register)
         {
         super.init(operation:.MOD,immediate:immediate,register2:register2,register3:register3)
         }
@@ -1465,12 +1462,12 @@ public class ANDInstruction:ArithmeticInstruction
         super.init(operation:.AND,register1:register1,register2:register2,register3:register3)
         }
         
-    public init(register1:Register,immediate:Immediate,register3:Register)
+    public init(register1:Register,immediate:Argon.Immediate,register3:Register)
         {
         super.init(operation:.AND,register1:register1,immediate:immediate,register3:register3)
         }
         
-    public init(immediate:Immediate,register2:Register,register3:Register)
+    public init(immediate:Argon.Immediate,register2:Register,register3:Register)
         {
         super.init(operation:.AND,immediate:immediate,register2:register2,register3:register3)
         }
@@ -1489,12 +1486,12 @@ public class ORInstruction:ArithmeticInstruction
         super.init(operation:.OR,register1:register1,register2:register2,register3:register3)
         }
         
-    public init(register1:Register,immediate:Immediate,register3:Register)
+    public init(register1:Register,immediate:Argon.Immediate,register3:Register)
         {
         super.init(operation:.OR,register1:register1,immediate:immediate,register3:register3)
         }
         
-    public init(immediate:Immediate,register2:Register,register3:Register)
+    public init(immediate:Argon.Immediate,register2:Register,register3:Register)
         {
         super.init(operation:.OR,immediate:immediate,register2:register2,register3:register3)
         }
@@ -1513,12 +1510,12 @@ public class XORInstruction:ArithmeticInstruction
         super.init(operation:.XOR,register1:register1,register2:register2,register3:register3)
         }
         
-    public init(register1:Register,immediate:Immediate,register3:Register)
+    public init(register1:Register,immediate:Argon.Immediate,register3:Register)
         {
         super.init(operation:.XOR,register1:register1,immediate:immediate,register3:register3)
         }
         
-    public init(immediate:Immediate,register2:Register,register3:Register)
+    public init(immediate:Argon.Immediate,register2:Register,register3:Register)
         {
         super.init(operation:.XOR,immediate:immediate,register2:register2,register3:register3)
         }
@@ -1537,12 +1534,12 @@ public class NOTInstruction:ArithmeticInstruction
         super.init(operation:.NOT,register1:register1,register2:register2,register3:.none)
         }
         
-    public init(register1:Register,immediate:Immediate,register3:Register)
+    public init(register1:Register,immediate:Argon.Immediate,register3:Register)
         {
         super.init(operation:.MUL,register1:register1,immediate:immediate,register3:.none)
         }
         
-    public init(immediate:Immediate,register2:Register,register3:Register)
+    public init(immediate:Argon.Immediate,register2:Register,register3:Register)
         {
         super.init(operation:.MUL,immediate:immediate,register2:register2,register3:.none)
         }
@@ -1573,21 +1570,21 @@ public class MOVInstruction:Instruction
         self.operand2 = .register(register2)
         }
         
-    public init(immediate:Immediate,register2:Register)
+    public init(immediate:Argon.Immediate,register2:Register)
         {
         super.init(.MOV,.immediateRegister)
         self.operand1 = .immediate(immediate)
         self.operand2 = .register(register2)
         }
         
-    public init(referenceAddress:Address,register2:Register)
+    public init(referenceAddress:Argon.Address,register2:Register)
         {
         super.init(.MOV,.addressRegister)
         self.operand1 = .referenceAddress(referenceAddress)
         self.operand2 = .register(register2)
         }
         
-    public init(register1:Register,referenceAddress:Address)
+    public init(register1:Register,referenceAddress:Argon.Address)
         {
         super.init(.MOV,.registerAddress)
         self.operand2 = .referenceAddress(referenceAddress)
@@ -1612,6 +1609,65 @@ public class MOVInstruction:Instruction
         {
         self.mode.encode(operand1: self.operand1,into: &words)
         self.mode.encode(operand2: self.operand2,into: &words)
+        }
+        
+    public override func execute(on thread:Thread) throws
+        {
+        switch(self.operand1,self.operand2)
+            {
+            case let(.address(address1),.address(address2)):
+                setWordAtAddress(wordAtAddress(address1),address2)
+            case let(.address(address1),.register(register)):
+                thread.registers[register] = address1
+            case let(.address(address1),.referenceRegister(register)):
+                setWordAtAddress(address1,thread.registers[register])
+            case let(.address(address1),.referenceAddress(address2)):
+                setWordAtAddress(address1,address2)
+            case let(.address(address1),.stack(offset)):
+                thread.stack.setStackValue(address1,on: thread,at: offset)
+            case let (.immediate(value),.register(register)):
+                thread.registers[register] = Word(bitPattern: value)
+            case let (.immediate(value),.referenceRegister(register)):
+                setWordAtAddress(Word(bitPattern: value),thread.registers[register])
+            case let (.immediate(value),.referenceAddress(address)):
+                setWordAtAddress(Word(bitPattern: value),address)
+            case let (.immediate(value),.stack(offset)):
+                thread.stack.setStackValue(Word(bitPattern: value),on: thread,at: offset)
+            case let (.register(register1),.register(register2)):
+                thread.registers[register2] = thread.registers[register1]
+            case let (.register(register1),.referenceAddress(address)):
+                setWordAtAddress(thread.registers[register1],address)
+            case let (.register(register1),.referenceRegister(register2)):
+                setWordAtAddress(thread.registers[register1],thread.registers[register2])
+            case let (.register(register1),.stack(offset)):
+                thread.stack.setStackValue(thread.registers[register1],on: thread,at: offset)
+            case let (.stack(offset1),.stack(offset2)):
+                thread.stack.setStackValue(thread.stack.stackValue(on: thread,at: offset1),on: thread,at: offset2)
+            case let (.stack(offset1),.register(register)):
+                 thread.registers[register] = thread.stack.stackValue(on: thread,at: offset1)
+            case let (.stack(offset1),.referenceRegister(register)):
+                 setWordAtAddress(thread.stack.stackValue(on: thread,at: offset1),thread.registers[register])
+            case let (.stack(offset1),.referenceAddress(address)):
+                 setWordAtAddress(thread.stack.stackValue(on: thread,at: offset1),address)
+            case let (.referenceAddress(address1),.referenceAddress(address2)):
+                 setWordAtAddress(wordAtAddress(address1),address2)
+            case let (.referenceAddress(address1),.register(register)):
+                 thread.registers[register] = wordAtAddress(address1)
+            case let (.referenceAddress(address1),.referenceRegister(register)):
+                 setWordAtAddress(wordAtAddress(address1),thread.registers[register])
+            case let (.referenceAddress(address1),.stack(offset)):
+                 thread.stack.setStackValue(wordAtAddress(address1),on: thread,at: offset)
+            case let (.referenceRegister(register1),.referenceAddress(address2)):
+                 setWordAtAddress(wordAtAddress(thread.registers[register1]),address2)
+            case let (.referenceRegister(register1),.register(register)):
+                 thread.registers[register] = wordAtAddress(thread.registers[register1])
+            case let (.referenceRegister(register1),.referenceRegister(register)):
+                 setWordAtAddress(wordAtAddress(thread.registers[register1]),thread.registers[register])
+            case let (.referenceRegister(register1),.stack(offset)):
+                 thread.stack.setStackValue(wordAtAddress(thread.registers[register1]),on: thread,at: offset)
+            default:
+                fatalError("Invalid MOV operand pairing")
+            }
         }
     }
 
@@ -1670,7 +1726,7 @@ public class ConditionalBranchInstruction:Instruction
         super.init(operation,.registerRegisterLabel)
         }
         
-    public init(operation:Operation,register1:Register,immediate:Immediate,label:Label)
+    public init(operation:Operation,register1:Register,immediate:Argon.Immediate,label:Label)
         {
         self.operand2 = .immediate(immediate)
         self.operand1 = .register(register1)
@@ -1678,7 +1734,7 @@ public class ConditionalBranchInstruction:Instruction
         super.init(operation,.registerImmediateRegister)
         }
         
-    public init(operation:Operation,register1:Register,referenceAddress:Address,label:Label)
+    public init(operation:Operation,register1:Register,referenceAddress:Argon.Address,label:Label)
         {
         self.operand2 = .referenceAddress(referenceAddress)
         self.operand1 = .register(register1)
@@ -1706,12 +1762,12 @@ public class BREQInstruction:ConditionalBranchInstruction
         super.init(operation:.BREQ,register1:register1,register2:register2,label:label)
         }
         
-    public init(register1:Register,immediate:Immediate,label:Label)
+    public init(register1:Register,immediate:Argon.Immediate,label:Label)
         {
         super.init(operation:.BREQ,register1:register1,immediate:immediate,label:label)
         }
         
-    public init(register1:Register,referenceAddress:Address,label:Label)
+    public init(register1:Register,referenceAddress:Argon.Address,label:Label)
         {
         super.init(operation:.BREQ,register1:register1,referenceAddress:referenceAddress,label:label)
         }
@@ -1730,12 +1786,12 @@ public class BRNEQInstruction:ConditionalBranchInstruction
         super.init(operation:.BRNEQ,register1:register1,register2:register2,label:label)
         }
         
-    public init(register1:Register,immediate:Immediate,label:Label)
+    public init(register1:Register,immediate:Argon.Immediate,label:Label)
         {
         super.init(operation:.BRNEQ,register1:register1,immediate:immediate,label:label)
         }
         
-    public init(register1:Register,referenceAddress:Address,label:Label)
+    public init(register1:Register,referenceAddress:Argon.Address,label:Label)
         {
         super.init(operation:.BRNEQ,register1:register1,referenceAddress:referenceAddress,label:label)
         }
@@ -1754,12 +1810,12 @@ public class BRZInstruction:ConditionalBranchInstruction
         super.init(operation:.BRZ,register1:register1,register2:register2,label:label)
         }
         
-    public init(register1:Register,immediate:Immediate,label:Label)
+    public init(register1:Register,immediate:Argon.Immediate,label:Label)
         {
         super.init(operation:.BRZ,register1:register1,immediate:immediate,label:label)
         }
         
-    public init(register1:Register,referenceAddress:Address,label:Label)
+    public init(register1:Register,referenceAddress:Argon.Address,label:Label)
         {
         super.init(operation:.BRZ,register1:register1,referenceAddress:referenceAddress,label:label)
         }
@@ -1778,12 +1834,12 @@ public class BRNZInstruction:ConditionalBranchInstruction
         super.init(operation:.BRNZ,register1:register1,register2:register2,label:label)
         }
         
-    public init(register1:Register,immediate:Immediate,label:Label)
+    public init(register1:Register,immediate:Argon.Immediate,label:Label)
         {
         super.init(operation:.BRNZ,register1:register1,immediate:immediate,label:label)
         }
         
-    public init(register1:Register,referenceAddress:Address,label:Label)
+    public init(register1:Register,referenceAddress:Argon.Address,label:Label)
         {
         super.init(operation:.BRNZ,register1:register1,referenceAddress:referenceAddress,label:label)
         }
@@ -1802,12 +1858,12 @@ public class BRGTInstruction:ConditionalBranchInstruction
         super.init(operation:.BRGT,register1:register1,register2:register2,label:label)
         }
         
-    public init(register1:Register,immediate:Immediate,label:Label)
+    public init(register1:Register,immediate:Argon.Immediate,label:Label)
         {
         super.init(operation:.BRGT,register1:register1,immediate:immediate,label:label)
         }
         
-    public init(register1:Register,referenceAddress:Address,label:Label)
+    public init(register1:Register,referenceAddress:Argon.Address,label:Label)
         {
         super.init(operation:.BRGT,register1:register1,referenceAddress:referenceAddress,label:label)
         }
@@ -1826,12 +1882,12 @@ public class BRGTEQInstruction:ConditionalBranchInstruction
         super.init(operation:.BRGTEQ,register1:register1,register2:register2,label:label)
         }
         
-    public init(register1:Register,immediate:Immediate,label:Label)
+    public init(register1:Register,immediate:Argon.Immediate,label:Label)
         {
         super.init(operation:.BRGTEQ,register1:register1,immediate:immediate,label:label)
         }
         
-    public init(register1:Register,referenceAddress:Address,label:Label)
+    public init(register1:Register,referenceAddress:Argon.Address,label:Label)
         {
         super.init(operation:.BRGTEQ,register1:register1,referenceAddress:referenceAddress,label:label)
         }
@@ -1850,12 +1906,12 @@ public class BRLTInstruction:ConditionalBranchInstruction
         super.init(operation:.BRLT,register1:register1,register2:register2,label:label)
         }
         
-    public init(register1:Register,immediate:Immediate,label:Label)
+    public init(register1:Register,immediate:Argon.Immediate,label:Label)
         {
         super.init(operation:.BRLT,register1:register1,immediate:immediate,label:label)
         }
         
-    public init(register1:Register,referenceAddress:Address,label:Label)
+    public init(register1:Register,referenceAddress:Argon.Address,label:Label)
         {
         super.init(operation:.BRLT,register1:register1,referenceAddress:referenceAddress,label:label)
         }
@@ -1874,12 +1930,12 @@ public class BRLTEQInstruction:ConditionalBranchInstruction
         super.init(operation:.BRLTEQ,register1:register1,register2:register2,label:label)
         }
         
-    public init(register1:Register,immediate:Immediate,label:Label)
+    public init(register1:Register,immediate:Argon.Immediate,label:Label)
         {
         super.init(operation:.BRLTEQ,register1:register1,immediate:immediate,label:label)
         }
         
-    public init(register1:Register,referenceAddress:Address,label:Label)
+    public init(register1:Register,referenceAddress:Argon.Address,label:Label)
         {
         super.init(operation:.BRLTEQ,register1:register1,referenceAddress:referenceAddress,label:label)
         }
@@ -1905,7 +1961,7 @@ public class SLOTGETInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(register1:Register,immediate:Immediate,register2:Register)
+    public init(register1:Register,immediate:Argon.Immediate,register2:Register)
         {
         self.operand1 = .register(register1)
         self.operand3 = .register(register2)
@@ -1949,7 +2005,7 @@ public class SLOTSETInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(register1:Register,register2:Register,immediate:Immediate)
+    public init(register1:Register,register2:Register,immediate:Argon.Immediate)
         {
         self.operand1 = .register(register1)
         self.operand2 = .register(register2)
@@ -1995,7 +2051,7 @@ public class CALLInstruction:Instruction
         super.init(.CALL,.label)
         }
         
-    public init(address:Address)
+    public init(address:Argon.Address)
         {
         self.operand1 = .address(address)
         super.init(.CALL,.address)
@@ -2023,7 +2079,7 @@ public class ENTERInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(byteCount:Immediate)
+    public init(byteCount:Argon.Immediate)
         {
         self.operand1 = .immediate(byteCount)
         super.init(.ENTER,.immediate)
@@ -2056,7 +2112,7 @@ public class LEAVEInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(byteCount:Immediate)
+    public init(byteCount:Argon.Immediate)
         {
         self.operand = .immediate(byteCount)
         super.init(.LEAVE,.immediate)
@@ -2098,7 +2154,7 @@ public class DISPInstruction:Instruction
         super.init(word1,word2,word3)
         }
         
-    public init(address:Address)
+    public init(address:Argon.Address)
         {
         self.operand = .referenceAddress(address)
         super.init(.DISP,.address)

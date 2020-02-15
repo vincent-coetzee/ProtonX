@@ -47,13 +47,13 @@ public class SeamPointer:TypePointer
                 {
                 return(self._slotArrayPointer!)
                 }
-            self._slotArrayPointer = ArrayPointer(untaggedAddressAtIndexAtPointer(Self.kSeamSlotArrayIndex,self.pointer))
+            self._slotArrayPointer = ArrayPointer(addressAtIndexAtAddress(Self.kSeamSlotArrayIndex,self.address))
             return(self._slotArrayPointer!)
             }
         set
             {
             self._slotArrayPointer = newValue
-            setWordAtIndexAtPointer(newValue.taggedAddress,Self.kSeamSlotArrayIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue.taggedAddress,Self.kSeamSlotArrayIndex,self.address)
             }
         }
         
@@ -67,13 +67,13 @@ public class SeamPointer:TypePointer
                 {
                 return(self._parentSeamArrayPointer!)
                 }
-            self._parentSeamArrayPointer = ArrayPointer(untaggedAddressAtIndexAtPointer(Self.kSeamParentSeamArrayIndex,self.pointer))
+            self._parentSeamArrayPointer = ArrayPointer(addressAtIndexAtAddress(Self.kSeamParentSeamArrayIndex,self.address))
             return(self._parentSeamArrayPointer!)
             }
         set
             {
             self._parentSeamArrayPointer = newValue
-            setWordAtIndexAtPointer(newValue.taggedAddress,Self.kSeamParentSeamArrayIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue.taggedAddress,Self.kSeamParentSeamArrayIndex,self.address)
             }
         }
         
@@ -87,13 +87,13 @@ public class SeamPointer:TypePointer
                 {
                 return(self._contractArrayPointer!)
                 }
-            self._contractArrayPointer = ArrayPointer(untaggedAddressAtIndexAtPointer(Self.kSeamContractArrayIndex,self.pointer))
+            self._contractArrayPointer = ArrayPointer(addressAtIndexAtAddress(Self.kSeamContractArrayIndex,self.address))
             return(self._contractArrayPointer!)
             }
         set
             {
             self._contractArrayPointer = newValue
-            setWordAtIndexAtPointer(newValue.taggedAddress,Self.kSeamContractArrayIndex,self.pointer)
+            setWordAtIndexAtAddress(newValue.taggedAddress,Self.kSeamContractArrayIndex,self.address)
             }
         }
         
@@ -119,11 +119,11 @@ public class SeamPointer:TypePointer
 //        {
 //        get
 //            {
-//            return(Int(untaggedWordAtIndexAtPointer(Self.kTypeInstanceSlotCountIndex,self.pointer)))
+//            return(Int(wordAtIndexAtAddress(Self.kTypeInstanceSlotCountIndex,self.address)))
 //            }
 //        set
 //            {
-//            setWordAtIndexAtPointer(Word(newValue),Self.kTypeInstanceSlotCountIndex,self.pointer)
+//            setWordAtIndexAtAddress(Word(newValue),Self.kTypeInstanceSlotCountIndex,self.address)
 //            }
 //        }
         

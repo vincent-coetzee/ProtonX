@@ -32,11 +32,11 @@ public class SlotPointer:ObjectPointer
         {
         get
             {
-            return(wordAtIndexAtPointer(Self.kSlotFlagsIndex,self.pointer))
+            return(wordAtIndexAtAddress(Self.kSlotFlagsIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kSlotFlagsIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kSlotFlagsIndex,self.address)
             }
         }
         
@@ -44,11 +44,11 @@ public class SlotPointer:ObjectPointer
         {
         get
             {
-            return(SlotIndex(index: Int(wordAtIndexAtPointer(Self.kSlotIndexIndex,self.pointer))))
+            return(SlotIndex(index: Int(wordAtIndexAtAddress(Self.kSlotIndexIndex,self.address))))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue.index),Self.kSlotIndexIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue.index),Self.kSlotIndexIndex,self.address)
             }
         }
         
@@ -56,11 +56,11 @@ public class SlotPointer:ObjectPointer
         {
         get
             {
-            return(ImmutableStringPointer(untaggedPointerAtIndexAtPointer(Self.kSlotNameIndex,self.pointer)))
+            return(ImmutableStringPointer(addressAtIndexAtAddress(Self.kSlotNameIndex,self.address)))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue.pointer,Self.kSlotNameIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue.address,Self.kSlotNameIndex,self.address)
             }
         }
         
@@ -76,11 +76,11 @@ public class SlotPointer:ObjectPointer
         {
         get
             {
-            return(TypePointer(untaggedPointerAtIndexAtPointer(Self.kSlotTypeIndex,self.pointer)))
+            return(TypePointer(addressAtIndexAtAddress(Self.kSlotTypeIndex,self.address)))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kSlotTypeIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue?.address ?? 0,Self.kSlotTypeIndex,self.address)
             }
         }
         
@@ -101,12 +101,7 @@ public class SlotPointer:ObjectPointer
         self.slotTypePointer = type
         }
     
-    required public init(_ address: UnsafeMutableRawPointer?)
-        {
-        super.init(address)
-        }
-    
-    public required init(_ address: Instruction.Address)
+    public required init(_ address: Argon.Address)
         {
         super.init(address)
         }

@@ -19,48 +19,48 @@ public class ListPointer:CollectionPointer
         return(7)
         }
         
-    public var firstElementAddress:Instruction.Address
+    public var firstElementAddress:Argon.Address
         {
         get
             {
-            let pointer = pointerAtIndexAtPointer(Self.kListFirstNodePointerIndex,self.pointer)
-            if pointer == nil
+            let address = addressAtIndexAtAddress(Self.kListFirstNodePointerIndex,self.address)
+            if address == 0
                 {
                 return(0)
                 }
-            return(ListNodePointer(pointer!).valueAddress)
+            return(ListNodePointer(address).valueAddress)
             }
         set
             {
-            let pointer = pointerAtIndexAtPointer(Self.kListFirstNodePointerIndex,self.pointer)
-            if pointer != nil
+            let address = addressAtIndexAtAddress(Self.kListFirstNodePointerIndex,self.address)
+            if address == 0
                 {
-                ListNodePointer(pointer!).valueAddress = newValue
+                ListNodePointer(address).valueAddress = newValue
                 }
             }
         }
         
-    public var firstNodeAddress:Instruction.Address
+    public var firstNodeAddress:Argon.Address
         {
         get
             {
-            return(untaggedAddressAtIndexAtPointer(Self.kListFirstNodePointerIndex,self.pointer))
+            return(addressAtIndexAtAddress(Self.kListFirstNodePointerIndex,self.address))
             }
         set
             {
-            tagAndSetAddressAtIndexAtPointer(newValue,Self.kListFirstNodePointerIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue,Self.kListFirstNodePointerIndex,self.address)
             }
         }
         
-    public var lastNodeAddress:Instruction.Address
+    public var lastNodeAddress:Argon.Address
         {
         get
             {
-            return(untaggedAddressAtIndexAtPointer(Self.kListLastNodePointerIndex,self.pointer))
+            return(addressAtIndexAtAddress(Self.kListLastNodePointerIndex,self.address))
             }
         set
             {
-            tagAndSetAddressAtIndexAtPointer(newValue,Self.kListLastNodePointerIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue,Self.kListLastNodePointerIndex,self.address)
             }
         }
         
@@ -68,7 +68,7 @@ public class ListPointer:CollectionPointer
         {
         get
             {
-            let address = untaggedAddressAtIndexAtPointer(Self.kListFirstNodePointerIndex,self.pointer)
+            let address = addressAtIndexAtAddress(Self.kListFirstNodePointerIndex,self.address)
             if address == 0
                 {
                 return(nil)
@@ -77,7 +77,7 @@ public class ListPointer:CollectionPointer
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kListFirstNodePointerIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue?.address ?? 0,Self.kListFirstNodePointerIndex,self.address)
             }
         }
         
@@ -85,7 +85,7 @@ public class ListPointer:CollectionPointer
         {
         get
             {
-            let address = untaggedAddressAtIndexAtPointer(Self.kListLastNodePointerIndex,self.pointer)
+            let address = addressAtIndexAtAddress(Self.kListLastNodePointerIndex,self.address)
             if address == 0
                 {
                 return(nil)
@@ -94,27 +94,27 @@ public class ListPointer:CollectionPointer
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kListLastNodePointerIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue?.address ?? 0,Self.kListLastNodePointerIndex,self.address)
             }
         }
         
-    public var lastElementAddress:Instruction.Address
+    public var lastElementAddress:Argon.Address
         {
         get
             {
-            let pointer = pointerAtIndexAtPointer(Self.kListLastNodePointerIndex,self.pointer)
-            if pointer == nil
+            let address = addressAtIndexAtAddress(Self.kListLastNodePointerIndex,self.address)
+            if address == 0
                 {
                 return(0)
                 }
-            return(ListNodePointer(pointer!).valueAddress)
+            return(ListNodePointer(address).valueAddress)
             }
         set
             {
-            let pointer = pointerAtIndexAtPointer(Self.kListLastNodePointerIndex,self.pointer)
-            if pointer != nil
+            let address = addressAtIndexAtAddress(Self.kListLastNodePointerIndex,self.address)
+            if address == 0
                 {
-                ListNodePointer(pointer!).valueAddress = newValue
+                ListNodePointer(address).valueAddress = newValue
                 }
             }
         }
@@ -211,7 +211,7 @@ public class ListPointer:CollectionPointer
     public func print()
         {
         Log.console()
-        Log.log("LIST @ 0x\(self.pointer?.hexString ?? "0000000000")")
+        Log.log("LIST @ 0x\(self.address.hexString)")
         Log.log("COUNT : \(self.count)")
         var node:ListNodePointer? = self.firstNodePointer
         var index = 0

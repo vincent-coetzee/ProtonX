@@ -31,13 +31,13 @@ public class SlotValue<T> where T:CachedPointer
                 {
                 return(aValue)
                 }
-            self.cachedValue = T.init(untaggedAddressAtIndexAtPointer(self.index,self._source!.pointer))
+            self.cachedValue = T.init(addressAtIndexAtAddress(self.index,self._source!.address))
             return(self.cachedValue!)
             }
         set
             {
             self.cachedValue = newValue
-            setAddressAtIndexAtPointer(newValue.taggedAddress,self.index,self._source!.pointer)
+            setAddressAtIndexAtAddress(newValue.taggedAddress,self.index,self._source!.address)
             }
         }
         

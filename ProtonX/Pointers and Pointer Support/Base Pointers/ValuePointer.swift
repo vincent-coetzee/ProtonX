@@ -24,7 +24,7 @@ public class ValuePointer:Pointer,Equatable
             {
             return(true)
             }
-        return(lhs.pointer == rhs.pointer)
+        return(lhs.address == rhs.address)
         }
         
     public class var totalSlotCount:Argon.SlotCount
@@ -32,7 +32,7 @@ public class ValuePointer:Pointer,Equatable
         fatalError("Should have been overridden")
         }
         
-    public let pointer:UnsafeMutableRawPointer?
+    public let address:Argon.Address
     public let _index:Word
     private var _segment:MemorySegment?
     
@@ -55,32 +55,32 @@ public class ValuePointer:Pointer,Equatable
         
     public var hexString:String
         {
-        return(self.pointer?.hexString ?? "0x00000000")
+        return(self.address.hexString)
         }
         
     public var bitString:String
         {
-        return(pointerAsWord(self.pointer).bitString)
+        return(self.address.bitString)
         }
         
-    public var taggedAddress:Instruction.Address
+    public var taggedAddress:Argon.Address
         {
-        return(0)
+        return(RawMemory.taggedAddress(self.address))
         }
         
-    public var untaggedAddress:Instruction.Address
+    public var untaggedAddress:Argon.Address
         {
-        return(0)
+        return(self.address)
         }
         
     public var isNull:Bool
         {
-        return(self.pointer == nil)
+        return(self.address == 0)
         }
         
     public var isNotNull:Bool
         {
-        return(self.pointer != nil)
+        return(self.address != 0)
         }
         
     internal func initSlots()
@@ -89,32 +89,17 @@ public class ValuePointer:Pointer,Equatable
         
     public init()
         {
-        self.pointer = nil
+        self.address = 0
         self._index = Argon.nextIndex
         self.initSlots()
         }
         
-    public init(_ address:Instruction.Address)
+    required public init(_ address:Argon.Address)
         {
-        assert(address != 7)
-        self.pointer = untaggedAddressAsPointer(address)
+        self.address = address & ~Argon.kTagBitsMask
         self._index = Argon.nextIndex
         self.initSlots()
         }
-        
-    required public init(_ address:UnsafeMutableRawPointer?)
-        {
-        self.pointer = untaggedPointer(address)
-        self._index = Argon.nextIndex
-        self.initSlots()
-        }
-        
-//    public convenience init(_ slotCount:Int,segment:MemorySegment = Memory.dataSegment)
-//        {
-//        var totalByteSize = self.byteCountForSlotCount(slotCount)
-//        self.init(segment.allocate(count: &totalByteSize))
-//        self.slotCount =
-//        }
         
     public class func byteCountForSlotCount(_ slotCount:Int) -> Int
         {
@@ -123,20 +108,6 @@ public class ValuePointer:Pointer,Equatable
         let totalCount = ((slotCount + 1) * wordSize).aligned(to: MemoryLayout<Word>.alignment)
         return(totalCount)
         }
-        
-//    public class func layoutFor<T>(type: T.Type,count:Int,slotCount:Int) -> BufferPointer<T>.BufferLayout
-//        {
-//        // round the number of bytes up to the next wword boundary
-//        let unitSize = MemoryLayout<T>.stride
-//        let slotSize = MemoryLayout<Word>.stride
-//        let sharedAlignment = Argon.lowestCommonMultiple(unitSize,slotSize)
-//        let unitByteCount = (count + 1) * unitSize
-//        let slotByteCount = (slotCount + 1)*slotSize
-//        let totalCount = (unitByteCount + slotByteCount).aligned(to: sharedAlignment)
-//        let totalSlotCount = totalCount / slotSize
-//        let layout = BufferPointer<T>.BufferLayout(elementByteCount: unitByteCount, elementStride: unitSize, slotByteCount: slotByteCount, slotStride: slotSize, totalByteCount: totalCount, totalSlotCount: totalSlotCount)
-//        return(layout)
-//        }
         
     public class func slotCountForByteCount(_ byteCount:Int) -> Int
         {
@@ -150,10 +121,10 @@ public class ValuePointer:Pointer,Equatable
         
     public var wordValue:Word
         {
-        return(pointerAsWord(self.pointer))
+        return(Word(self.address))
         }
         
-    public func makeInstance(in segment:MemorySegment = Memory.managedSegment) -> Argon.Pointer?
+    public func makeInstance(in segment:MemorySegment = Memory.managedSegment) -> Argon.Address
         {
         fatalError("This should not be called here")
         }

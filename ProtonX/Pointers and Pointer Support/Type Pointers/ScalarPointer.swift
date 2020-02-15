@@ -13,17 +13,17 @@ public class ScalarPointer:ValuePointer,Key
     {
     public static func ==(lhs:ScalarPointer,rhs:ScalarPointer) -> Bool
         {
-        return(ValueHolder(word: wordAtIndexAtPointer(.zero,lhs.pointer)) == ValueHolder(word: wordAtIndexAtPointer(.zero,rhs.pointer)))
+        return(ValueHolder(word: wordAtIndexAtAddress(.zero,lhs.address)) == ValueHolder(word: wordAtIndexAtAddress(.zero,rhs.address)))
         }
         
     public static func <(lhs:ScalarPointer,rhs:ScalarPointer) -> Bool
         {
-        return(ValueHolder(word: wordAtIndexAtPointer(.zero,lhs.pointer)) < ValueHolder(word: wordAtIndexAtPointer(.zero,rhs.pointer)))
+        return(ValueHolder(word: wordAtIndexAtAddress(.zero,lhs.address)) < ValueHolder(word: wordAtIndexAtAddress(.zero,rhs.address)))
         }
         
     public var hashedValue:Int
         {
-        return(Int(bitPattern: self.pointer!))
+        return(Int(Int64(self.address)))
         }
         
     public var hashedValueIndex: SlotIndex
@@ -66,11 +66,11 @@ public class ScalarPointer:ValuePointer,Key
         {
         get
             {
-            return(untaggedIntegerAtIndexAtPointer(SlotIndex(index: 0),self.pointer))
+            return(integerAtIndexAtAddress(SlotIndex(index: 0),self.address))
             }
         set
             {
-            setTaggedIntegerAtIndexAtPointer(newValue,SlotIndex(index: 0),self.pointer)
+            setIntegerAtIndexAtAddress(newValue,SlotIndex(index: 0),self.address)
             }
         }
 
@@ -78,11 +78,11 @@ public class ScalarPointer:ValuePointer,Key
         {
         get
             {
-            untaggedUIntegerAtIndexAtPointer(SlotIndex(index: 0),self.pointer)
+            return(uintegerAtIndexAtAddress(SlotIndex(index: 0),self.address))
             }
         set
             {
-            setTaggedUIntegerAtIndexAtPointer(newValue,SlotIndex(index: 0),self.pointer)
+            setUIntegerAtIndexAtAddress(newValue,SlotIndex(index: 0),self.address)
             }
         }
         
@@ -90,11 +90,11 @@ public class ScalarPointer:ValuePointer,Key
         {
         get
             {
-            untaggedBooleanAtIndexAtPointer(SlotIndex.zero,self.pointer)
+            return(booleanAtIndexAtAddress(SlotIndex.zero,self.address))
             }
         set
             {
-            setTaggedBooleanAtIndexAtPointer(newValue,.zero,self.pointer)
+            setBooleanAtIndexAtAddress(newValue,.zero,self.address)
             }
         }
         
@@ -114,35 +114,35 @@ public class ScalarPointer:ValuePointer,Key
         {
         get
             {
-            untaggedFloat32AtIndexAtPointer(.zero,self.pointer)
+            float32AtIndexAtAddress(.zero,self.address)
             }
         set
             {
-            setTaggedFloat32AtIndexAtPointer(newValue,.zero,self.pointer)
+            setFloat32AtIndexAtAddress(newValue,.zero,self.address)
             }
         }
         
-    public var float64Value:Argon.Float64
-        {
-        get
-            {
-            Argon.Float64(untaggedFloat64AtIndexAtPointer(.zero,self.pointer))
-            }
-        set
-            {
-            setTaggedFloat64AtIndexAtPointer(newValue.float64,.zero,self.pointer)
-            }
-        }
+//    public var float64Value:Argon.Float64
+//        {
+//        get
+//            {
+//            Argon.Float64(untaggedFloat64AtIndexAtPointer(.zero,self.address))
+//            }
+//        set
+//            {
+//            setTaggedFloat64AtIndexAtPointer(newValue.float64,.zero,self.address)
+//            }
+//        }
         
     public var byteValue:UInt8
         {
         get
             {
-            untaggedByteAtIndexAtPointer(.zero,self.pointer)
+            return(byteAtIndexAtAddress(.zero,self.address))
             }
         set
             {
-            setTaggedByteAtIndexAtPointer(newValue,.zero,self.pointer)
+            setByteAtIndexAtAddress(newValue,.zero,self.address)
             }
         }
         
@@ -150,38 +150,38 @@ public class ScalarPointer:ValuePointer,Key
         {
         get
             {
-            untaggedBitsAtIndexAtPointer(.zero,self.pointer)
+            return(bitsAtIndexAtAddress(.zero,self.address))
             }
         set
             {
-            setTaggedBitsAtIndexAtPointer(newValue,.zero,self.pointer)
+            setBitsAtIndexAtAddress(newValue,.zero,self.address)
             }
         }
         
-    public override var taggedAddress:Instruction.Address
-        {
-        switch(self.scalarType)
-            {
-            case .none:
-                break
-            case .integer:
-                return(taggedInteger(self.integerValue))
-            case .uinteger:
-                return(taggedUInteger(self.uintegerValue))
-            case .boolean:
-                return(taggedBoolean(self.booleanValue))
-            case .byte:
-                return(taggedByte(self.byteValue))
-            case .bits:
-                return(taggedBits(self.bitsValue))
-            case .float32:
-                return(taggedFloat32(self.float32Value))
-            case .float64:
-//                return(taggedFloat64(self.float64Value))
-                fatalError("You need to think this through")
-            }
-        return(0)
-        }
+//    public override var taggedAddress:Argon.Address
+//        {
+//        switch(self.scalarType)
+//            {
+//            case .none:
+//                break
+//            case .integer:
+//                return(taggedInteger(self.integerValue))
+//            case .uinteger:
+//                return(taggedUInteger(self.uintegerValue))
+//            case .boolean:
+//                return(taggedBoolean(self.booleanValue))
+//            case .byte:
+//                return(taggedByte(self.byteValue))
+//            case .bits:
+//                return(taggedBits(self.bitsValue))
+//            case .float32:
+//                return(taggedFloat32(self.float32Value))
+//            case .float64:
+////                return(taggedFloat64(self.float64Value))
+//                fatalError("You need to think this through")
+//            }
+//        return(0)
+//        }
         
     public init(type:Argon.ScalarType)
         {
@@ -191,45 +191,34 @@ public class ScalarPointer:ValuePointer,Key
     public init(float:Argon.Float32)
         {
         self.scalarType = Argon.ScalarType.float32
-        super.init(UnsafeMutableRawPointer(bitPattern: Int(float.bitPattern)))
+        super.init(Argon.Address(bitPattern: Int64(float.bitPattern)))
         }
         
     public init(int:Int)
         {
         self.scalarType = Argon.ScalarType.integer
-        super.init(UnsafeMutableRawPointer(bitPattern: int))
+        super.init(Argon.Address(bitPattern: Int64(int)))
         }
         
     public init(word:Word)
         {
         self.scalarType = Argon.ScalarType.uinteger
-        super.init(UnsafeMutableRawPointer(bitPattern: Int(Int64(bitPattern: word))))
+        super.init(word)
         }
         
     public init(type:TypePointer)
         {
-        Header(wordAtIndexAtPointer(.zero,type.pointer)).valueType = .float32
+        Header(wordAtIndexAtAddress(.zero,type.address)).valueType = .float32
         self.scalarType = Argon.ScalarType.float32
-        super.init(taggedObject(type.pointer))
+        super.init(type.address)
         }
         
-    public override init(_ address:Instruction.Address)
+    public required init(_ address:Argon.Address)
         {
-        let type = Header(wordAtIndexAtPointer(.zero,UnsafeMutableRawPointer(bitPattern: UInt(address)))).valueType
+        let type = Header(wordAtIndexAtAddress(.zero,address)).valueType
         self.scalarType = Argon.ScalarType(type)
         super.init(address)
         }
-        
-    required public init(_ rawPointer: UnsafeMutableRawPointer?)
-        {
-        let tag = Header(wordAtIndexAtPointer(.zero,rawPointer)).valueType
-        self.scalarType = Argon.ScalarType(tag)
-        super.init(rawPointer)
-        }
-    
-    public required init(_ pointer: Argon.Pointer) {
-        fatalError("init(_:) has not been implemented")
-    }
     
     public func asWord() -> Word
         {
@@ -273,8 +262,8 @@ public class ScalarPointer:ValuePointer,Key
         return(false)
         }
         
-    public func store(atPointer pointer:Argon.Pointer)
+    public func store(atAddress pointer:Argon.Address)
         {
-        setAddressAtPointer(self.taggedAddress,pointer)
+        setAddressAtAddress(self.taggedAddress,pointer)
         }
     }

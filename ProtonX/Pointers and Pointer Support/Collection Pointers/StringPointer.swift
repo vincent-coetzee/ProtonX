@@ -21,7 +21,7 @@ public class StringPointer:ObjectPointer
             {
             return(false)
             }
-        guard let charPointer = charPointerToIndexAtPointer(StringPointer.kStringBytesIndex,aStringPointer.pointer) else
+        guard let charPointer = charPointerToIndexAtAddress(StringPointer.kStringBytesIndex,aStringPointer.address) else
             {
             return(false)
             }
@@ -60,7 +60,7 @@ public class StringPointer:ObjectPointer
             {
             return(false)
             }
-        guard let lhsPointer = charPointerToIndexAtPointer(Self.kStringBytesIndex,lhs.pointer),let rhsPointer = charPointerToIndexAtPointer(Self.kStringBytesIndex,rhs.pointer) else
+        guard let lhsPointer = charPointerToIndexAtAddress(Self.kStringBytesIndex,lhs.address),let rhsPointer = charPointerToIndexAtAddress(Self.kStringBytesIndex,rhs.address) else
             {
             return(false)
             }
@@ -94,7 +94,7 @@ public class StringPointer:ObjectPointer
         {
         get
             {
-            guard let charPointer = charPointerToIndexAtPointer(Self.kStringBytesIndex,self.pointer) else
+            guard let charPointer = charPointerToIndexAtAddress(Self.kStringBytesIndex,self.address) else
                 {
                 return("")
                 }
@@ -115,11 +115,11 @@ public class StringPointer:ObjectPointer
             }
         set
             {
-            guard let charPointer = charPointerToIndexAtPointer(Self.kStringBytesIndex,self.pointer) else
+            guard let charPointer = charPointerToIndexAtAddress(Self.kStringBytesIndex,self.address) else
                 {
                 return
                 }
-            Log.log("IN STRING ASSIGN SELF POINTER = \(self.pointer!.hexString) STRING BYTES INDEX = \(Self.kStringBytesIndex) CHAR POINTER = \(Argon.Pointer(charPointer)!.hexString)")
+            Log.log("IN STRING ASSIGN SELF POINTER = \(self.address.hexString) STRING BYTES INDEX = \(Self.kStringBytesIndex) CHAR POINTER = \(Word(bitPattern: Int64(Int(bitPattern: charPointer))).hexString)")
             let stringCount = newValue.utf8.count
             let view = newValue.utf8
             var stringIndex = view.startIndex
@@ -152,11 +152,11 @@ public class StringPointer:ObjectPointer
         {
         get
             {
-            return(Int(wordAtIndexAtPointer(Self.kStringCountIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kStringCountIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kStringCountIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kStringCountIndex,self.address)
             }
         }
         
@@ -164,11 +164,11 @@ public class StringPointer:ObjectPointer
         {
         get
             {
-            return(Int(wordAtIndexAtPointer(Self.kStringMaximumCountIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kStringMaximumCountIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kStringMaximumCountIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kStringMaximumCountIndex,self.address)
             }
         }
         

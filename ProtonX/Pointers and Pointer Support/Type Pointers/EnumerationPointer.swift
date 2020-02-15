@@ -46,11 +46,11 @@ public class EnumerationCasePointer:ObjectPointer
         {
         get
             {
-            return(ImmutableStringPointer(untaggedPointerAtIndexAtPointer(Self.kEnumerationCaseNameIndex,self.pointer)))
+            return(ImmutableStringPointer(addressAtIndexAtAddress(Self.kEnumerationCaseNameIndex,self.address)))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue.pointer,Self.kEnumerationCaseNameIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue.address,Self.kEnumerationCaseNameIndex,self.address)
             }
         }
         
@@ -58,11 +58,11 @@ public class EnumerationCasePointer:ObjectPointer
         {
         get
             {
-            return(EnumerationPointer(untaggedPointerAtIndexAtPointer(Self.kEnumerationCaseEnumerationIndex,self.pointer)))
+            return(EnumerationPointer(addressAtIndexAtAddress(Self.kEnumerationCaseEnumerationIndex,self.address)))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue.pointer,Self.kEnumerationCaseEnumerationIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue.address,Self.kEnumerationCaseEnumerationIndex,self.address)
             }
         }
         
@@ -70,11 +70,11 @@ public class EnumerationCasePointer:ObjectPointer
         {
         get
             {
-            return(Int(untaggedWordAtIndexAtPointer(Self.kEnumerationCaseIndexIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kEnumerationCaseIndexIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kEnumerationCaseIndexIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kEnumerationCaseIndexIndex,self.address)
             }
         }
         
@@ -82,17 +82,17 @@ public class EnumerationCasePointer:ObjectPointer
         {
         get
             {
-            return(Int(untaggedWordAtIndexAtPointer(Self.kEnumerationCaseAssociatedValueCountIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kEnumerationCaseAssociatedValueCountIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kEnumerationCaseAssociatedValueCountIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kEnumerationCaseAssociatedValueCountIndex,self.address)
             }
         }
         
     public func associatedValueTypePointer(at index:Int) -> TypePointer
         {
-        return(TypePointer(Instruction.Address(untaggedAddressAtIndexAtPointer(Self.kEnumerationCaseAssociatedValueTypesIndex,self.pointer))))
+        return(TypePointer(Argon.Address(addressAtIndexAtAddress(Self.kEnumerationCaseAssociatedValueTypesIndex,self.address))))
         }
         
     public init(_ enumerationCase:EnumerationCase)
@@ -106,7 +106,7 @@ public class EnumerationCasePointer:ObjectPointer
         var offset = 0
         for type in enumerationCase.associatedValueTypes
             {
-            setWordAtIndexAtPointer(taggedObject(type?.pointer),Self.kEnumerationCaseAssociatedValueTypesIndex + offset,self.pointer)
+            setAddressAtIndexAtAddress(type?.address ?? 0,Self.kEnumerationCaseAssociatedValueTypesIndex + offset,self.address)
             offset += 1
             }
         }
@@ -115,7 +115,7 @@ public class EnumerationCasePointer:ObjectPointer
         fatalError("init(_:) has not been implemented")
     }
     
-    public required init(_ address: Instruction.Address)
+    public required init(_ address: Argon.Address)
         {
         super.init(address)
         }
@@ -136,11 +136,11 @@ public class EnumerationPointer:TypePointer
         {
         get
             {
-            return(Int(untaggedWordAtIndexAtPointer(Self.kEnumerationCaseCountIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kEnumerationCaseCountIndex,self.address)))
             }
         set
             {
-            setWordAtIndexAtPointer(Word(newValue),Self.kEnumerationCaseCountIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kEnumerationCaseCountIndex,self.address)
             }
         }
         
@@ -148,11 +148,11 @@ public class EnumerationPointer:TypePointer
         {
         get
             {
-            return(EnumerationCasePointer(untaggedPointerAtIndexAtPointer(Self.kEnumerationCasesIndex + index,self.pointer)))
+            return(EnumerationCasePointer(addressAtIndexAtAddress(Self.kEnumerationCasesIndex + index,self.address)))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue.pointer,Self.kEnumerationCasesIndex + index,self.pointer)
+            setAddressAtIndexAtAddress(newValue.address,Self.kEnumerationCasesIndex + index,self.address)
             }
         }
         
@@ -171,26 +171,17 @@ public class EnumerationPointer:TypePointer
     public convenience init(_ name:String,_ caseType:TypePointer,_ someCases:[EnumerationCasePointer.EnumerationCase])
         {
         let pointer = Memory.staticSegment.allocateEnumeration(named: name,cases: someCases)
-        self.init(pointer)
+        self.init(pointer.address)
         var cases:[EnumerationCasePointer.EnumerationCase] = someCases
         for index in 0..<cases.count
             {
             cases[index].associatedValueTypes = cases[index].associatedValueTypeNames.map{Memory.type(atName: $0)}
             let casePointer = EnumerationCasePointer(cases[index])
-            setObjectPointerAtIndexAtPointer(casePointer.pointer,Self.kEnumerationCasesIndex + index,pointer)
+            setAddressAtIndexAtAddress(casePointer.address,Self.kEnumerationCasesIndex + index,pointer.address)
             }
         }
     
-    public required init(_ pointer: Argon.Pointer) {
-        fatalError("init(_:) has not been implemented")
-    }
-    
-    required public init(_ address: UnsafeMutableRawPointer?)
-        {
-        fatalError("init(_:) has not been implemented")
-        }
-    
-    public required init(_ address: Instruction.Address)
+    public required init(_ address: Argon.Address)
         {
         super.init(address)
         }

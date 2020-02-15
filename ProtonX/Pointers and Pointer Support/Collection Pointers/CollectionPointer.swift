@@ -24,13 +24,13 @@ public class CollectionPointer:ObjectPointer
         get
             {
             Log.log("GET Collection Count Index = \(Self.kCollectionCountIndex)")
-            return(Int(wordAtIndexAtPointer(Self.kCollectionCountIndex,self.pointer)))
+            return(Int(wordAtIndexAtAddress(Self.kCollectionCountIndex,self.address)))
             }
         set
             {
             Log.log("SET Collection Count = \(newValue)")
             Log.log("SET Collection Count Index = \(Self.kCollectionCountIndex)")
-            setWordAtIndexAtPointer(Word(newValue),Self.kCollectionCountIndex,self.pointer)
+            setWordAtIndexAtAddress(Word(newValue),Self.kCollectionCountIndex,self.address)
             }
         }
         
@@ -38,20 +38,15 @@ public class CollectionPointer:ObjectPointer
         {
         get
             {
-            return(TypePointer(untaggedPointerAtIndexAtPointer(Self.kCollectionElementTypeIndex,self.pointer)))
+            return(TypePointer(addressAtIndexAtAddress(Self.kCollectionElementTypeIndex,self.address)))
             }
         set
             {
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kCollectionElementTypeIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue?.address ?? 0,Self.kCollectionElementTypeIndex,self.address)
             }
         }
         
-    public required init(_ address:UnsafeMutableRawPointer?)
-        {
-        super.init(address)
-        }
-        
-    public required init(_ word:Instruction.Address)
+    public required init(_ word:Argon.Address)
         {
         super.init(word)
         }

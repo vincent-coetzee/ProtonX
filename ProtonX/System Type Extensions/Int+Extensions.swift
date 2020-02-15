@@ -50,8 +50,8 @@ extension Int
 
 extension Int:CachedPointer
     {
-    public var taggedAddress: Instruction.Address
+    public var taggedAddress: Argon.Address
         {
-        return(Instruction.Address(self))
+        return(Argon.Address(self))
         }
     }

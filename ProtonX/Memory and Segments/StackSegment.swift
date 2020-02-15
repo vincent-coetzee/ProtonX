@@ -12,11 +12,6 @@ import RawMemory
 public class StackSegment:MemorySegment
     {
     public var top:Word
-    
-    public override var identifier:Identifier
-        {
-        return(.stack)
-        }
         
     public required init()
         {
@@ -44,14 +39,42 @@ public class StackSegment:MemorySegment
         return(wordAtAddress(self.top))
         }
         
-    public func frameRelativeValue(on thread:Thread,at offset:Word) -> Word
+    public func stackValue(on thread:Thread,at offset:Int) -> Word
         {
-        return(wordAtAddress(offset + thread.registers[.bp]))
+        return(wordAtAddress(Word(UInt(bitPattern: offset + Int(thread.registers[.bp])))))
         }
         
-    public func setFrameRelativeValue(on thread:Thread,_ word:Word,at offset:Word)
+    public func setStackValue(_ word:Word,on thread:Thread,at offset:Int)
         {
-        setWordAtAddress(word,offset + thread.registers[.bp])
+        setWordAtAddress(word,Word(UInt(bitPattern: offset + Int(thread.registers[.bp]))))
+        }
+        
+    public func push(_ operand:Instruction.Operand,on thread:Thread)
+        {
+        switch(operand)
+            {
+        case .immediate(let value):
+            setWordAtAddress(Word(bitPattern: value),self.top)
+            self.top -= Word(MemoryLayout<Word>.size)
+        case .address(let address):
+            setWordAtAddress(address,self.top)
+            self.top -= Word(MemoryLayout<Word>.size)
+        case .referenceAddress(let value):
+            setWordAtAddress(value,self.top)
+            self.top -= Word(MemoryLayout<Word>.size)
+        case .register(let register):
+            setWordAtAddress(thread.registers[register],self.top)
+            self.top -= Word(MemoryLayout<Word>.size)
+        case .referenceRegister(let register):
+            let address = thread.registers[register]
+            setWordAtAddress(wordAtAddress(address),self.top)
+            self.top -= Word(MemoryLayout<Word>.size)
+        case .stack(let offset):
+            let stackOffset = thread.registers[.bp] + Word(UInt(bitPattern: offset))
+            setWordAtAddress(wordAtAddress(stackOffset),self.top)
+        default:
+            break
+            }
         }
         
     public func enterBlock(on thread: Thread,localsSizeInBytes size: Instruction.Operand)

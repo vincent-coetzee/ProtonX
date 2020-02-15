@@ -39,15 +39,10 @@ public class ImmutableStringPointer:StringPointer
         
     public convenience init(_ contents:String,segment:MemorySegment = .managed)
         {
-        self.init(segment.allocateStringConstant(contents,segment: segment))
+        self.init(segment.allocateStringConstant(contents,segment: segment).address)
         }
         
-    public required init(_ address:UnsafeMutableRawPointer?)
-        {
-        super.init(address)
-        }
-        
-    public required init(_ address:Instruction.Address)
+    public required init(_ address:Argon.Address)
         {
         super.init(address)
         }

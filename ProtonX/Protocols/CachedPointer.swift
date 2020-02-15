@@ -10,6 +10,6 @@ import Foundation
 
 public protocol CachedPointer
     {
-    var taggedAddress:Instruction.Address { get }
-    init(_ address:Instruction.Address)
+    var taggedAddress:Argon.Address { get }
+    init(_ address:Argon.Address)
     }

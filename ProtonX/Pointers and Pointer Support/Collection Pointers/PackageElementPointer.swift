@@ -28,11 +28,11 @@ public class PackageElementPointer:ObjectPointer,NamedPointer
 //        {
 //        get
 //            {
-//            return(ImmutableStringPointer(untaggedPointerAtIndexAtPointer(Self.kPackageElementNameIndex,self.pointer)))
+//            return(ImmutableStringPointer(addressAtIndexAtAddress(Self.kPackageElementNameIndex,self.address)))
 //            }
 //        set
 //            {
-//            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kPackageElementNameIndex,self.pointer)
+//            setAddressAtIndexAtAddress((newValue?.address ?? 0,Self.kPackageElementNameIndex,self.address)
 //            }
 //        }
         
@@ -46,13 +46,13 @@ public class PackageElementPointer:ObjectPointer,NamedPointer
                 {
                 return(self._packagePointer)
                 }
-            self._packagePointer = PackagePointer(untaggedPointerAtIndexAtPointer(Self.kPackageElementPackageIndex,self.pointer))
+            self._packagePointer = PackagePointer(addressAtIndexAtAddress(Self.kPackageElementPackageIndex,self.address))
             return(self._packagePointer)
             }
         set
             {
             self._packagePointer = newValue
-            tagAndSetPointerAtIndexAtPointer(newValue?.pointer,Self.kPackageElementPackageIndex,self.pointer)
+            setAddressAtIndexAtAddress(newValue?.address ?? 0,Self.kPackageElementPackageIndex,self.address)
             }
         }
         

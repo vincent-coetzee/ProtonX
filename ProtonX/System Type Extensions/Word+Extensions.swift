@@ -54,11 +54,6 @@ extension Word:HashableValue,Value
         lhs = lhs + Word(rhs)
         }
         
-    public func store(atPointer:Argon.Pointer?)
-        {
-        setWordAtPointer(self,atPointer)
-        }
-        
     public var isHeader:Bool
         {
         let mask = Argon.kHeaderMarkerMask << Argon.kHeaderMarkerShift
@@ -163,16 +158,6 @@ extension Word:HashableValue,Value
         self.init(count.count)
         }
         
-    public init(atPointer:Argon.Pointer?)
-        {
-        self.init(untaggedWordAtPointer(atPointer))
-        }
-        
-    public init(bitPattern pointer:Argon.Pointer)
-        {
-        self.init(pointerAsWord(pointer))
-        }
-        
     public init(bitPattern float:Float)
         {
         self.init(bitPattern: Int64(Int32(bitPattern: float.bitPattern)))
@@ -181,5 +166,48 @@ extension Word:HashableValue,Value
     public init(bits:String)
         {
         self.init(BitSetPointer.bitsAsWord(bits))
+        }
+    }
+
+public typealias TaggedWord = Word
+
+extension TaggedWord
+    {
+    public init(integer:Argon.Integer)
+        {
+        self = Word(bitPattern: integer) & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsInteger
+        }
+        
+    public init(uinteger:Argon.UInteger)
+        {
+        self = uinteger & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsUInteger
+        }
+        
+    public init(float:Argon.Float32)
+        {
+        self = Word(float.bitPattern) & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsFloat32
+        }
+        
+    public init(boolean:Argon.Boolean)
+        {
+        self = Word(boolean ? 1 : 0) & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsBoolean
+        }
+        
+    public init(byte:Argon.Byte)
+        {
+        self = Word(byte) & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsByte
+        }
+        
+    public init(bits:Word)
+        {
+        self = bits & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsBits
+        }
+        
+    public init(page:Word,offset:Word)
+        {
+        let word1 = ((page & ~(Argon.kPageMask << Argon.kPageShift)) << Argon.kPageShift)
+        let word2 = ((offset & ~(Argon.kOffsetMask << Argon.kOffsetShift)) << Argon.kOffsetShift)
+        let word3 = (Argon.kTagBitsPersistent << Argon.kTagBitsShift)
+        self = word1 | word2 | word3
         }
     }
