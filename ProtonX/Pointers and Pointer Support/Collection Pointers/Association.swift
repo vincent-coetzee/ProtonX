@@ -11,19 +11,19 @@ import RawMemory
     
 public struct Association
     {
-    public static var strideInBytes:Argon.ByteCount
+    public static var strideInBytes:Proton.ByteCount
         {
-        return(Argon.ByteCount(2*MemoryLayout<Word>.stride))
+        return(Proton.ByteCount(2*MemoryLayout<Word>.stride))
         }
         
     public static let stride = Word.stride * 2
     
-    internal let keyPointer:Argon.Address
-    internal let valuePointer:Argon.Address
+    internal let keyPointer:Proton.Address
+    internal let valuePointer:Proton.Address
     internal let keyType:TypePointer?
     internal let valueType:TypePointer?
     
-    public init(atAddress:Argon.Address,keyType:TypePointer?,valueType:TypePointer?)
+    public init(atAddress:Proton.Address,keyType:TypePointer?,valueType:TypePointer?)
         {
         self.keyType = keyType
         self.valueType = valueType

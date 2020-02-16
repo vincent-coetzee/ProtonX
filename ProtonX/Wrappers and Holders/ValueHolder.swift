@@ -319,12 +319,12 @@ public enum ValueHolder:Comparable
             }
         }
         
-    public init(integer:Argon.Integer)
+    public init(integer:Proton.Integer)
         {
-        self = .integer(integer & ~(Argon.Integer(Argon.kTagBitsMask) << Argon.Integer(Argon.kTagBitsShift)))
+        self = .integer(integer & ~(Proton.Integer(Proton.kTagBitsMask) << Proton.Integer(Proton.kTagBitsShift)))
         }
         
-    public init(uinteger:Argon.UInteger)
+    public init(uinteger:Proton.UInteger)
         {
         self = .uinteger(uinteger)
         }
@@ -339,7 +339,7 @@ public enum ValueHolder:Comparable
         self = .float32(float32)
         }
         
-    public init(byte:Argon.Byte)
+    public init(byte:Proton.Byte)
         {
         self = .byte(byte)
         }
@@ -362,8 +362,8 @@ public enum ValueHolder:Comparable
             }
         else
             {
-            let word = incoming! & ~(Argon.kTagBitsMask << Argon.kTagBitsShift)
-            switch(Argon.HeaderTag(rawValue: (incoming ?? 0).tag)!)
+            let word = incoming! & ~(Proton.kTagBitsMask << Proton.kTagBitsShift)
+            switch(Proton.HeaderTag(rawValue: (incoming ?? 0).tag)!)
                 {
                 case .integer:
                     self = .integer(Int64(bitPattern: word))
@@ -382,14 +382,14 @@ public enum ValueHolder:Comparable
                 case .address:
                     self = ValueHolder.objectValue(for: word)
                 case .bits:
-                    self = .bits(word & ~Argon.kTagBitsMask)
+                    self = .bits(word & ~Proton.kTagBitsMask)
                 case .persistent:
                     fatalError("This should have been implemented")
                 }
             }
         }
         
-    public func copyAddress() -> Argon.Address
+    public func copyAddress() -> Proton.Address
         {
         switch(self)
             {
@@ -407,19 +407,19 @@ public enum ValueHolder:Comparable
         }
         
     @inline(__always)
-    public mutating func store(atIndex index:SlotIndex,atAddress:Argon.Address)
+    public mutating func store(atIndex index:SlotIndex,atAddress:Proton.Address)
         {
         self.store(atAddress: atAddress + index)
         }
         
     @inline(__always)
-    public mutating func store(atIndex index:Int,atAddress:Argon.Address)
+    public mutating func store(atIndex index:Int,atAddress:Proton.Address)
         {
         self.store(atAddress: atAddress + SlotIndex(index: index))
         }
         
     @inline(__always)
-    public mutating func store(atAddress address:Argon.Address)
+    public mutating func store(atAddress address:Proton.Address)
         {
         switch(self)
             {

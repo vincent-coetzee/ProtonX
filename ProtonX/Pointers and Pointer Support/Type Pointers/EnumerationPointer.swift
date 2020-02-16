@@ -25,7 +25,7 @@ public class EnumerationCasePointer:ObjectPointer
     public static let kEnumerationCaseAssociatedValueCountIndex = SlotIndex.five
     public static let kEnumerationCaseAssociatedValueTypesIndex = SlotIndex.six
 
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(7)
         }
@@ -92,7 +92,7 @@ public class EnumerationCasePointer:ObjectPointer
         
     public func associatedValueTypePointer(at index:Int) -> TypePointer
         {
-        return(TypePointer(Argon.Address(addressAtIndexAtAddress(Self.kEnumerationCaseAssociatedValueTypesIndex,self.address))))
+        return(TypePointer(Proton.Address(addressAtIndexAtAddress(Self.kEnumerationCaseAssociatedValueTypesIndex,self.address))))
         }
         
     public init(_ enumerationCase:EnumerationCase)
@@ -115,7 +115,7 @@ public class EnumerationCasePointer:ObjectPointer
         fatalError("init(_:) has not been implemented")
     }
     
-    public required init(_ address: Argon.Address)
+    public required init(_ address: Proton.Address)
         {
         super.init(address)
         }
@@ -127,7 +127,7 @@ public class EnumerationPointer:TypePointer
     public static let kEnumerationCaseCountIndex = SlotIndex.ten + .two
     public static let kEnumerationCasesIndex = SlotIndex.ten + .three
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(14)
         }
@@ -181,7 +181,7 @@ public class EnumerationPointer:TypePointer
             }
         }
     
-    public required init(_ address: Argon.Address)
+    public required init(_ address: Proton.Address)
         {
         super.init(address)
         }

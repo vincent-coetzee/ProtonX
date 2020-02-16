@@ -60,7 +60,7 @@ public class ScalarPointer:ValuePointer,Key
 //        return(MemoryLayout<Word>.stride)
 //        }
     
-    public var scalarType:Argon.ScalarType
+    public var scalarType:Proton.ScalarType
 
     public var integerValue:Int64
         {
@@ -110,7 +110,7 @@ public class ScalarPointer:ValuePointer,Key
             }
         }
         
-    public var float32Value:Argon.Float32
+    public var float32Value:Proton.Float32
         {
         get
             {
@@ -183,40 +183,40 @@ public class ScalarPointer:ValuePointer,Key
 //        return(0)
 //        }
         
-    public init(type:Argon.ScalarType)
+    public init(type:Proton.ScalarType)
         {
         fatalError()
         }
     
-    public init(float:Argon.Float32)
+    public init(float:Proton.Float32)
         {
-        self.scalarType = Argon.ScalarType.float32
-        super.init(Argon.Address(bitPattern: Int64(float.bitPattern)))
+        self.scalarType = Proton.ScalarType.float32
+        super.init(Proton.Address(bitPattern: Int64(float.bitPattern)))
         }
         
     public init(int:Int)
         {
-        self.scalarType = Argon.ScalarType.integer
-        super.init(Argon.Address(bitPattern: Int64(int)))
+        self.scalarType = Proton.ScalarType.integer
+        super.init(Proton.Address(bitPattern: Int64(int)))
         }
         
     public init(word:Word)
         {
-        self.scalarType = Argon.ScalarType.uinteger
+        self.scalarType = Proton.ScalarType.uinteger
         super.init(word)
         }
         
     public init(type:TypePointer)
         {
         Header(wordAtIndexAtAddress(.zero,type.address)).valueType = .float32
-        self.scalarType = Argon.ScalarType.float32
+        self.scalarType = Proton.ScalarType.float32
         super.init(type.address)
         }
         
-    public required init(_ address:Argon.Address)
+    public required init(_ address:Proton.Address)
         {
         let type = Header(wordAtIndexAtAddress(.zero,address)).valueType
-        self.scalarType = Argon.ScalarType(type)
+        self.scalarType = Proton.ScalarType(type)
         super.init(address)
         }
     
@@ -262,7 +262,7 @@ public class ScalarPointer:ValuePointer,Key
         return(false)
         }
         
-    public func store(atAddress pointer:Argon.Address)
+    public func store(atAddress pointer:Proton.Address)
         {
         setAddressAtAddress(self.taggedAddress,pointer)
         }

@@ -38,7 +38,7 @@ extension Int
         
     public func withTagBitsZeroed() -> Int
         {
-        return(self & ~(Self(Argon.kTagBitsMask) << Self(Argon.kTagBitsShift)))
+        return(self & ~(Self(Proton.kTagBitsMask) << Self(Proton.kTagBitsShift)))
         }
         
     public func withTagAndSignBitsCleared() -> Int
@@ -50,8 +50,8 @@ extension Int
 
 extension Int:CachedPointer
     {
-    public var taggedAddress: Argon.Address
+    public var taggedAddress: Proton.Address
         {
-        return(Argon.Address(self))
+        return(Proton.Address(self))
         }
     }

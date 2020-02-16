@@ -27,12 +27,12 @@ public class ValuePointer:Pointer,Equatable
         return(lhs.address == rhs.address)
         }
         
-    public class var totalSlotCount:Argon.SlotCount
+    public class var totalSlotCount:Proton.SlotCount
         {
         fatalError("Should have been overridden")
         }
         
-    public let address:Argon.Address
+    public let address:Proton.Address
     public let _index:Word
     private var _segment:MemorySegment?
     
@@ -63,12 +63,12 @@ public class ValuePointer:Pointer,Equatable
         return(self.address.bitString)
         }
         
-    public var taggedAddress:Argon.Address
+    public var taggedAddress:Proton.Address
         {
         return(RawMemory.taggedAddress(self.address))
         }
         
-    public var untaggedAddress:Argon.Address
+    public var untaggedAddress:Proton.Address
         {
         return(self.address)
         }
@@ -90,14 +90,14 @@ public class ValuePointer:Pointer,Equatable
     public init()
         {
         self.address = 0
-        self._index = Argon.nextIndex
+        self._index = Proton.nextIndex
         self.initSlots()
         }
         
-    required public init(_ address:Argon.Address)
+    required public init(_ address:Proton.Address)
         {
-        self.address = address & ~Argon.kTagBitsMask
-        self._index = Argon.nextIndex
+        self.address = address & ~Proton.kTagBitsMask
+        self._index = Proton.nextIndex
         self.initSlots()
         }
         
@@ -124,7 +124,7 @@ public class ValuePointer:Pointer,Equatable
         return(Word(self.address))
         }
         
-    public func makeInstance(in segment:MemorySegment = Memory.managedSegment) -> Argon.Address
+    public func makeInstance(in segment:MemorySegment = Memory.managedSegment) -> Proton.Address
         {
         fatalError("This should not be called here")
         }

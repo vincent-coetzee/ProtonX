@@ -72,13 +72,13 @@ extension String:HashableValue,Key
         return(MemoryLayout<Word>.stride)
         }
         
-    public func store(atAddress:Argon.Address)
+    public func store(atAddress:Proton.Address)
         {
         let address = ImmutableStringPointer(self).address
-        setAddressAtIndexAtAddress(address,.zero,atAddress)
+        setAddressAtAddress(address,atAddress)
         }
         
-    public init(atAddress:Argon.Address)
+    public init(atAddress:Proton.Address)
         {
         self.init(ImmutableStringPointer(atAddress).string)
         }
@@ -105,7 +105,7 @@ extension String:HashableValue,Key
         return(SlotIndex(index: self.linkingHash))
         }
     
-    public var taggedAddress: Argon.Address
+    public var taggedAddress: Proton.Address
         {
         let stringPointer = ImmutableStringPointer(self)
         return(stringPointer.taggedAddress)

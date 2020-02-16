@@ -27,7 +27,7 @@ public class TypePointer:PackageElementPointer
     public static let kTypeFlagsIndex = SlotIndex.four
     public static let kTypeInstanceTypeIndex = SlotIndex.five
     
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(6)
         }
@@ -104,14 +104,14 @@ public class TypePointer:PackageElementPointer
             }
         }
         
-    public override var objectStrideInBytes:Argon.ByteCount
+    public override var objectStrideInBytes:Proton.ByteCount
         {
 //        let stride = MemoryLayout<Word>.stride
 //        return(Argon.ByteCount(max(self.slotArrayPointer.count * stride,stride)))
-        return(Argon.ByteCount(0))
+        return(Proton.ByteCount(0))
         }
         
-    public override var taggedAddress:Argon.Address
+    public override var taggedAddress:Proton.Address
         {
         return(RawMemory.taggedAddress(self.address))
         }
@@ -136,23 +136,23 @@ public class TypePointer:PackageElementPointer
 //        self.name = name
         }
         
-    public init(_ name:String,_ address:Argon.Address)
+    public init(_ name:String,_ address:Proton.Address)
         {
         super.init(address)
         self.name = name
         }
         
-    public required  init(_ address:Argon.Address)
+    public required  init(_ address:Proton.Address)
         {
         super.init(address)
         }
         
     public func typedValue(of word:Word) -> Value?
         {
-        return(Argon.UInteger(word))
+        return(Proton.UInteger(word))
         }
         
-    public override func makeInstance(in segment:MemorySegment = Memory.managedSegment) -> Argon.Address
+    public override func makeInstance(in segment:MemorySegment = Memory.managedSegment) -> Proton.Address
         {
         fatalError("A type itself should not be making instances")
         }

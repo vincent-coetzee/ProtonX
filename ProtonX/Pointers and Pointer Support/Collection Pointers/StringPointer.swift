@@ -80,7 +80,7 @@ public class StringPointer:ObjectPointer
         return(true)
         }
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(5)
         }
@@ -124,7 +124,7 @@ public class StringPointer:ObjectPointer
             let view = newValue.utf8
             var stringIndex = view.startIndex
             var index = 0
-            let flag = Int8(Argon.kTagBitsMask) << Int8(4)
+            let flag = Int8(Proton.kTagBitsMask) << Int8(4)
             for _ in 0..<stringCount
                 {
                 if (index + 1) % 8 == 0 && index != 0

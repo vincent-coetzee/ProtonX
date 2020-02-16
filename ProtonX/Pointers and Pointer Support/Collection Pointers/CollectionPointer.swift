@@ -14,7 +14,7 @@ public class CollectionPointer:ObjectPointer
     public static let kCollectionCountIndex = SlotIndex.two
     public static let kCollectionElementTypeIndex = SlotIndex.three
     
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(4)
         }
@@ -46,7 +46,7 @@ public class CollectionPointer:ObjectPointer
             }
         }
         
-    public required init(_ word:Argon.Address)
+    public required init(_ word:Proton.Address)
         {
         super.init(word)
         }

@@ -14,7 +14,7 @@ public class PackagePointer:TypePointer
     public static let kPackageContentDictionaryIndex = SlotIndex.ten + .one
     public static let kPackageParentPackageIndex = SlotIndex.ten + .two
     
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(13)
         }

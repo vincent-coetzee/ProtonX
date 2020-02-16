@@ -13,16 +13,16 @@ public class ScalarTypePointer:TypePointer
     {
     public static let kScalarTypeIndex = SlotIndex.ten + .one
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(12)
         }
         
-    public var scalarType:Argon.ScalarType
+    public var scalarType:Proton.ScalarType
         {
         get
             {
-            return(Argon.ScalarType(rawValue: wordAtIndexAtAddress(Self.kScalarTypeIndex,self.address))!)
+            return(Proton.ScalarType(rawValue: wordAtIndexAtAddress(Self.kScalarTypeIndex,self.address))!)
             }
         set
             {
@@ -30,7 +30,7 @@ public class ScalarTypePointer:TypePointer
             }
         }
         
-    public func makeInstance() -> Argon.Address
+    public func makeInstance() -> Proton.Address
         {
         switch(self.scalarType)
             {
@@ -60,17 +60,17 @@ public class ScalarTypePointer:TypePointer
             case .bits:
                 return(word)
             case .integer:
-                return(Argon.Integer(bitPattern: word))
+                return(Proton.Integer(bitPattern: word))
             case .uinteger:
-                return(Argon.UInteger(word))
+                return(Proton.UInteger(word))
             case .boolean:
-                return(Argon.Boolean(word))
+                return(Proton.Boolean(word))
             case .byte:
-                return(Argon.Byte(word))
+                return(Proton.Byte(word))
             case .none:
                 return(nil)
             case .float32:
-                return(Argon.Float32(bitPattern: word))
+                return(Proton.Float32(bitPattern: word))
             case .float64:
                 fatalError("You need to think this through")
             }

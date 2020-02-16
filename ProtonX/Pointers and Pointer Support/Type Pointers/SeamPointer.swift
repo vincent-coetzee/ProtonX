@@ -16,7 +16,7 @@ public class SeamPointer:TypePointer
     public static let kSeamContractArrayIndex = SlotIndex.seven
     public static let kSeamInstanceHasBytesIndex = SlotIndex.eight
     
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(9)
         }
@@ -100,7 +100,7 @@ public class SeamPointer:TypePointer
     public var fitsInWord:Bool
         {
         let flag = self.instanceType
-        return(flag == Argon.kTypeInteger || flag == Argon.kTypeUInteger || flag == Argon.kTypeBoolean || flag == Argon.kTypeByte || flag == Argon.kTypeFloat32)
+        return(flag == Proton.kTypeInteger || flag == Proton.kTypeUInteger || flag == Proton.kTypeBoolean || flag == Proton.kTypeByte || flag == Proton.kTypeFloat32)
         }
         
     public var instanceHasBytes:Bool

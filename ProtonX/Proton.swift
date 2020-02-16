@@ -9,7 +9,7 @@
 import Foundation
 import RawMemory
     
-public class Argon
+public class Proton
     {
     public class func greatestCommonDivisor(_ aIn : Int,_ bIn : Int) -> Int
         {
@@ -324,7 +324,7 @@ public class Argon
             let word1 = Word(alignment) - 1
             let word2 = ~Word(alignment - 1)
             let word0 = Word(self.count)
-            return(Argon.SlotCount(word0 + (word1 & word2)))
+            return(Proton.SlotCount(word0 + (word1 & word2)))
             }
         }
         
@@ -362,7 +362,7 @@ public class Argon
         case none
         case bits
         
-        public init(_ tag:Argon.ValueType)
+        public init(_ tag:Proton.ValueType)
             {
             switch(tag)
                 {
@@ -385,7 +385,7 @@ public class Argon
                 }
             }
             
-        public init(_ tag:Argon.HeaderTag)
+        public init(_ tag:Proton.HeaderTag)
             {
             switch(tag)
                 {
@@ -423,9 +423,9 @@ public class Argon
                 case .none:
                     return("none")
                 case .float32:
-                    return("\(Argon.Float32(bitPattern: UInt32(word)))")
+                    return("\(Proton.Float32(bitPattern: UInt32(word)))")
                 case .float64:
-                    return("\(Argon.Float64(bitPattern: UInt64(word)))")
+                    return("\(Proton.Float64(bitPattern: UInt64(word)))")
                 }
             }
         }
@@ -441,7 +441,7 @@ public class Argon
     }
 
 
-extension Argon.Immediate
+extension Proton.Immediate
     {
     public init(from: Word)
         {

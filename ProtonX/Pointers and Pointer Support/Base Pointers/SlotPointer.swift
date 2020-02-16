@@ -23,7 +23,7 @@ public class SlotPointer:ObjectPointer
     public static let kSlotIndexIndex = SlotIndex.ten + .three      // the index of the slot in the object, the header index is 0, the type is 1, so this should be t least 2
     public static let kSlotBaseSlotCount = SlotIndex.ten + .four    // dunno
 
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(15)
         }
@@ -87,8 +87,8 @@ public class SlotPointer:ObjectPointer
     public init(name:String,type:TypePointer?,flags:Word = 0,index:SlotIndex,segment:MemorySegment = Memory.managedSegment)
         {
         let namePointer = ImmutableStringPointer(name)
-        let byteCount = Argon.ByteCount(Self.totalSlotCount)
-        var newSlotCount = Argon.SlotCount(0)
+        let byteCount = Proton.ByteCount(Self.totalSlotCount)
+        var newSlotCount = Proton.SlotCount(0)
         let address = segment.allocate(byteCount: byteCount,slotCount: &newSlotCount)
         super.init(address)
         self.isMarked = true
@@ -101,7 +101,7 @@ public class SlotPointer:ObjectPointer
         self.slotTypePointer = type
         }
     
-    public required init(_ address: Argon.Address)
+    public required init(_ address: Proton.Address)
         {
         super.init(address)
         }

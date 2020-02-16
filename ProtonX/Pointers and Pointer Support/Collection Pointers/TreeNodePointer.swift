@@ -17,7 +17,7 @@ public class TreeNodePointer:ObjectPointer
     public static let kTreeNodeKeyIndex = SlotIndex.five
     public static let kTreeNodeValueIndex = SlotIndex.six
     
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(7)
         }
@@ -60,7 +60,7 @@ public class TreeNodePointer:ObjectPointer
             }
         }
         
-    public var keyAddress:Argon.Address
+    public var keyAddress:Proton.Address
         {
         get
             {
@@ -72,7 +72,7 @@ public class TreeNodePointer:ObjectPointer
             }
         }
 
-    public var valueAddress:Argon.Address
+    public var valueAddress:Proton.Address
         {
         get
             {
@@ -84,7 +84,7 @@ public class TreeNodePointer:ObjectPointer
             }
         }
         
-    public var leftNodeAddress:Argon.Address
+    public var leftNodeAddress:Proton.Address
         {
         get
             {
@@ -96,7 +96,7 @@ public class TreeNodePointer:ObjectPointer
             }
         }
         
-    public var parentNodeAddress:Argon.Address
+    public var parentNodeAddress:Proton.Address
         {
         get
             {
@@ -108,7 +108,7 @@ public class TreeNodePointer:ObjectPointer
             }
         }
         
-    public var rightNodeAddress:Argon.Address
+    public var rightNodeAddress:Proton.Address
         {
         get
             {
@@ -205,7 +205,7 @@ public class TreeNodePointer:ObjectPointer
         return(node!)
         }
         
-    public func findValue<K>(forKey:K) -> Argon.Address? where K:Key
+    public func findValue<K>(forKey:K) -> Proton.Address? where K:Key
         {
         return(self.findNode(forKey: forKey)?.valueAddress)
         }

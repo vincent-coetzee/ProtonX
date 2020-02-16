@@ -9,7 +9,7 @@
 import Foundation
 import RawMemory
 
-extension Argon.Float64
+extension Proton.Float64
     {
     public init(_ double:Double)
         {

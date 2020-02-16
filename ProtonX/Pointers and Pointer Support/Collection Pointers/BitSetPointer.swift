@@ -102,7 +102,7 @@ public class BitSetPointer:CollectionPointer
     public static let kBitSetWordCountIndex = SlotIndex.five
     public static let kBitSetWordsIndex = SlotIndex.six
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(7)
         }
@@ -328,7 +328,7 @@ public class BitSetPointer:CollectionPointer
             let wordBitWidth = Word.bitWidth
             if bitCount % wordBitWidth != 0
                 {
-                throw(Argon.Error.bitCountMustBeMultipleOfWordBitWidth)
+                throw(Proton.Error.bitCountMustBeMultipleOfWordBitWidth)
                 }
             let wordCount = bitCount / Word.bitWidth
             self.words = Array<Word>(repeating: 0, count: wordCount)
@@ -778,7 +778,7 @@ public struct BitRange
         self.wordTo = to - ( self.wordIndex * Word.bitWidth ) - 1
         if self.wordTo >= Word.bitWidth
             {
-            throw(Argon.Error.bitRangeWidthMustBeLessThanWordBitWidth)
+            throw(Proton.Error.bitRangeWidthMustBeLessThanWordBitWidth)
             }
         }
     }

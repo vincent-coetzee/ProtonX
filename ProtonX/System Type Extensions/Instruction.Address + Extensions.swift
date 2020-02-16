@@ -11,41 +11,41 @@ import RawMemory
 
 postfix operator ++
 
-extension Argon.Address
+extension Proton.Address
     {
-    public static func +(lhs:Argon.Address,rhs:SlotIndex) -> Self
+    public static func +(lhs:Proton.Address,rhs:SlotIndex) -> Self
         {
-        return(lhs + Argon.Address(rhs.index * MemoryLayout<Word>.stride))
+        return(lhs + Proton.Address(rhs.index * MemoryLayout<Word>.stride))
         }
         
     @discardableResult
     public static postfix func ++(lhs:inout Self) -> Self
         {
         let before = lhs
-        lhs += Argon.Address(MemoryLayout<Self>.size)
+        lhs += Proton.Address(MemoryLayout<Self>.size)
         return(before)
         }
         
     public static func +(lhs:Self,rhs:SlotOffset) -> Self
         {
-        return(lhs + Argon.Address(rhs.offset))
+        return(lhs + Proton.Address(rhs.offset))
         }
         
     public static let zero = 0
 
     public var addressesInstancePointer:Bool
         {
-        return(wordAtAddress(untaggedAddress(self)).tag == Argon.kTagBitsAddress)
+        return(wordAtAddress(untaggedAddress(self)).tag == Proton.kTagBitsAddress)
         }
         
     public var addressesStringPointer:Bool
         {
         let word = wordAtAddress(untaggedAddress(self))
-        if word.tag != Argon.kTagBitsAddress
+        if word.tag != Proton.kTagBitsAddress
             {
             return(false)
             }
-        return(wordAtAddress(untaggedAddress(word)).objectType == Argon.kTypeString)
+        return(wordAtAddress(untaggedAddress(word)).objectType == Proton.kTypeString)
         }
         
     public var addressedInstanceTypeName:String
@@ -65,27 +65,27 @@ extension Argon.Address
         
     public var isInstancePointer:Bool
         {
-        return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.HeaderTag.address.rawValue)
+        return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.HeaderTag.address.rawValue)
         }
         
     public var isInteger:Bool
         {
-        return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.kTagBitsInteger)
+        return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsInteger)
         }
         
     public var isUInteger:Bool
         {
-        return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.kTagBitsUInteger)
+        return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsUInteger)
         }
         
     public var isBoolean:Bool
         {
-        return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.kTagBitsBoolean)
+        return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsBoolean)
         }
         
     public var isFloat:Bool
         {
-        return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.kTagBitsFloat32)
+        return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsFloat32)
         }
         
 //    public var isDouble:Bool
@@ -95,6 +95,6 @@ extension Argon.Address
 
     public var isByte:Bool
         {
-        return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.kTagBitsByte)
+        return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsByte)
         }
     }

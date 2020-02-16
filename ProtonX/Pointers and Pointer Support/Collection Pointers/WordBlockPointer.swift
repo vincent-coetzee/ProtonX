@@ -47,16 +47,16 @@ public class WordBlockPointer:CollectionPointer
         return(SlotIndex.eight)
         }
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(9)
         }
         
-    public var totalByteCount:Argon.ByteCount
+    public var totalByteCount:Proton.ByteCount
         {
         get
             {
-            return(Argon.ByteCount(wordAtIndexAtAddress(Self.kBufferTotalByteCountIndex,self.address)))
+            return(Proton.ByteCount(wordAtIndexAtAddress(Self.kBufferTotalByteCountIndex,self.address)))
             }
         set
             {
@@ -88,11 +88,11 @@ public class WordBlockPointer:CollectionPointer
             }
         }
         
-    public var totalElementByteCount:Argon.ByteCount
+    public var totalElementByteCount:Proton.ByteCount
         {
         get
             {
-            return(Argon.ByteCount(wordAtIndexAtAddress(Self.kBufferTotalElementByteCountIndex,self.address)))
+            return(Proton.ByteCount(wordAtIndexAtAddress(Self.kBufferTotalElementByteCountIndex,self.address)))
             }
         set
             {
@@ -109,11 +109,11 @@ public class WordBlockPointer:CollectionPointer
         {
         let theElementStride = elementType.objectStrideInBytes
         let theSlotStride = MemoryLayout<Word>.stride
-        let overallAlignment = Argon.lowestCommonMultiple(theElementStride.count,theSlotStride)
-        let theElementByteCount = Argon.ByteCount(theElementStride.count * elementCount).aligned(to: overallAlignment)
-        let theSlotByteCount = Argon.ByteCount(theSlotStride * WordBlockPointer.totalSlotCount.count).aligned(to: overallAlignment)
+        let overallAlignment = Proton.lowestCommonMultiple(theElementStride.count,theSlotStride)
+        let theElementByteCount = Proton.ByteCount(theElementStride.count * elementCount).aligned(to: overallAlignment)
+        let theSlotByteCount = Proton.ByteCount(theSlotStride * WordBlockPointer.totalSlotCount.count).aligned(to: overallAlignment)
         let theTotalByteCount = theSlotByteCount + theElementByteCount
-        var newSlotCount = Argon.SlotCount(0)
+        var newSlotCount = Proton.SlotCount(0)
         super.init(segment.allocate(byteCount: theTotalByteCount,slotCount: &newSlotCount))
         self.elementTypePointer = elementType
         self.maximumElementCount = elementCount
@@ -130,12 +130,12 @@ public class WordBlockPointer:CollectionPointer
         }
         
     @inline(__always)
-    public func addressOfElement(atIndex:SlotIndex) -> Argon.Address
+    public func addressOfElement(atIndex:SlotIndex) -> Proton.Address
         {
         return(self.address + SlotOffset(stride: self.elementStrideInBytes,index: atIndex))
         }
         
-    public var wordAddress:Argon.Address
+    public var wordAddress:Proton.Address
         {
         return(self.address + Self.kBufferElementsIndex)
         }
@@ -152,7 +152,7 @@ public class WordBlockPointer:CollectionPointer
             }
         }
         
-    public func copy(from buffer: Argon.Address,elementCount:Int)
+    public func copy(from buffer: Proton.Address,elementCount:Int)
         {
         let totalBytes = (elementCount + WordBlockPointer.totalSlotCount.count) * MemoryLayout<Word>.stride
         memcpy(UnsafeMutableRawPointer(bitPattern: UInt(self.address)),UnsafeMutableRawPointer(bitPattern: UInt(self.address)),totalBytes)

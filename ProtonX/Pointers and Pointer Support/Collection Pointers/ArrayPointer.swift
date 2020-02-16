@@ -18,7 +18,7 @@ public class ArrayPointer:CollectionPointer
     public static let kArrayRangeUpperBoundIndex = SlotIndex.eight
     public static let kArrayRangeEnumerationIndex = SlotIndex.nine
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(10)
         }
@@ -32,7 +32,7 @@ public class ArrayPointer:CollectionPointer
     public enum ArrayIndex
         {
         case none
-        case enumeration(Argon.Address)
+        case enumeration(Proton.Address)
         case fixed(Word)
         case range(Int)
         case vector(Word)
@@ -41,9 +41,9 @@ public class ArrayPointer:CollectionPointer
     public enum ArrayIndexType
         {
         case none
-        case enumeration(Argon.Address,Word,Word)
+        case enumeration(Proton.Address,Word,Word)
         case fixed(Word)
-        case range(Argon.Address,Int,Int)
+        case range(Proton.Address,Int,Int)
         case vector
         
         public var rawValue:Int
@@ -183,7 +183,7 @@ public class ArrayPointer:CollectionPointer
             }
         }
         
-    public var elementAddress:Argon.Address?
+    public var elementAddress:Proton.Address?
         {
         return(self.bufferPointer.wordAddress)
         }
@@ -294,7 +294,7 @@ public class ArrayPointer:CollectionPointer
         self.count += 1
         }
         
-    public required init(_ word:Argon.Address)
+    public required init(_ word:Proton.Address)
         {
         super.init(word)
         }

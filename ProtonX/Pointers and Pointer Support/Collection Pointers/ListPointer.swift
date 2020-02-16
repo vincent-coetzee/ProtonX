@@ -14,12 +14,12 @@ public class ListPointer:CollectionPointer
     public static let kListFirstNodePointerIndex = SlotIndex.five
     public static let kListLastNodePointerIndex = SlotIndex.six
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(7)
         }
         
-    public var firstElementAddress:Argon.Address
+    public var firstElementAddress:Proton.Address
         {
         get
             {
@@ -40,7 +40,7 @@ public class ListPointer:CollectionPointer
             }
         }
         
-    public var firstNodeAddress:Argon.Address
+    public var firstNodeAddress:Proton.Address
         {
         get
             {
@@ -52,7 +52,7 @@ public class ListPointer:CollectionPointer
             }
         }
         
-    public var lastNodeAddress:Argon.Address
+    public var lastNodeAddress:Proton.Address
         {
         get
             {
@@ -98,7 +98,7 @@ public class ListPointer:CollectionPointer
             }
         }
         
-    public var lastElementAddress:Argon.Address
+    public var lastElementAddress:Proton.Address
         {
         get
             {

@@ -14,7 +14,7 @@ public class ContractPointer:TypePointer
     public static let kContractMethodArrayIndex = SlotIndex.ten
     public static let kContractConstantSlotArrayIndex = SlotIndex.ten + .one
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(12)
         }

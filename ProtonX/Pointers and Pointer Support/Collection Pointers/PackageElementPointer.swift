@@ -14,7 +14,7 @@ public class PackageElementPointer:ObjectPointer,NamedPointer
     public static let kPackageElementNameIndex = SlotIndex.nine
     public static let kPackageElementPackageIndex = SlotIndex.ten
     
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(11)
         }

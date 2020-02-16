@@ -11,11 +11,11 @@ import RawMemory
     
 public class ImmutableStringPointer:StringPointer
     {
-    public class func storageBytesRequired(for string:String) -> Argon.ByteCount
+    public class func storageBytesRequired(for string:String) -> Proton.ByteCount
         {
         let sevens = (string.utf8.count + 1) / 7 + 1
         let eights = sevens.aligned(to: MemoryLayout<Word>.stride) * MemoryLayout<Word>.stride
-        return(Argon.ByteCount(eights))
+        return(Proton.ByteCount(eights))
         }
         
     public class var kFillerWord:Word
@@ -42,7 +42,7 @@ public class ImmutableStringPointer:StringPointer
         self.init(segment.allocateStringConstant(contents,segment: segment).address)
         }
         
-    public required init(_ address:Argon.Address)
+    public required init(_ address:Proton.Address)
         {
         super.init(address)
         }

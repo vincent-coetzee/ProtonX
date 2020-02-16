@@ -27,7 +27,7 @@ public class MethodInstancePointer:CodeBlockPointer
     public static let kMethodInstanceNameIndex = SlotIndex.six
     public static let kMethodInstanceBaseSlotCount = SlotIndex.seven
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(8)
         }
@@ -57,7 +57,7 @@ public class MethodInstancePointer:CodeBlockPointer
         self.namePointer = ImmutableStringPointer(name)
         }   
     
-    public required init(_ address: Argon.Address)
+    public required init(_ address: Proton.Address)
         {
         super.init(address)
         }

@@ -49,7 +49,7 @@
 		BF0045E423E5597100F07111 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00459423E5597000F07111 /* Timer.swift */; };
 		BF0045E523E5597100F07111 /* EnglishWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00459523E5597000F07111 /* EnglishWord.swift */; };
 		BF0045E623E5597100F07111 /* Words.text in Resources */ = {isa = PBXBuildFile; fileRef = BF00459623E5597000F07111 /* Words.text */; };
-		BF0045E723E5597100F07111 /* Argon.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00459723E5597000F07111 /* Argon.swift */; };
+		BF0045E723E5597100F07111 /* Proton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00459723E5597000F07111 /* Proton.swift */; };
 		BF0045E823E5597100F07111 /* ContractPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00459A23E5597000F07111 /* ContractPointer.swift */; };
 		BF0045E923E5597100F07111 /* EnumerationPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00459B23E5597000F07111 /* EnumerationPointer.swift */; };
 		BF0045EA23E5597100F07111 /* ScalarTypePointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00459C23E5597000F07111 /* ScalarTypePointer.swift */; };
@@ -148,7 +148,7 @@
 		BF00459423E5597000F07111 /* Timer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		BF00459523E5597000F07111 /* EnglishWord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnglishWord.swift; sourceTree = "<group>"; };
 		BF00459623E5597000F07111 /* Words.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Words.text; sourceTree = "<group>"; };
-		BF00459723E5597000F07111 /* Argon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Argon.swift; sourceTree = "<group>"; };
+		BF00459723E5597000F07111 /* Proton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Proton.swift; sourceTree = "<group>"; };
 		BF00459A23E5597000F07111 /* ContractPointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContractPointer.swift; sourceTree = "<group>"; };
 		BF00459B23E5597000F07111 /* EnumerationPointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnumerationPointer.swift; sourceTree = "<group>"; };
 		BF00459C23E5597000F07111 /* ScalarTypePointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScalarTypePointer.swift; sourceTree = "<group>"; };
@@ -233,7 +233,7 @@
 		BF00455623E5592D00F07111 /* ProtonX */ = {
 			isa = PBXGroup;
 			children = (
-				BF00459723E5597000F07111 /* Argon.swift */,
+				BF00459723E5597000F07111 /* Proton.swift */,
 				BF00456C23E5596F00F07111 /* BitSet.swift */,
 				BF00460C23E5598400F07111 /* RawMemory */,
 				BF00458523E5596F00F07111 /* Instructions */,
@@ -587,7 +587,7 @@
 				BF0045D923E5597000F07111 /* IndexVector.swift in Sources */,
 				BF0045E423E5597100F07111 /* Timer.swift in Sources */,
 				BF0045C423E5597000F07111 /* CodeSegment.swift in Sources */,
-				BF0045E723E5597100F07111 /* Argon.swift in Sources */,
+				BF0045E723E5597100F07111 /* Proton.swift in Sources */,
 				BF5DEF0D23F022A40010D55D /* Mutex.swift in Sources */,
 				BF0045F623E5597100F07111 /* ListPointer.swift in Sources */,
 				BF0045EE23E5597100F07111 /* ObjectPointer.swift in Sources */,

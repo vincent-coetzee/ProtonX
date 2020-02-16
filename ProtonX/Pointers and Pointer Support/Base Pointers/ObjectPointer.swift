@@ -34,24 +34,24 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
     public static let kObjectHeaderIndex = SlotIndex.zero
     public static let kObjectTypeIndex = SlotIndex.one
         
-    public class var slotSizeInBytes:Argon.ByteCount
+    public class var slotSizeInBytes:Proton.ByteCount
         {
-        return(Argon.ByteCount(MemoryLayout<Word>.stride))
+        return(Proton.ByteCount(MemoryLayout<Word>.stride))
         }
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(2)
         }
         
-    public override var taggedAddress:Argon.Address
+    public override var taggedAddress:Proton.Address
         {
-        return((self.address & ~(Argon.kTagBitsMask << Argon.kTagBitsShift)) | (Argon.kTagBitsAddress << Argon.kTagBitsShift))
+        return((self.address & ~(Proton.kTagBitsMask << Proton.kTagBitsShift)) | (Proton.kTagBitsAddress << Proton.kTagBitsShift))
         }
         
-    public override var untaggedAddress:Argon.Address
+    public override var untaggedAddress:Proton.Address
         {
-        return(self.address & ~(Argon.kTagBitsMask << Argon.kTagBitsShift))
+        return(self.address & ~(Proton.kTagBitsMask << Proton.kTagBitsShift))
         }
         
     public var typePointer:TypePointer?
@@ -78,14 +78,14 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
             }
         }
     
-    public var objectStrideInBytes:Argon.ByteCount
+    public var objectStrideInBytes:Proton.ByteCount
         {
-        return(Argon.ByteCount(2*MemoryLayout<Word>.stride))
+        return(Proton.ByteCount(2*MemoryLayout<Word>.stride))
         }
         
     private var pointerSlotCache:[SlotIndex:ObjectPointer] = [:]
 
-    public required init(_ address:Argon.Address)
+    public required init(_ address:Proton.Address)
         {
         super.init(address)
         self.isMarked = true
@@ -101,18 +101,18 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
         Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(self.headerWord.bitString)"),.space(1),.natural("HEADER(TYPE=\(self.valueType),SLOTS=\(self.totalSlotCount),EXTRA=\(self.hasExtraSlotsAtEnd),FORWARD=\(self.isForwarded))"))
         }
         
-    private func dumpWord(_ slotWord:Word,at address:Argon.Address)
+    private func dumpWord(_ slotWord:Word,at address:Proton.Address)
         {
         switch(slotWord.tag)
             {
-            case Argon.kTagBitsAddress:
+            case Proton.kTagBitsAddress:
                 let objectHeader = HeaderPointer(RawMemory.untaggedAddress(slotWord))
                 let type = objectHeader.valueType
                 let stringValue = type == .string ? "\"" + ImmutableStringPointer(RawMemory.untaggedAddress(slotWord)).string + "\"" : ""
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(objectHeader.headerWord.bitString)"),.space(1),.natural("POINTER TO \(type) \(stringValue)"))
-            case Argon.kTagBitsInteger:
+            case Proton.kTagBitsInteger:
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("INTEGER(\(Int64(bitPattern: slotWord)))"))
-            case Argon.kTagBitsUInteger:
+            case Proton.kTagBitsUInteger:
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("UINTEGER(\(Int64(bitPattern: slotWord)))"))
 //                        case Argon.kTagBitsUnsigned:
 //                            Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("UNSIGNED(\(slotWord))"))
@@ -120,13 +120,13 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
 //                let character = Unicode.Scalar(UInt16(untaggedWord(slotWord)))
 //                let string = String(character!)
 //                Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("CHARACTER(\(string))"))
-            case Argon.kTagBitsByte:
+            case Proton.kTagBitsByte:
                 let byte = UInt8(slotWord)
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("BYTE(\(byte))"))
-            case Argon.kTagBitsBoolean:
+            case Proton.kTagBitsBoolean:
                 let boolean = slotWord == 1
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("BOOLEAN(\(boolean))"))
-            case Argon.kTagBitsFloat32:
+            case Proton.kTagBitsFloat32:
                 let float = Float(bitPattern: slotWord)
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("FLOAT32(\(float))"))
             default:
@@ -159,7 +159,7 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
         return(false)
         }
         
-    public func store(atAddress address:Argon.Address)
+    public func store(atAddress address:Proton.Address)
         {
         setAddressAtAddress(self.address,address)
         }

@@ -9,7 +9,7 @@
 import Foundation
 import RawMemory
 
-extension Argon.Integer:Value
+extension Proton.Integer:Value
     {
     public var bitString:String
         {
@@ -25,7 +25,7 @@ extension Argon.Integer:Value
         return(String(string.reversed()))
         }
         
-    public var taggedAddress:Argon.Address
+    public var taggedAddress:Proton.Address
         {
         return(taggedInteger(self))
         }
@@ -47,18 +47,18 @@ extension Argon.Integer:Value
         
     public func equals(_ value:Value) -> Bool
         {
-        if value is Argon.Integer
+        if value is Proton.Integer
             {
-            return(self == (value as! Argon.Integer))
+            return(self == (value as! Proton.Integer))
             }
         return(false)
         }
         
     public func isLessThan(_ value:Value) -> Bool
         {
-        if value is Argon.Integer
+        if value is Proton.Integer
             {
-            return(self < (value as! Argon.Integer))
+            return(self < (value as! Proton.Integer))
             }
         return(false)
         }
@@ -68,27 +68,27 @@ extension Argon.Integer:Value
         return(Word(bitPattern: self))
         }
         
-    public func store(atAddress pointer:Argon.Address)
+    public func store(atAddress pointer:Proton.Address)
         {
-        setAddressAtAddress(self.taggedAddress,pointer)
+        setIntegerAtAddress(self,pointer)
         }
         
-    public func withTagBitsZeroed() -> Argon.Integer
+    public func withTagBitsZeroed() -> Proton.Integer
         {
-        return(self & ~(Self(Argon.kTagBitsMask) << Self(Argon.kTagBitsShift)))
+        return(self & ~(Self(Proton.kTagBitsMask) << Self(Proton.kTagBitsShift)))
         }
         
         
-    public func withTagAndSignBitsCleared() -> Argon.Integer
+    public func withTagAndSignBitsCleared() -> Proton.Integer
         {
-        let mask:Argon.Integer = 1152921504606846975
+        let mask:Proton.Integer = 1152921504606846975
         return(self & mask)
         }
     }
     
-extension Argon.UInteger
+extension Proton.UInteger
     {
-    public var taggedAddress:Argon.Address
+    public var taggedAddress:Proton.Address
         {
         return(taggedUInteger(self))
         }
@@ -105,36 +105,36 @@ extension Argon.UInteger
         
     public func equals(_ value:Value) -> Bool
         {
-        if value is Argon.UInteger
+        if value is Proton.UInteger
             {
-            return(self == (value as! Argon.UInteger))
+            return(self == (value as! Proton.UInteger))
             }
         return(false)
         }
         
     public func isLessThan(_ value:Value) -> Bool
         {
-        if value is Argon.UInteger
+        if value is Proton.UInteger
             {
-            return(self < (value as! Argon.UInteger))
+            return(self < (value as! Proton.UInteger))
             }
         return(false)
         }
         
-    public func store(atAddress pointer:Argon.Address)
+    public func store(atAddress pointer:Proton.Address)
         {
         setAddressAtAddress(self.taggedAddress,pointer)
         }
         
-    public func withTagBitsZeroed() -> Argon.UInteger
+    public func withTagBitsZeroed() -> Proton.UInteger
         {
-        return(self & ~(Self(Argon.kTagBitsMask) << Self(Argon.kTagBitsShift)))
+        return(self & ~(Self(Proton.kTagBitsMask) << Self(Proton.kTagBitsShift)))
         }
     }
 
-extension Argon.Boolean:Value
+extension Proton.Boolean:Value
     {
-    public var taggedAddress:Argon.Address
+    public var taggedAddress:Proton.Address
         {
         return(taggedBoolean(self))
         }
@@ -166,9 +166,9 @@ extension Argon.Boolean:Value
         
     public func equals(_ value:Value) -> Bool
         {
-        if value is Argon.Boolean
+        if value is Proton.Boolean
             {
-            return(self == (value as! Argon.Boolean))
+            return(self == (value as! Proton.Boolean))
             }
         return(false)
         }
@@ -178,18 +178,18 @@ extension Argon.Boolean:Value
         return(false)
         }
         
-    public func store(atAddress pointer:Argon.Address)
+    public func store(atAddress pointer:Proton.Address)
         {
         setAddressAtAddress(self.taggedAddress,pointer)
         }
         
-    public func withTagBitsZeroed() -> Argon.Boolean
+    public func withTagBitsZeroed() -> Proton.Boolean
         {
         return(self)
         }
     }
     
-extension Argon.Float32:Value
+extension Proton.Float32:Value
     {
     public var bitString:String
         {
@@ -206,7 +206,7 @@ extension Argon.Float32:Value
         return(String(string.reversed()))
         }
         
-    public var taggedAddress:Argon.Address
+    public var taggedAddress:Proton.Address
         {
         return(taggedFloat32(self))
         }
@@ -238,41 +238,41 @@ extension Argon.Float32:Value
         
     public func equals(_ value:Value) -> Bool
         {
-        if value is Argon.Float32
+        if value is Proton.Float32
             {
-            return(self == (value as! Argon.Float32))
+            return(self == (value as! Proton.Float32))
             }
         return(false)
         }
         
     public func isLessThan(_ value:Value) -> Bool
         {
-        if value is Argon.Float32
+        if value is Proton.Float32
             {
-            return(self < (value as! Argon.Float32))
+            return(self < (value as! Proton.Float32))
             }
         return(false)
         }
         
-    public func store(atAddress pointer:Argon.Address)
+    public func store(atAddress pointer:Proton.Address)
         {
         setAddressAtAddress(self.taggedAddress,pointer)
         }
         
-    public func withTagBitsZeroed() -> Argon.Float32
+    public func withTagBitsZeroed() -> Proton.Float32
         {
         return(self)
         }
     }
 
-extension Argon.Float64:Value
+extension Proton.Float64:Value
     {
-    public static func ==(lhs:Argon.Float64,rhs:Argon.Float64) -> Bool
+    public static func ==(lhs:Proton.Float64,rhs:Proton.Float64) -> Bool
         {
         return(lhs.float64 == rhs.float64)
         }
         
-    public var taggedAddress:Argon.Address
+    public var taggedAddress:Proton.Address
         {
         return(0)
         }
@@ -320,20 +320,20 @@ extension Argon.Float64:Value
         return(false)
         }
         
-    public func store(atAddress pointer:Argon.Address)
+    public func store(atAddress pointer:Proton.Address)
         {
         setAddressAtAddress(self.taggedAddress,pointer)
         }
         
-    public func withTagBitsZeroed() -> Argon.Float64
+    public func withTagBitsZeroed() -> Proton.Float64
         {
         return(self)
         }
     }
 
-extension Argon.Byte:Value
+extension Proton.Byte:Value
     {
-    public var taggedAddress:Argon.Address
+    public var taggedAddress:Proton.Address
         {
         return(taggedByte(self))
         }
@@ -353,16 +353,16 @@ extension Argon.Byte:Value
 //        return(Word(self))
 //        }
         
-    public func store(atAddress pointer:Argon.Address)
+    public func store(atAddress pointer:Proton.Address)
         {
         setAddressAtAddress(self.taggedAddress,pointer)
         }
         
     public func equals(_ value:Value) -> Bool
         {
-        if value is Argon.Byte
+        if value is Proton.Byte
             {
-            return(self == (value as! Argon.Byte))
+            return(self == (value as! Proton.Byte))
             }
         return(false)
         }
@@ -374,9 +374,9 @@ extension Argon.Byte:Value
         
     public func isLessThan(_ value:Value) -> Bool
         {
-        if value is Argon.Byte
+        if value is Proton.Byte
             {
-            return(self < (value as! Argon.Byte))
+            return(self < (value as! Proton.Byte))
             }
         return(false)
         }
@@ -386,7 +386,7 @@ extension Argon.Byte:Value
 //        self.init(UInt8(word))
 //        }
 
-    public func withTagBitsZeroed() -> Argon.Byte
+    public func withTagBitsZeroed() -> Proton.Byte
         {
         return(self)
         }

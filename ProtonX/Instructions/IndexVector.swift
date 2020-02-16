@@ -10,7 +10,7 @@ import Foundation
 
 public struct IndexVector
     {
-    private var elements:[Argon.Index] = []
+    private var elements:[Proton.Index] = []
     
     public var count:Int
         {
@@ -27,12 +27,12 @@ public struct IndexVector
         return(self.elements.count == 1)
         }
         
-    public var first:Argon.Index
+    public var first:Proton.Index
         {
         return(self.elements.first!)
         }
         
-    public init(_ elements:[Argon.Index])
+    public init(_ elements:[Proton.Index])
         {
         self.elements = elements
         }

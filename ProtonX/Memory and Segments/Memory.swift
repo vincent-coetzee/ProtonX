@@ -70,7 +70,7 @@ public class Memory
         return(segment)
         }
         
-    public class func segmentContaining(address:Argon.Address) -> MemorySegment?
+    public class func segmentContaining(address:Proton.Address) -> MemorySegment?
         {
         for segment in segmentsKeyedByIndex.values
             {
@@ -140,71 +140,71 @@ public class Memory
         Self.kTypeScalarType?.typePointer = Self.kTypeType
         Self.kTypeUInteger = Self.staticSegment.allocateEmptyScalarType(.uinteger)
         Self.kTypeUInteger?.scalarType = .uinteger
-        Self.kTypeUInteger?.instanceType = Argon.kTypeUInteger
+        Self.kTypeUInteger?.instanceType = Proton.kTypeUInteger
         Self.kTypeUInteger?.name = "UInteger"
         Self.kPackageArgon!.append(Self.kTypeUInteger!)
         Self.kTypeInteger = Self.staticSegment.allocateEmptyScalarType(.integer)
         Self.kTypeInteger?.scalarType = .integer
-        Self.kTypeInteger?.instanceType = Argon.kTypeInteger
+        Self.kTypeInteger?.instanceType = Proton.kTypeInteger
         Self.kTypeInteger?.name = "Integer"
         Self.kPackageArgon!.append(Self.kTypeInteger!)
         Self.kTypeBoolean = Self.staticSegment.allocateEmptyScalarType(.boolean)
         Self.kTypeBoolean?.scalarType = .boolean
         Self.kTypeBoolean?.name = "Boolean"
-        Self.kTypeBoolean?.instanceType = Argon.kTypeBoolean
+        Self.kTypeBoolean?.instanceType = Proton.kTypeBoolean
         Self.kPackageArgon!.append(Self.kTypeBoolean!)
         Self.kTypeByte = Self.staticSegment.allocateEmptyScalarType(.byte)
         Self.kTypeByte?.scalarType = .byte
         Self.kTypeByte?.name = "Byte"
-        Self.kTypeByte?.instanceType = Argon.kTypeByte
+        Self.kTypeByte?.instanceType = Proton.kTypeByte
         Self.kPackageArgon!.append(Self.kTypeByte!)
         Self.kTypeFloat32 = Self.staticSegment.allocateEmptyScalarType(.float32)
         Self.kTypeFloat32?.scalarType = .float32
         Self.kTypeFloat32?.name = "Float32"
-        Self.kTypeFloat32?.instanceType = Argon.kTypeFloat32
+        Self.kTypeFloat32?.instanceType = Proton.kTypeFloat32
         Self.kPackageArgon!.append(Self.kTypeFloat32!)
         Self.kTypeFloat64 = Self.staticSegment.allocateEmptyScalarType(.float64)
         Self.kTypeFloat64?.scalarType = .float64
         Self.kTypeFloat64?.name = "Float64"
-        Self.kTypeFloat64?.instanceType = Argon.kTypeFloat64
+        Self.kTypeFloat64?.instanceType = Proton.kTypeFloat64
         Self.kPackageArgon!.append(Self.kTypeFloat64!)
         Self.kTypeDictionary = Self.staticSegment.allocateEmptyType()
         Self.kTypeDictionary?.name = "Dictionary"
-        Self.kTypeDictionary?.instanceType = Argon.kTypeDictionary
+        Self.kTypeDictionary?.instanceType = Proton.kTypeDictionary
         Self.kPackageArgon!.append(Self.kTypeDictionary!)
         Self.kTypeList = Self.staticSegment.allocateEmptyType()
         Self.kTypeList?.name = "List"
-        Self.kTypeList?.instanceType = Argon.kTypeList
+        Self.kTypeList?.instanceType = Proton.kTypeList
         Self.kPackageArgon!.append(Self.kTypeList!)
         Self.kTypeSet = Self.staticSegment.allocateEmptyType()
         Self.kTypeSet?.name = "Set"
-        Self.kTypeSet?.instanceType = Argon.kTypeSet
+        Self.kTypeSet?.instanceType = Proton.kTypeSet
         Self.kPackageArgon!.append(Self.kTypeSet!)
         Self.kTypeBitSet = Self.staticSegment.allocateEmptyType()
         Self.kTypeBitSet?.name = "BitSet"
-        Self.kTypeBitSet?.instanceType = Argon.kTypeBitSet
+        Self.kTypeBitSet?.instanceType = Proton.kTypeBitSet
         Self.kPackageArgon!.append(Self.kTypeBitSet!)
         Self.kTypeCodeBlock = Self.staticSegment.allocateEmptyType()
         Self.kTypeCodeBlock?.name = "CodeBlock"
-        Self.kTypeCodeBlock?.instanceType = Argon.kTypeCodeBlock
+        Self.kTypeCodeBlock?.instanceType = Proton.kTypeCodeBlock
         Self.kPackageArgon!.append(Self.kTypeCodeBlock!)
         Self.kTypeEnumeration = Self.staticSegment.allocateType(named: "Enumeration")
-        Self.kTypeEnumeration?.instanceType = Argon.kTypeEnumeration
+        Self.kTypeEnumeration?.instanceType = Proton.kTypeEnumeration
         Self.kPackageArgon!.append(Self.kTypeEnumeration!)
         Self.kTypeEnumerationCase = Self.staticSegment.allocateType(named: "EnumerationCase")
-        Self.kTypeEnumerationCase?.instanceType = Argon.kTypeEnumerationCase
+        Self.kTypeEnumerationCase?.instanceType = Proton.kTypeEnumerationCase
         Self.kPackageArgon!.append(Self.kTypeEnumerationCase!)
         Self.kTypeListNode = Self.staticSegment.allocateType(named: "ListNode")
-        Self.kTypeListNode?.instanceType = Argon.kTypeListNode
+        Self.kTypeListNode?.instanceType = Proton.kTypeListNode
         Self.kPackageArgon!.append(Self.kTypeListNode!)
         Self.kTypeTreeNode = Self.staticSegment.allocateType(named: "TreeNode")
-        Self.kTypeTreeNode?.instanceType = Argon.kTypeTreeNode
+        Self.kTypeTreeNode?.instanceType = Proton.kTypeTreeNode
         Self.kPackageArgon!.append(Self.kTypeTreeNode!)
         Self.kTypeTree = Self.staticSegment.allocateType(named: "Tree")
-        Self.kTypeTree?.instanceType = Argon.kTypeTree
+        Self.kTypeTree?.instanceType = Proton.kTypeTree
         Self.kPackageArgon!.append(Self.kTypeTree!)
         Self.kTypeInstruction = Self.staticSegment.allocateType(named: "Instruction")
-        Self.kTypeInstruction?.instanceType = Argon.kTypeInstruction
+        Self.kTypeInstruction?.instanceType = Proton.kTypeInstruction
         Self.kPackageArgon!.append(Self.kTypeInstruction!)
         }
     }

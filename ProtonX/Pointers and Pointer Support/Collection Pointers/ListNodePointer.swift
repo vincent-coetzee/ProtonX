@@ -15,7 +15,7 @@ public class ListNodePointer:ObjectPointer
     public static let kListPreviousNodePointerIndex = SlotIndex.three
     public static let kListElementPointerIndex = SlotIndex.four
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(5)
         }
@@ -25,7 +25,7 @@ public class ListNodePointer:ObjectPointer
         return(ValueHolder(word: self.valueAddress))
         }
         
-    public var valueAddress:Argon.Address
+    public var valueAddress:Proton.Address
         {
         get
             {
@@ -71,7 +71,7 @@ public class ListNodePointer:ObjectPointer
             }
         }
         
-    public var nextNodeAddress:Argon.Address
+    public var nextNodeAddress:Proton.Address
         {
         get
             {
@@ -83,7 +83,7 @@ public class ListNodePointer:ObjectPointer
             }
         }
         
-    public var previousNodeAddress:Argon.Address
+    public var previousNodeAddress:Proton.Address
         {
         get
             {

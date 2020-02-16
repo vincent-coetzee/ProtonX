@@ -12,41 +12,41 @@ import RawMemory
 public protocol Headered:class
     {
     var headerWord:Word { get set }
-    var tag:Argon.HeaderTag { get set }
-    var totalSlotCount:Argon.SlotCount { get set }
+    var tag:Proton.HeaderTag { get set }
+    var totalSlotCount:Proton.SlotCount { get set }
     var hasExtraSlotsAtEnd:Bool { get set }
     var isMarked:Bool { get set }
     var isForwarded:Bool { get set }
-    var valueType:Argon.ValueType { get set }
+    var valueType:Proton.ValueType { get set }
     }
     
 extension Headered
     {
-    public var tag:Argon.HeaderTag
+    public var tag:Proton.HeaderTag
         {
         get
             {
-            let tagValue = (self.headerWord & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift
-            return(Argon.HeaderTag(rawValue: tagValue)!)
+            let tagValue = (self.headerWord & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift
+            return(Proton.HeaderTag(rawValue: tagValue)!)
             }
         set
             {
-            let tagValue = (newValue.rawValue & Argon.kTagBitsMask ) << Argon.kTagBitsShift
-            let header = self.headerWord & ~(Argon.kTagBitsMask  << Argon.kTagBitsShift)
+            let tagValue = (newValue.rawValue & Proton.kTagBitsMask ) << Proton.kTagBitsShift
+            let header = self.headerWord & ~(Proton.kTagBitsMask  << Proton.kTagBitsShift)
             self.headerWord = header | tagValue
             }
         }
         
-    public var totalSlotCount:Argon.SlotCount
+    public var totalSlotCount:Proton.SlotCount
         {
         get
             {
-            return(Argon.SlotCount(((Argon.kHeaderSlotCountMask << Argon.kHeaderSlotCountShift) & self.headerWord) >> Argon.kHeaderSlotCountShift))
+            return(Proton.SlotCount(((Proton.kHeaderSlotCountMask << Proton.kHeaderSlotCountShift) & self.headerWord) >> Proton.kHeaderSlotCountShift))
             }
         set
             {
-            let newWord = (Word(newValue) & Argon.kHeaderSlotCountMask) << Argon.kHeaderSlotCountShift
-            let header = self.headerWord & ~(Argon.kHeaderSlotCountMask  << Argon.kHeaderSlotCountShift)
+            let newWord = (Word(newValue) & Proton.kHeaderSlotCountMask) << Proton.kHeaderSlotCountShift
+            let header = self.headerWord & ~(Proton.kHeaderSlotCountMask  << Proton.kHeaderSlotCountShift)
             self.headerWord = header | newWord
             }
         }
@@ -65,16 +65,16 @@ extension Headered
 //            }
 //        }
         
-    public var valueType:Argon.ValueType
+    public var valueType:Proton.ValueType
         {
         get
             {
-            return(Argon.ValueType(rawValue: (self.headerWord & Argon.kHeaderValueTypeMask)) ?? .none)
+            return(Proton.ValueType(rawValue: (self.headerWord & Proton.kHeaderValueTypeMask)) ?? .none)
             }
         set
             {
-            let newWord = (Word(newValue.rawValue) & Argon.kHeaderValueTypeMask)
-            let header = self.headerWord & ~(Argon.kHeaderValueTypeMask)
+            let newWord = (Word(newValue.rawValue) & Proton.kHeaderValueTypeMask)
+            let header = self.headerWord & ~(Proton.kHeaderValueTypeMask)
             self.headerWord = header | newWord
             }
         }
@@ -83,12 +83,12 @@ extension Headered
         {
         get
             {
-            return((((Argon.kHeaderHasExtraSlotsAtEndMask << Argon.kHeaderHasExtraSlotsAtEndShift) & self.headerWord) >> Argon.kHeaderHasExtraSlotsAtEndShift) == 1)
+            return((((Proton.kHeaderHasExtraSlotsAtEndMask << Proton.kHeaderHasExtraSlotsAtEndShift) & self.headerWord) >> Proton.kHeaderHasExtraSlotsAtEndShift) == 1)
             }
         set
             {
-            let newWord = ((newValue ? 1 : 0) & Argon.kHeaderHasExtraSlotsAtEndMask) << Argon.kHeaderHasExtraSlotsAtEndShift
-            let header = self.headerWord & ~(Argon.kHeaderHasExtraSlotsAtEndMask  << Argon.kHeaderHasExtraSlotsAtEndShift)
+            let newWord = ((newValue ? 1 : 0) & Proton.kHeaderHasExtraSlotsAtEndMask) << Proton.kHeaderHasExtraSlotsAtEndShift
+            let header = self.headerWord & ~(Proton.kHeaderHasExtraSlotsAtEndMask  << Proton.kHeaderHasExtraSlotsAtEndShift)
             self.headerWord = header | newWord
             }
         }
@@ -97,7 +97,7 @@ extension Headered
         {
         get
             {
-            return((((Argon.kHeaderMarkerMask << Argon.kHeaderMarkerShift) & self.headerWord) >> Argon.kHeaderMarkerShift) == 1)
+            return((((Proton.kHeaderMarkerMask << Proton.kHeaderMarkerShift) & self.headerWord) >> Proton.kHeaderMarkerShift) == 1)
             }
         set
             {
@@ -105,8 +105,8 @@ extension Headered
                 {
                 return
                 }
-            let newWord = ((newValue ? 1 : 0) & Argon.kHeaderMarkerMask) << Argon.kHeaderMarkerShift
-            let header = self.headerWord & ~(Argon.kHeaderMarkerMask  << Argon.kHeaderMarkerShift)
+            let newWord = ((newValue ? 1 : 0) & Proton.kHeaderMarkerMask) << Proton.kHeaderMarkerShift
+            let header = self.headerWord & ~(Proton.kHeaderMarkerMask  << Proton.kHeaderMarkerShift)
             self.headerWord = header | newWord
             }
         }
@@ -115,12 +115,12 @@ extension Headered
         {
         get
             {
-            return((((Argon.kHeaderIsForwardedMask << Argon.kHeaderIsForwardedShift) & self.headerWord) >> Argon.kHeaderIsForwardedShift) == 1)
+            return((((Proton.kHeaderIsForwardedMask << Proton.kHeaderIsForwardedShift) & self.headerWord) >> Proton.kHeaderIsForwardedShift) == 1)
             }
         set
             {
-            let newWord = ((newValue ? 1 : 0) & Argon.kHeaderIsForwardedMask) << Argon.kHeaderIsForwardedShift
-            let header = self.headerWord & ~(Argon.kHeaderIsForwardedMask  << Argon.kHeaderIsForwardedShift)
+            let newWord = ((newValue ? 1 : 0) & Proton.kHeaderIsForwardedMask) << Proton.kHeaderIsForwardedShift
+            let header = self.headerWord & ~(Proton.kHeaderIsForwardedMask  << Proton.kHeaderIsForwardedShift)
             self.headerWord = header | newWord
             }
         }
@@ -146,7 +146,7 @@ public class Header:Headered
         self.word = word
         }
         
-    public init(slotCount:Argon.SlotCount,valueType:Argon.ValueType,hasExtraSlotsAtEnd:Bool)
+    public init(slotCount:Proton.SlotCount,valueType:Proton.ValueType,hasExtraSlotsAtEnd:Bool)
         {
         self.totalSlotCount = slotCount
         self.valueType = valueType
@@ -168,7 +168,7 @@ public class Header:Headered
 
 public class HeaderPointer:Headered
     {
-    private let address:Argon.Address
+    private let address:Proton.Address
     
     public var headerWord:Word
         {
@@ -182,7 +182,7 @@ public class HeaderPointer:Headered
             }
         }
         
-    public init(_ address:Argon.Address)
+    public init(_ address:Proton.Address)
         {
         self.address = address
         }

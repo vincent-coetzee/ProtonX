@@ -55,7 +55,7 @@ public class CodeBlockPointer:ObjectPointer
     public static let kCodeBlockInstructionCountIndex = SlotIndex.two
     public static let kCodeBlockInstructionArrayIndex = SlotIndex.three
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(4)
         }
@@ -127,12 +127,12 @@ public class CodeBlockPointer:ObjectPointer
         self.count = instructions.count
         }
 
-    public var instructionAddress:Argon.Address?
+    public var instructionAddress:Proton.Address?
         {
         return(self.instructionArrayPointer.elementAddress)
         }
     
-    public required init(_ address: Argon.Address)
+    public required init(_ address: Proton.Address)
         {
         super.init(address)
         }

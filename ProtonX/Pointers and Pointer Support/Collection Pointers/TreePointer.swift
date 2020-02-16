@@ -13,20 +13,20 @@ public class TreePointer:CollectionPointer
     {
     public static let kTreeNodeIndex = SlotIndex.five
 
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(6)
         }
         
-    public var nodeAddress:Argon.Address
+    public var nodeAddress:Proton.Address
         {
         get
             {
-            return(wordAtIndexAtAddress(Self.kTreeNodeIndex,self.address))
+            return(addressAtIndexAtAddress(Self.kTreeNodeIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtAddress(newValue,Self.kTreeNodeIndex,self.address)
+            setAddressAtIndexAtAddress(newValue,Self.kTreeNodeIndex,self.address)
             }
         }
         
@@ -105,7 +105,7 @@ public class TreePointer:CollectionPointer
             }
         }
         
-    public func value<T>(forKey key:T) -> Argon.Address? where T:Key
+    public func value<T>(forKey key:T) -> Proton.Address? where T:Key
         {
         if let nodePointer = self.nodePointer
             {
@@ -122,7 +122,7 @@ public class TreePointer:CollectionPointer
         let newNode = self.segment.allocateTreeNode(key:forKey,value:value)
         if self.nodeAddress.isNull
             {
-            self.nodeAddress = newNode.taggedAddress
+            self.nodeAddress = newNode.address
             }
         else
             {

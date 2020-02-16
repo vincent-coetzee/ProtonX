@@ -44,37 +44,37 @@ extension Word:HashableValue,Value
         return(Int(self))
         }
         
-    public static var objectStrideInBytes: Argon.ByteCount
+    public static var objectStrideInBytes: Proton.ByteCount
         {
-        return(Argon.ByteCount(MemoryLayout<Self>.stride))
+        return(Proton.ByteCount(MemoryLayout<Self>.stride))
         }
     
-    public static func +=(lhs:inout Word,rhs:Argon.ByteCount)
+    public static func +=(lhs:inout Word,rhs:Proton.ByteCount)
         {
         lhs = lhs + Word(rhs)
         }
         
     public var isHeader:Bool
         {
-        let mask = Argon.kHeaderMarkerMask << Argon.kHeaderMarkerShift
+        let mask = Proton.kHeaderMarkerMask << Proton.kHeaderMarkerShift
         return((self & mask) == mask)
         }
         
     public var isNull:Bool
         {
-        return((self & ~(Argon.kTagBitsMask << Argon.kTagBitsShift)) == 0)
+        return((self & ~(Proton.kTagBitsMask << Proton.kTagBitsShift)) == 0)
         }
         
     public var isNotNull:Bool
         {
-        return((self & ~(Argon.kTagBitsMask << Argon.kTagBitsShift)) != 0)
+        return((self & ~(Proton.kTagBitsMask << Proton.kTagBitsShift)) != 0)
         }
         
-    public var valueType:Argon.ValueType
+    public var valueType:Proton.ValueType
         {
-        let mask = Argon.kHeaderValueTypeMask << Argon.kHeaderValueTypeShift
-        let bits = Word((self & mask) >> Argon.kHeaderValueTypeShift)
-        return(Argon.ValueType(rawValue: bits)!)
+        let mask = Proton.kHeaderValueTypeMask << Proton.kHeaderValueTypeShift
+        let bits = Word((self & mask) >> Proton.kHeaderValueTypeShift)
+        return(Proton.ValueType(rawValue: bits)!)
         }
         
 //    public var tagPointerType:ValuePointer.Type
@@ -104,12 +104,12 @@ extension Word:HashableValue,Value
         
     public var tag:Word
         {
-        return((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift)
+        return((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift)
         }
         
     public var objectType:Word
         {
-        return((self & (Argon.kHeaderValueTypeMask << Argon.kHeaderValueTypeShift)) >> Argon.kHeaderValueTypeShift)
+        return((self & (Proton.kHeaderValueTypeMask << Proton.kHeaderValueTypeShift)) >> Proton.kHeaderValueTypeShift)
         }
         
     public func asWord() -> Word
@@ -148,12 +148,12 @@ extension Word:HashableValue,Value
         return(String(string.reversed()))
         }
         
-    public init(_ count:Argon.ByteCount)
+    public init(_ count:Proton.ByteCount)
         {
         self.init(count.count)
         }
         
-    public init(_ count:Argon.SlotCount)
+    public init(_ count:Proton.SlotCount)
         {
         self.init(count.count)
         }
@@ -173,41 +173,41 @@ public typealias TaggedWord = Word
 
 extension TaggedWord
     {
-    public init(integer:Argon.Integer)
+    public init(integer:Proton.Integer)
         {
-        self = Word(bitPattern: integer) & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsInteger
+        self = Word(bitPattern: integer) & ~(Proton.kTagBitsMask << Proton.kTagBitsShift) | Proton.kTagBitsInteger
         }
         
-    public init(uinteger:Argon.UInteger)
+    public init(uinteger:Proton.UInteger)
         {
-        self = uinteger & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsUInteger
+        self = uinteger & ~(Proton.kTagBitsMask << Proton.kTagBitsShift) | Proton.kTagBitsUInteger
         }
         
-    public init(float:Argon.Float32)
+    public init(float:Proton.Float32)
         {
-        self = Word(float.bitPattern) & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsFloat32
+        self = Word(float.bitPattern) & ~(Proton.kTagBitsMask << Proton.kTagBitsShift) | Proton.kTagBitsFloat32
         }
         
-    public init(boolean:Argon.Boolean)
+    public init(boolean:Proton.Boolean)
         {
-        self = Word(boolean ? 1 : 0) & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsBoolean
+        self = Word(boolean ? 1 : 0) & ~(Proton.kTagBitsMask << Proton.kTagBitsShift) | Proton.kTagBitsBoolean
         }
         
-    public init(byte:Argon.Byte)
+    public init(byte:Proton.Byte)
         {
-        self = Word(byte) & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsByte
+        self = Word(byte) & ~(Proton.kTagBitsMask << Proton.kTagBitsShift) | Proton.kTagBitsByte
         }
         
     public init(bits:Word)
         {
-        self = bits & ~(Argon.kTagBitsMask << Argon.kTagBitsShift) | Argon.kTagBitsBits
+        self = bits & ~(Proton.kTagBitsMask << Proton.kTagBitsShift) | Proton.kTagBitsBits
         }
         
     public init(page:Word,offset:Word)
         {
-        let word1 = ((page & ~(Argon.kPageMask << Argon.kPageShift)) << Argon.kPageShift)
-        let word2 = ((offset & ~(Argon.kOffsetMask << Argon.kOffsetShift)) << Argon.kOffsetShift)
-        let word3 = (Argon.kTagBitsPersistent << Argon.kTagBitsShift)
+        let word1 = ((page & ~(Proton.kPageMask << Proton.kPageShift)) << Proton.kPageShift)
+        let word2 = ((offset & ~(Proton.kOffsetMask << Proton.kOffsetShift)) << Proton.kOffsetShift)
+        let word3 = (Proton.kTagBitsPersistent << Proton.kTagBitsShift)
         self = word1 | word2 | word3
         }
     }

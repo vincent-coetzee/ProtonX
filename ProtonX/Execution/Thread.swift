@@ -69,7 +69,7 @@ public class Thread
         self.registers[.cp] = self.stack.pop()
         }
         
-    public func execute(codeBlockAddress:Argon.Address) throws
+    public func execute(codeBlockAddress:Proton.Address) throws
         {
         self.stack.push(self.registers[.cp])
         self.stack.push(self.registers[.ip])
@@ -92,7 +92,7 @@ public class Thread
             }
         }
         
-    public func call(address:Argon.Address) throws
+    public func call(address:Proton.Address) throws
         {
         let codeBlock = CodeBlockPointer(address)
         self.saveExecutionContext()

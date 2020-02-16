@@ -31,7 +31,7 @@ public class DictionaryBucketNodePointer:ObjectPointer
         return(SlotIndex.five)
         }
         
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(6)
         }
@@ -108,7 +108,7 @@ public class DictionaryBucketNodePointer:ObjectPointer
             }
         }
         
-    public init<K>(key:K,value:Value,previous:Argon.Address = 0,next:Argon.Address = 0,segment:MemorySegment = .managed) where K:Key
+    public init<K>(key:K,value:Value,previous:Proton.Address = 0,next:Proton.Address = 0,segment:MemorySegment = .managed) where K:Key
         {
         super.init(segment.allocate(slotCount: Self.totalSlotCount))
         key.store(atAddress: self.address + DictionaryBucketNodePointer.kDictionaryBucketNodeKeyIndex)
@@ -129,7 +129,7 @@ public class DictionaryBucketNodePointer:ObjectPointer
         self.previousNodePointer?.nextNodeValue = self.nextNodeValue
         }
         
-    public func addressOfBucket(forKey:ValueHolder) -> Argon.Address
+    public func addressOfBucket(forKey:ValueHolder) -> Proton.Address
         {
         if forKey == ValueHolder(word: self.keyValue)
             {
@@ -165,7 +165,7 @@ public class DictionaryBucketNodePointer:ObjectPointer
             }
         }
     
-    public required init(_ address: Argon.Address)
+    public required init(_ address: Proton.Address)
         {
         super.init(address)
         }

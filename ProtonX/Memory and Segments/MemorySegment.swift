@@ -106,7 +106,7 @@ public class MemorySegment:Equatable
             }
         }
         
-    public static func makeCode() -> Argon.Address
+    public static func makeCode() -> Proton.Address
         {
         let string1 = ImmutableStringPointer("Test String 1")
         let string2 = ImmutableStringPointer("Test String 2")
@@ -161,7 +161,7 @@ public class MemorySegment:Equatable
         let sampleWords = EnglishWord.wordsAtIndices(inSet: indices)
         for word in sampleWords
             {
-            tree.setValue(Argon.Integer(word.hashedValue),forKey: word)
+            tree.setValue(Proton.Integer(word.hashedValue),forKey: word)
             }
         Log.console()
         tree.print()
@@ -455,7 +455,7 @@ public class MemorySegment:Equatable
     internal var nextAddress:Word
     internal let sizeInBytes:Word
     private let pointer:UnsafeMutableRawPointer
-    public let index = Argon.nextIndex
+    public let index = Proton.nextIndex
     private let roundToPageSize = true
     public private(set) var highwaterMark:Word
     private var lock = RecursiveLock()
@@ -482,12 +482,12 @@ public class MemorySegment:Equatable
         self.highwaterMark = 0
         }
         
-    public func contains(address:Argon.Address) -> Bool
+    public func contains(address:Proton.Address) -> Bool
         {
         return(self.baseAddress <= address && address <= self.topAddress)
         }
         
-    public func allocate(byteCount count:Argon.ByteCount,slotCount:inout Argon.SlotCount) -> Argon.Address
+    public func allocate(byteCount count:Proton.ByteCount,slotCount:inout Proton.SlotCount) -> Proton.Address
         {
         self.lock.lock()
         defer
@@ -496,10 +496,10 @@ public class MemorySegment:Equatable
             }
         // round the byte count up to the nearest word count
         let wordSize = MemoryLayout<Word>.size
-        let byteCount = Argon.ByteCount(Argon.SlotCount(count) + 1)
+        let byteCount = Proton.ByteCount(Proton.SlotCount(count) + 1)
         let address = self.nextAddress
-        let alignedCount = byteCount.aligned(to: wordSize) + Argon.SlotCount(1)
-        slotCount = Argon.SlotCount(alignedCount)
+        let alignedCount = byteCount.aligned(to: wordSize) + Proton.SlotCount(1)
+        slotCount = Proton.SlotCount(alignedCount)
         memset(UnsafeMutableRawPointer(bitPattern: Int(Int64(bitPattern: address))),0,alignedCount.count)
         self.nextAddress += alignedCount
         self.highwaterMark  = self.nextAddress > self.highwaterMark ? self.nextAddress : self.highwaterMark
@@ -581,7 +581,7 @@ public class MemorySegment:Equatable
         return(pointer)
         }
         
-    public func allocateEmptyScalarType(_ type:Argon.ScalarType) -> ScalarTypePointer
+    public func allocateEmptyScalarType(_ type:Proton.ScalarType) -> ScalarTypePointer
         {
         let pointer = ScalarTypePointer(self.allocate(slotCount: ScalarTypePointer.totalSlotCount))
         pointer.isMarked = true
@@ -595,15 +595,15 @@ public class MemorySegment:Equatable
         return(pointer)
         }
         
-    public func allocate(slotCount:Argon.SlotCount) -> Argon.Address
+    public func allocate(slotCount:Proton.SlotCount) -> Proton.Address
         {
         self.lock.lock()
         defer
             {
             self.lock.unlock()
             }
-        let byteCount = Argon.ByteCount(slotCount)
-        var newSlotCount = Argon.SlotCount(0)
+        let byteCount = Proton.ByteCount(slotCount)
+        var newSlotCount = Proton.SlotCount(0)
         let pointer = self.allocate(byteCount: byteCount,slotCount: &newSlotCount)
         ObjectPointer(pointer).totalSlotCount = newSlotCount
         return(pointer)
@@ -613,8 +613,8 @@ public class MemorySegment:Equatable
         {
         let maximumCount = max(count,elements.count)
         let allocationSlotCount = maximumCount * 2
-        let byteCount = Argon.ByteCount(ArrayPointer.totalSlotCount.count * elementType.objectStrideInBytes.count)
-        var newSlotCount = Argon.SlotCount(0)
+        let byteCount = Proton.ByteCount(ArrayPointer.totalSlotCount.count * elementType.objectStrideInBytes.count)
+        var newSlotCount = Proton.SlotCount(0)
         let address = self.allocate(byteCount: byteCount,slotCount: &newSlotCount)
         let bufferPointer = WordBlockPointer(elementCount: allocationSlotCount,elementType: elementType)
         let array = ArrayPointer(address)
@@ -646,8 +646,8 @@ public class MemorySegment:Equatable
         {
         let extraWordCount = (maximumBitCount / Word.bitWidth) + 1
         let slotCount = BitSetPointer.totalSlotCount
-        let byteCount = Argon.ByteCount((slotCount + extraWordCount) * MemoryLayout<Word>.stride)
-        var newSlotCount = Argon.SlotCount(0)
+        let byteCount = Proton.ByteCount((slotCount + extraWordCount) * MemoryLayout<Word>.stride)
+        var newSlotCount = Proton.SlotCount(0)
         let address = self.allocate(byteCount: byteCount,slotCount: &newSlotCount)
         let bitSet = BitSetPointer(address)
         bitSet.isMarked = true
@@ -661,10 +661,10 @@ public class MemorySegment:Equatable
         return(bitSet)
         }
         
-    public func allocateList(elements:Array<Argon.Address> = []) -> ListPointer
+    public func allocateList(elements:Array<Proton.Address> = []) -> ListPointer
         {
-        let byteCount = Argon.ByteCount(ListPointer.totalSlotCount)
-        var newSlotCount = Argon.SlotCount(0)
+        let byteCount = Proton.ByteCount(ListPointer.totalSlotCount)
+        var newSlotCount = Proton.SlotCount(0)
         let address = self.allocate(byteCount: byteCount,slotCount: &newSlotCount)
         let list = ListPointer(address)
         list.isMarked = true
@@ -689,8 +689,8 @@ public class MemorySegment:Equatable
         
     public func allocateTree() -> TreePointer
         {
-        let byteCount = Argon.ByteCount(TreePointer.totalSlotCount)
-        var newSlotCount = Argon.SlotCount(0)
+        let byteCount = Proton.ByteCount(TreePointer.totalSlotCount)
+        var newSlotCount = Proton.SlotCount(0)
         let address = self.allocate(byteCount: byteCount,slotCount: &newSlotCount)
         let tree = TreePointer(address)
         tree.isMarked = true
@@ -705,17 +705,17 @@ public class MemorySegment:Equatable
         return(tree)
         }
         
-    public func allocateTreeNode<K>(key:K,value:Value,left:Argon.Address = 0,right:Argon.Address = 0) -> TreeNodePointer where K:Key
+    public func allocateTreeNode<K>(key:K,value:Value,left:Proton.Address = 0,right:Proton.Address = 0) -> TreeNodePointer where K:Key
         {
-        let byteCount = Argon.ByteCount(TreeNodePointer.totalSlotCount)
-        var newSlotCount = Argon.SlotCount(0)
+        let byteCount = Proton.ByteCount(TreeNodePointer.totalSlotCount)
+        var newSlotCount = Proton.SlotCount(0)
         let address = self.allocate(byteCount: byteCount,slotCount: &newSlotCount)
         let node = TreeNodePointer(address)
         node.isMarked = true
-        node.valueType = .listNode
+        node.valueType = .treeNode
         node.hasExtraSlotsAtEnd = false
         node.totalSlotCount = newSlotCount
-        node.typePointer = Memory.kTypeListNode
+        node.typePointer = Memory.kTypeTreeNode
         node.segment = self
         node.store(key: key,atIndex: TreeNodePointer.kTreeNodeKeyIndex)
         node.store(value: value,atIndex: TreeNodePointer.kTreeNodeValueIndex)
@@ -725,10 +725,10 @@ public class MemorySegment:Equatable
         return(node)
         }
         
-    public func allocateListNode(element:Value,previous:Argon.Address = 0,next:Argon.Address = 0) -> ListNodePointer
+    public func allocateListNode(element:Value,previous:Proton.Address = 0,next:Proton.Address = 0) -> ListNodePointer
         {
-        let byteCount = Argon.ByteCount(ListNodePointer.totalSlotCount)
-        var newSlotCount = Argon.SlotCount(0)
+        let byteCount = Proton.ByteCount(ListNodePointer.totalSlotCount)
+        var newSlotCount = Proton.SlotCount(0)
         let address = self.allocate(byteCount: byteCount,slotCount: &newSlotCount)
         let node = ListNodePointer(address)
         node.isMarked = true
@@ -746,8 +746,8 @@ public class MemorySegment:Equatable
         
     public func allocateDictionary(chunkFactor:Int) -> DictionaryPointer
         {
-        let byteCount = Argon.ByteCount((DictionaryPointer.totalSlotCount.count + chunkFactor) * MemoryLayout<Word>.stride)
-        var newSlotCount = Argon.SlotCount(0)
+        let byteCount = Proton.ByteCount((DictionaryPointer.totalSlotCount.count + chunkFactor) * MemoryLayout<Word>.stride)
+        var newSlotCount = Proton.SlotCount(0)
         let address = self.allocate(byteCount: byteCount,slotCount: &newSlotCount)
         let dictionary = DictionaryPointer(address)
         dictionary.isMarked = true
@@ -767,8 +767,8 @@ public class MemorySegment:Equatable
         let size = MemoryLayout<Word>.size
         let byteCount = ImmutableStringPointer.storageBytesRequired(for: contents)
         let count = (ImmutableStringPointer.totalSlotCount.count * size) + byteCount.count
-        let unitCount = Argon.ByteCount(count.aligned(to: MemoryLayout<Word>.alignment))
-        var newSlotCount = Argon.SlotCount(0)
+        let unitCount = Proton.ByteCount(count.aligned(to: MemoryLayout<Word>.alignment))
+        var newSlotCount = Proton.SlotCount(0)
         let pointer = ImmutableStringPointer(segment.allocate(byteCount: unitCount,slotCount: &newSlotCount))
         pointer.typePointer = Memory.kTypeString
         pointer.isMarked = true
@@ -805,14 +805,14 @@ public class MemorySegment:Equatable
                     let slotWord = wordAtAddress(address)
                     switch(slotWord.tag)
                         {
-                        case Argon.kTagBitsAddress:
+                        case Proton.kTagBitsAddress:
                             let objectHeader = HeaderPointer(untaggedAddress(slotWord))
                             let type = objectHeader.valueType
                             let stringValue = type == .string ? "\"" + ImmutableStringPointer(untaggedAddress(slotWord)).string + "\"" : ""
                             Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(objectHeader.headerWord.bitString)"),.space(1),.natural("POINTER TO \(type) \(stringValue)"))
-                        case Argon.kTagBitsInteger:
+                        case Proton.kTagBitsInteger:
                             Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("SIGNED(\(Int64(bitPattern: slotWord)))"))
-                        case Argon.kTagBitsUInteger:
+                        case Proton.kTagBitsUInteger:
                             Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("SIGNED(\(Int64(bitPattern: slotWord)))"))
 //                        case Argon.kTagBitsUnsigned:
 //                            Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("UNSIGNED(\(slotWord))"))
@@ -820,13 +820,13 @@ public class MemorySegment:Equatable
 //                            let character = Unicode.Scalar(UInt16(untaggedWord(slotWord)))
 //                            let string = String(character!)
 //                            Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("CHARACTER(\(string))"))
-                        case Argon.kTagBitsByte:
+                        case Proton.kTagBitsByte:
                             let byte = UInt8(slotWord)
                             Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("BYTE(\(byte))"))
-                        case Argon.kTagBitsBoolean:
+                        case Proton.kTagBitsBoolean:
                             let boolean = slotWord == 1
                             Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("BOOLEAN(\(boolean))"))
-                        case Argon.kTagBitsFloat32:
+                        case Proton.kTagBitsFloat32:
                             let float = Float(bitPattern: slotWord)
                             Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("FLOAT32(\(float))"))
                         default:
@@ -855,7 +855,7 @@ public class MemorySegment:Equatable
 //            }
         }
         
-    public func dumpObjectContents(at address:inout Argon.Address)
+    public func dumpObjectContents(at address:inout Proton.Address)
         {
         let header = HeaderPointer(address)
         let slotCount = header.totalSlotCount
@@ -866,7 +866,7 @@ public class MemorySegment:Equatable
             }
         }
         
-    private func dumpInstance(at address:inout Argon.Address)
+    private func dumpInstance(at address:inout Proton.Address)
         {
         let header = HeaderPointer(address)
         let type = TypePointer(untaggedAddress(wordAtIndexAtAddress(.one,address)))
@@ -875,7 +875,7 @@ public class MemorySegment:Equatable
         self.dumpObjectContents(at: &address)
         }
         
-    private func dumpStringInstance(at address:inout Argon.Address)
+    private func dumpStringInstance(at address:inout Proton.Address)
         {
         let headerWord = wordAtAddress(address)
         let header = Header(headerWord)
@@ -887,10 +887,10 @@ public class MemorySegment:Equatable
         Log.log(.right("TYPE PTR ",Self.kLabelWidth),.natural(": 0x\(address.hexString)[0001] "),.natural(wordAtAddress(address).bitString),.space(1),.natural(" String"))
         address++
         let countWord = wordAtAddress(address)
-        Log.log(.right("COUNT ",Self.kLabelWidth),.natural(": 0x\(address.hexString)[0002] "),.natural(countWord.bitString),.space(1),.natural(Argon.ScalarType.integer.valueText(for: countWord)))
+        Log.log(.right("COUNT ",Self.kLabelWidth),.natural(": 0x\(address.hexString)[0002] "),.natural(countWord.bitString),.space(1),.natural(Proton.ScalarType.integer.valueText(for: countWord)))
         address++
         let maxCountWord = wordAtAddress(address)
-        Log.log(.right("MAX COUNT ",Self.kLabelWidth),.natural(": 0x\(address.hexString)[0003] "),.natural(maxCountWord.bitString),.space(1),.natural(Argon.ScalarType.integer.valueText(for: maxCountWord)))
+        Log.log(.right("MAX COUNT ",Self.kLabelWidth),.natural(": 0x\(address.hexString)[0003] "),.natural(maxCountWord.bitString),.space(1),.natural(Proton.ScalarType.integer.valueText(for: maxCountWord)))
         address++
         var offset = 0
         for index in 0..<(slotCount.count - 4)
@@ -903,7 +903,7 @@ public class MemorySegment:Equatable
             }
         }
         
-    private func dumpSlot(at address:inout Argon.Address,index:Int)
+    private func dumpSlot(at address:inout Proton.Address,index:Int)
         {
         let indexString = String(format: "[%04d]",index)
         let word = wordAtAddress(untaggedAddress(address))
@@ -942,7 +942,7 @@ public class MemorySegment:Equatable
             {
             let rawTag = header.tag
             let tag = "\(rawTag)"
-            Log.log(.right("\(tag.uppercased()) ",Self.kLabelWidth),.natural(": 0x\(address.hexString) : "),.natural(word.bitString),.space(1),.natural(Argon.ScalarType(rawTag).valueText(for: word)))
+            Log.log(.right("\(tag.uppercased()) ",Self.kLabelWidth),.natural(": 0x\(address.hexString) : "),.natural(word.bitString),.space(1),.natural(Proton.ScalarType(rawTag).valueText(for: word)))
             }
         address++
         }

@@ -11,11 +11,11 @@ import RawMemory
 
 public protocol Value
     {
-    var taggedAddress:Argon.Address { get }
+    var taggedAddress:Proton.Address { get }
 //    var typePointer:TypePointer? { get }
 //    var valueStride:Int { get }
     func asWord() -> Word
-    func store(atAddress:Argon.Address)
+    func store(atAddress:Proton.Address)
     func equals(_ value:Value) -> Bool
     func isLessThan(_ value:Value) -> Bool
     }

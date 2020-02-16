@@ -14,7 +14,7 @@ public class DictionaryPointer:CollectionPointer
     public static let kDictionaryChunkFactorIndex = SlotIndex.four
     public static let kDictionaryBucketsIndex = SlotIndex.five
      
-    public override class var totalSlotCount:Argon.SlotCount
+    public override class var totalSlotCount:Proton.SlotCount
         {
         return(6)
         }
@@ -94,7 +94,7 @@ public class DictionaryPointer:CollectionPointer
         return(DictionaryBucketNodePointer(bucketAddress).value(forKey: ValueHolder(key: key)))
         }
         
-    public required init(_ address:Argon.Address)
+    public required init(_ address:Proton.Address)
         {
         super.init(address)
         self.isMarked = true

@@ -133,14 +133,14 @@ extension SlotIndex:Equatable,ExpressibleByIntegerLiteral,Hashable
         return(newIndex)
         }
         
-    public static func +(lhs:SlotIndex,rhs:Argon.SlotCount) -> SlotIndex
+    public static func +(lhs:SlotIndex,rhs:Proton.SlotCount) -> SlotIndex
         {
         var newIndex = SlotIndex()
         newIndex.index = lhs.index + rhs.count
         return(newIndex)
         }
         
-    public static func *(lhs:SlotIndex,rhs:Argon.ByteCount) -> SlotIndex
+    public static func *(lhs:SlotIndex,rhs:Proton.ByteCount) -> SlotIndex
         {
         var newIndex = SlotIndex()
         newIndex.index = lhs.index * rhs.count
