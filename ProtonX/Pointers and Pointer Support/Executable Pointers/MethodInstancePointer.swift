@@ -24,12 +24,12 @@ public struct InstructionValue
     
 public class MethodInstancePointer:CodeBlockPointer
     {
-    public static let kMethodInstanceNameIndex = SlotIndex.six
-    public static let kMethodInstanceBaseSlotCount = SlotIndex.seven
+    public static let kMethodInstanceNameIndex = SlotIndex.four
+    public static let kMethodInstanceBaseSlotCount = SlotIndex.five
         
     public override class var totalSlotCount:Proton.SlotCount
         {
-        return(8)
+        return(6)
         }
         
     public var namePointer:ImmutableStringPointer

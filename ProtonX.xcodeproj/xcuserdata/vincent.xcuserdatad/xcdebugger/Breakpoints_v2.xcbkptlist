@@ -14,9 +14,9 @@
             filePath = "ProtonX/Memory and Segments/MemorySegment.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "96"
-            endingLineNumber = "96"
-            landmarkName = "testThreads()"
+            startingLineNumber = "106"
+            endingLineNumber = "106"
+            landmarkName = "testBitFieldMaskSections()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -30,10 +30,10 @@
             filePath = "ProtonX/Instructions/Instruction.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1632"
-            endingLineNumber = "1632"
-            landmarkName = "execute(on:)"
-            landmarkType = "7">
+            startingLineNumber = "1098"
+            endingLineNumber = "1098"
+            landmarkName = "operand2IsReference"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -55,32 +55,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D97F0040-9879-4BA3-949B-DAC1A1F9CB90"
+            uuid = "14B29060-26B8-4DFD-B00D-4F0B0DA630F6"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ProtonX/Memory and Segments/MemorySegment.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
-            landmarkName = "testTrees()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9911D56B-5CD5-4044-96BE-C3D177DA5BBD"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ProtonX/Memory and Segments/MemorySegment.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "720"
-            endingLineNumber = "720"
-            landmarkName = "allocateTreeNode(key:value:left:right:)"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
+            landmarkName = "testDoubles()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

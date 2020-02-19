@@ -129,17 +129,20 @@ public class Proton
         
     public enum HeaderTag:Word
         {
-        case integer = 0
-        case uinteger = 1
-        case float32 = 2
-        case boolean = 3
-        case byte = 4
-        case address = 5
-        case bits = 6
-        case persistent = 7
+        case uinteger = 0
+        case integer
+        case float32
+        case float64
+        case boolean
+        case character
+        case byte
+        case string
+        case address
+        case bits
+        case persistent
         }
         
-    public static let kTagBitsUInteger:Word = HeaderTag.uinteger.rawValue
+    public static let kTagBitsFloat64:Word = HeaderTag.float64.rawValue
     public static let kTagBitsInteger:Word = HeaderTag.integer.rawValue
     public static let kTagBitsFloat32:Word = HeaderTag.float32.rawValue
     public static let kTagBitsBoolean:Word = HeaderTag.boolean.rawValue
@@ -147,6 +150,13 @@ public class Proton
     public static let kTagBitsByte:Word = HeaderTag.byte.rawValue
     public static let kTagBitsBits:Word = HeaderTag.bits.rawValue
     public static let kTagBitsPersistent:Word = HeaderTag.persistent.rawValue
+    public static let kTagBitsCharacter:Word = HeaderTag.character.rawValue
+    public static let kTagBitsUInteger:Word = HeaderTag.uinteger.rawValue
+    public static let kTagBitsString:Word = HeaderTag.string.rawValue
+    
+    public static let kTagBitsZeroMask:Word =  ~(Word(7) << Word(60))
+    
+    public static let kSignMask:Word = Word(1) << Word(63)
     
     public static let kPageMask:Word = 1099511627775
     public static let kPageShift:Word = 16
@@ -155,6 +165,8 @@ public class Proton
     
     public static let kTagBitsMask:Word = 7
     public static let kTagBitsShift:Word = 60
+    public static let kTagBitsWidth:Word = 5
+    public static let kTagBitsFloat32Mask:Word = 4294967295
 
     public static let kHeaderMarkerMask:Word = 1
     public static let kHeaderMarkerShift:Word = 59
@@ -185,11 +197,11 @@ public class Proton
     
     public typealias WordPointer = UnsafeMutablePointer<Word>
     public typealias Float32 = Float
+    public typealias Float64 = Double
     public typealias Integer = Int64
     public typealias UInteger = UInt64
     public typealias Boolean = Bool
     public typealias Byte = UInt8
-    public typealias Float64 = PrivateFloat64
     public typealias Address = Word
     public typealias Immediate = Int64
     public typealias Index = Int
@@ -391,8 +403,6 @@ public class Proton
                 {
                 case .bits:
                     self = .bits
-                case .uinteger:
-                    self = .uinteger
                 case .integer:
                     self = .integer
                 case .boolean:
@@ -401,6 +411,8 @@ public class Proton
                     self = .byte
                 case .float32:
                     self = .float32
+                case .float64:
+                    self = .float64
                 default:
                     self = .none
                 }
@@ -437,6 +449,9 @@ public class Proton
         case arrayIndexBoundsViolation(Int,Int)
         case outOfMemory(MemorySegment)
         case internalErrorCanNotGrowArray
+        case integerTypeMismatch
+        case registerValueInvalid(Instruction.Register)
+        case invalidOperands
         }
     }
 

@@ -38,13 +38,6 @@ typedef struct _SlotOffset
     long offset;
     }
     SlotOffset;
-    
-typedef struct _Float64
-    {
-    Word header;
-    double float64;
-    }
-    PrivateFloat64;
 
 #define kWordSize (sizeof(Word))
 

@@ -112,14 +112,6 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(objectHeader.headerWord.bitString)"),.space(1),.natural("POINTER TO \(type) \(stringValue)"))
             case Proton.kTagBitsInteger:
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("INTEGER(\(Int64(bitPattern: slotWord)))"))
-            case Proton.kTagBitsUInteger:
-                Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("UINTEGER(\(Int64(bitPattern: slotWord)))"))
-//                        case Argon.kTagBitsUnsigned:
-//                            Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("UNSIGNED(\(slotWord))"))
-//            case Argon.kTagBitsCharacter:
-//                let character = Unicode.Scalar(UInt16(untaggedWord(slotWord)))
-//                let string = String(character!)
-//                Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("CHARACTER(\(string))"))
             case Proton.kTagBitsByte:
                 let byte = UInt8(slotWord)
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("BYTE(\(byte))"))
@@ -127,8 +119,11 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
                 let boolean = slotWord == 1
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("BOOLEAN(\(boolean))"))
             case Proton.kTagBitsFloat32:
-                let float = Float(bitPattern: slotWord)
+                let float = Float(taggedBits: slotWord)
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("FLOAT32(\(float))"))
+            case Proton.kTagBitsFloat64:
+                let float = Double(taggedBits: slotWord)
+                Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("FLOAT64(\(float))"))
             default:
                 Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"))
             }

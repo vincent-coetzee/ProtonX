@@ -188,6 +188,11 @@ public class ArrayPointer:CollectionPointer
         return(self.bufferPointer.wordAddress)
         }
         
+    public var wordBufferAddress:Proton.Address
+        {
+        return(self._bufferPointer.valueAddress)
+        }
+        
     private var _bufferPointer = SlotValue<WordBlockPointer>(index: ArrayPointer.kArrayWordBufferPointerIndex)
     
     public var bufferPointer:WordBlockPointer

@@ -174,6 +174,8 @@ public enum ValueHolder:Comparable
                 return(0)
             case .integer(let int):
                 return(int.asWord())
+            case .character(let char):
+                fatalError("Inplement this")
             case .uinteger(let uint):
                 return(uint)
             case .float32(let value):
@@ -258,7 +260,9 @@ public enum ValueHolder:Comparable
                 return("TypePointer(\(value.name))")
             case .package(let value):
                 return("Package(\(value.fullName))")
-            }
+        case .character:
+            fatalError("Implement this")
+        }
         }
         
     case none
@@ -267,6 +271,7 @@ public enum ValueHolder:Comparable
     case float32(Float)
     case float64(Double)
     case boolean(Bool)
+    case character(UInt16)
     case byte(UInt8)
     case string(String)
     case stringReference(StringPointer)
@@ -369,12 +374,13 @@ public enum ValueHolder:Comparable
                     self = .integer(Int64(bitPattern: word))
                 case .uinteger:
                     self = .uinteger(word)
+                case .character:
+                    self = .character(UInt16(word & 65535))
                 case .float32:
                     let u32 = UInt32(word &  4294967295)
                     self = .float32(Float(bitPattern: u32))
-//                case .float64:
-    //                return(lhs.word == rhs.word)
-                    self = .float64(0)
+                case .float64:
+                    self = .float64(Double(bitPattern: (word & 1152921504606846975) << 4))
                 case .boolean:
                     self = .boolean(word == 1)
                 case .byte:
@@ -385,6 +391,8 @@ public enum ValueHolder:Comparable
                     self = .bits(word & ~Proton.kTagBitsMask)
                 case .persistent:
                     fatalError("This should have been implemented")
+                case .string:
+                    self = .string("")
                 }
             }
         }
@@ -466,6 +474,8 @@ public enum ValueHolder:Comparable
                 setAddressAtAddress(value.address,address)
             case .package(let value):
                 setAddressAtAddress(value.address,address)
+        case .character:
+            fatalError("Implement this")
             }
         }
     }

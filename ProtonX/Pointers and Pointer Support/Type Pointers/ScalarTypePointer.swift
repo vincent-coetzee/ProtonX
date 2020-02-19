@@ -60,7 +60,7 @@ public class ScalarTypePointer:TypePointer
             case .bits:
                 return(word)
             case .integer:
-                return(Proton.Integer(bitPattern: word))
+                return(Proton.Integer(taggedBits: word))
             case .uinteger:
                 return(Proton.UInteger(word))
             case .boolean:
@@ -70,7 +70,7 @@ public class ScalarTypePointer:TypePointer
             case .none:
                 return(nil)
             case .float32:
-                return(Proton.Float32(bitPattern: word))
+                return(Proton.Float32(taggedBits:word))
             case .float64:
                 fatalError("You need to think this through")
             }

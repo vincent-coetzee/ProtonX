@@ -41,12 +41,12 @@ public class StackSegment:MemorySegment
         
     public func stackValue(on thread:Thread,at offset:Int) -> Word
         {
-        return(wordAtAddress(Word(UInt(bitPattern: offset + Int(thread.registers[.bp])))))
+        return(wordAtAddress(Word(UInt(bitPattern: offset + Int(thread.registers[Instruction.Register.fp.rawValue])))))
         }
         
     public func setStackValue(_ word:Word,on thread:Thread,at offset:Int)
         {
-        setWordAtAddress(word,Word(UInt(bitPattern: offset + Int(thread.registers[.bp]))))
+        setWordAtAddress(word,Word(UInt(bitPattern: offset + Int(thread.registers[Instruction.Register.fp.rawValue]))))
         }
         
     public func push(_ operand:Instruction.Operand,on thread:Thread)
@@ -63,14 +63,14 @@ public class StackSegment:MemorySegment
             setWordAtAddress(value,self.top)
             self.top -= Word(MemoryLayout<Word>.size)
         case .register(let register):
-            setWordAtAddress(thread.registers[register],self.top)
+            setWordAtAddress(thread.registers[register.rawValue],self.top)
             self.top -= Word(MemoryLayout<Word>.size)
         case .referenceRegister(let register):
-            let address = thread.registers[register]
+            let address = thread.registers[register.rawValue]
             setWordAtAddress(wordAtAddress(address),self.top)
             self.top -= Word(MemoryLayout<Word>.size)
         case .stack(let offset):
-            let stackOffset = thread.registers[.bp] + Word(UInt(bitPattern: offset))
+            let stackOffset = thread.registers[Instruction.Register.fp.rawValue] + Word(UInt(bitPattern: offset))
             setWordAtAddress(wordAtAddress(stackOffset),self.top)
         default:
             break
@@ -79,8 +79,8 @@ public class StackSegment:MemorySegment
         
     public func enterBlock(on thread: Thread,localsSizeInBytes size: Instruction.Operand)
         {
-        self.push(thread.registers[.bp])
-        thread.registers[.bp] = thread.registers[.sp]
+        self.push(thread.registers[Instruction.Register.fp.rawValue])
+        thread.registers[Instruction.Register.fp.rawValue] = thread.registers[Instruction.Register.sp.rawValue]
         switch(size)
             {
             case .immediate(let value):

@@ -55,6 +55,13 @@ public class CodeBlockPointer:ObjectPointer
     public static let kCodeBlockInstructionCountIndex = SlotIndex.two
     public static let kCodeBlockInstructionArrayIndex = SlotIndex.three
         
+    public class func instructionAddress(of codeBlockAddress:Proton.Address) -> Proton.Address
+        {
+        var address = addressAtAddress(codeBlockAddress + Self.kCodeBlockInstructionArrayIndex)
+        address = addressAtAddress(address + ArrayPointer.kArrayWordBufferPointerIndex)
+        return(address + WordBlockPointer.kBufferElementsIndex)
+        }
+        
     public override class var totalSlotCount:Proton.SlotCount
         {
         return(4)
@@ -90,6 +97,11 @@ public class CodeBlockPointer:ObjectPointer
             self._instructionArrayPointer = newValue
             setAddressAtIndexAtAddress(newValue.address,Self.kCodeBlockInstructionArrayIndex,self.address)
             }
+        }
+        
+    public var instructionsAddress:Proton.Address
+        {
+        return(self.instructionArrayPointer.wordBufferAddress + WordBlockPointer.kBufferElementsIndex)
         }
         
     private var _cachedInstructions:Array<Instruction>?

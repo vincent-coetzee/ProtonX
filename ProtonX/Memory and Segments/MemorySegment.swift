@@ -47,6 +47,7 @@ public class MemorySegment:Equatable
         {
         Log.silent()
         Memory.initTypes()
+        self.testDoubles()
         self.testThreads()
         print("STRIDE OF Int IS \(MemoryLayout<Int>.stride)")
         print("STRIDE OF Int64 IS \(MemoryLayout<Int64>.stride)")
@@ -73,6 +74,33 @@ public class MemorySegment:Equatable
         self.testStringDictionaries()
         self.testTypes()
         segment.dump()
+        }
+        
+    public static func testDoubles()
+        {
+        Log.console()
+        let double1 = Double(5632876.5634252897978)
+        Log.log("DOUBLE1 IS \(double1)")
+        let taggedDouble1:Word = double1.bitPattern
+        Log.log("DOUBLE1 BITPATTERN IS   \(taggedDouble1.bitString)")
+        Log.log("DOUBLE1 EXPONENT IS     \(Word(double1.exponentBitPattern).bitString)")
+        Log.log("DOUBLE1 SIGNIFICAND IS  \(Word(double1.significandBitPattern).bitString)")
+        Log.log("DOUBLE RADIX IS         \(Double.radix)")
+        Log.log("DOUBLE EXP BITWIDTH IS  \(Double.exponentBitCount)")
+        Log.log("DOUBLE SIG BITWIDTH IS  \(Double.significandBitCount)")
+        let double2 = -double1
+        Log.log("-DOUBLE1 IS \(double2)")
+        let taggedDouble2:Word = double2.bitPattern
+        Log.log("-DOUBLE1 BITPATTERN IS  \(taggedDouble2.bitString)")
+        Log.log("-DOUBLE1 EXPONENT IS    \(Word(double2.exponentBitPattern).bitString)")
+        Log.log("-DOUBLE1 SIGNIFICAND IS \(Word(double2.significand.bitPattern).bitString)")
+        let signMask:Word = 9223372036854775808
+        let sign = taggedDouble2 & signMask
+        let newDouble = ((taggedDouble2 >> 4) & Proton.kTagBitsZeroMask) | (Proton.kTagBitsFloat64 << Proton.kTagBitsShift) | sign
+        Log.log("-DOUBLE1 TAGGED BITS IS \(newDouble.bitString)")
+        let finalSign = newDouble & signMask
+        let finalDouble = Double(bitPattern: ((newDouble & Proton.kTagBitsZeroMask) << 4) | finalSign)
+        Log.log("-DOUBLE1 UNTAGGED IS    \(finalDouble)")
         }
         
     public static func testBitFieldMaskSections()
@@ -115,8 +143,8 @@ public class MemorySegment:Equatable
         codeBlock.appendInstruction(anInstruction)
         codeBlock.appendInstruction(PUSHInstruction(address: string1.taggedAddress))
         codeBlock.appendInstruction(PUSHInstruction(address: string2.taggedAddress))
-        codeBlock.appendInstruction(PUSHInstruction(register:.bp))
-        codeBlock.appendInstruction(MOVInstruction(register1:.sp,register2:.bp))
+        codeBlock.appendInstruction(PUSHInstruction(register:.fp))
+        codeBlock.appendInstruction(MOVInstruction(register1:.sp,register2:.fp))
         codeBlock.appendInstruction(ADDInstruction(register1:.sp,immediate:24,register3:.sp))
         codeBlock.appendInstruction(MOVInstruction(immediate:-10,register2:.r9))
         codeBlock.appendInstruction(ADDInstruction(register1:.r9,immediate:100,register3:.r10))
@@ -137,8 +165,8 @@ public class MemorySegment:Equatable
         print("ENTER ENCODED = 0x\(anInstruction.encoded.instruction.hexString)")
         codeBlock.appendInstruction(PUSHInstruction(address: string1.taggedAddress))
         codeBlock.appendInstruction(PUSHInstruction(address: string2.taggedAddress))
-        codeBlock.appendInstruction(PUSHInstruction(register:.bp))
-        codeBlock.appendInstruction(MOVInstruction(register1:.sp,register2:.bp))
+        codeBlock.appendInstruction(PUSHInstruction(register:.fp))
+        codeBlock.appendInstruction(MOVInstruction(register1:.sp,register2:.fp))
         codeBlock.appendInstruction(ADDInstruction(register1:.sp,immediate:24,register3:.sp))
         codeBlock.appendInstruction(MOVInstruction(immediate:-10,register2:.r9))
         codeBlock.appendInstruction(ADDInstruction(register1:.r9,immediate:100,register3:.r10))
@@ -811,15 +839,7 @@ public class MemorySegment:Equatable
                             let stringValue = type == .string ? "\"" + ImmutableStringPointer(untaggedAddress(slotWord)).string + "\"" : ""
                             Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(objectHeader.headerWord.bitString)"),.space(1),.natural("POINTER TO \(type) \(stringValue)"))
                         case Proton.kTagBitsInteger:
-                            Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("SIGNED(\(Int64(bitPattern: slotWord)))"))
-                        case Proton.kTagBitsUInteger:
-                            Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("SIGNED(\(Int64(bitPattern: slotWord)))"))
-//                        case Argon.kTagBitsUnsigned:
-//                            Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("UNSIGNED(\(slotWord))"))
-//                        case Argon.kTagBitsCharacter:
-//                            let character = Unicode.Scalar(UInt16(untaggedWord(slotWord)))
-//                            let string = String(character!)
-//                            Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("CHARACTER(\(string))"))
+                            Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("INTEGER(\(Int64(bitPattern: slotWord)))"))
                         case Proton.kTagBitsByte:
                             let byte = UInt8(slotWord)
                             Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("BYTE(\(byte))"))
@@ -827,8 +847,11 @@ public class MemorySegment:Equatable
                             let boolean = slotWord == 1
                             Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("BOOLEAN(\(boolean))"))
                         case Proton.kTagBitsFloat32:
-                            let float = Float(bitPattern: slotWord)
+                            let float = Float(taggedBits: slotWord)
                             Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("FLOAT32(\(float))"))
+                        case Proton.kTagBitsFloat64:
+                            let float = Double(taggedBits: slotWord)
+                            Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"),.space(1),.natural("FLOAT64(\(float))"))
                         default:
                             Log.log(.natural("0x\(address.hexString):"),.space(1),.natural("\(slotWord.bitString)"))
                         }

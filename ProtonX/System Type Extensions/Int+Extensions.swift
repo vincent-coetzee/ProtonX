@@ -26,9 +26,19 @@ extension Int
         return((byteCount / wordSize) + 1)
         }
         
+    public var taggedBits:Word
+        {
+        return(Word(bitPattern: Int64(self)) & 9223372036854775807)
+        }
+        
     public var bitString:String
         {
         return(Word(self).bitString)
+        }
+        
+    public init(taggedBits:Word)
+        {
+        self = Int(bitPattern: UInt(taggedBits))
         }
         
     public func aligned(to alignment:Int) -> Int

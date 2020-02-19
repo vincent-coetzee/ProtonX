@@ -41,6 +41,11 @@ public class SlotValue<T> where T:CachedPointer
             }
         }
         
+    public var valueAddress:Proton.Address
+        {
+        return(self._source!.address + self.index)
+        }
+        
     private var cachedValue:T?
     private let index:SlotIndex
     private var _source:ObjectPointer?

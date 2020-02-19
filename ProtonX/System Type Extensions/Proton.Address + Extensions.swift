@@ -73,26 +73,26 @@ extension Proton.Address
         return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsInteger)
         }
         
-    public var isUInteger:Bool
-        {
-        return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsUInteger)
-        }
-        
     public var isBoolean:Bool
         {
         return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsBoolean)
         }
         
-    public var isFloat:Bool
+    public var isFloat32:Bool
         {
         return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsFloat32)
         }
         
-//    public var isDouble:Bool
-//        {
-//        return(((self & (Argon.kTagBitsMask << Argon.kTagBitsShift)) >> Argon.kTagBitsShift) == Argon.kTagBitsFloat64)
-//        }
+    public var isFloat64:Bool
+        {
+        return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsFloat64)
+        }
 
+    public var isPersistent:Bool
+        {
+        return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsPersistent)
+        }
+        
     public var isByte:Bool
         {
         return(((self & (Proton.kTagBitsMask << Proton.kTagBitsShift)) >> Proton.kTagBitsShift) == Proton.kTagBitsByte)

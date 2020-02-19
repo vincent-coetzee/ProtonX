@@ -178,11 +178,6 @@ extension TaggedWord
         self = Word(bitPattern: integer) & ~(Proton.kTagBitsMask << Proton.kTagBitsShift) | Proton.kTagBitsInteger
         }
         
-    public init(uinteger:Proton.UInteger)
-        {
-        self = uinteger & ~(Proton.kTagBitsMask << Proton.kTagBitsShift) | Proton.kTagBitsUInteger
-        }
-        
     public init(float:Proton.Float32)
         {
         self = Word(float.bitPattern) & ~(Proton.kTagBitsMask << Proton.kTagBitsShift) | Proton.kTagBitsFloat32
