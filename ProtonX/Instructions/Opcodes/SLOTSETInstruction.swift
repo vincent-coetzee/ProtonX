@@ -20,12 +20,12 @@ public class SLOTSETInstruction:Instruction
     private let operand2:Operand
     private let operand3:Operand
     
-    public override init(_ word1:Word,_ word2:Word,_ word3:Word)
+    public override init(_ word1:Word,_ word2:Word,_ word3:Word,_ word4:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3)
-        super.init(word1,word2,word3)
+        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3,word4)
+        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3,word4)
+        self.operand3 = Mode.mode(of: word1).decodeOperand3(word1,word2,word3,word4)
+        super.init(word1,word2,word3,word4)
         }
         
     public init(register1:Register,register2:Register,immediate:Proton.Immediate)

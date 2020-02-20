@@ -161,6 +161,7 @@ public class CodeBlockPointer:ObjectPointer
             index += 1
             var addressWord:Word = 0
             var immediate:Word = 0
+            var offsets:Word = 0
             if Instruction.instructionWordHasAddress(word)
                 {
                 addressWord = array[index]
@@ -171,7 +172,12 @@ public class CodeBlockPointer:ObjectPointer
                 immediate = array[index]
                 index += 1
                 }
-            instructions.append(Instruction.makeInstruction(from: word,with: addressWord,with: immediate))
+            if Instruction.instructionWordHasOffsets(word)
+                {
+                offsets = array[index]
+                index += 1
+                }
+            instructions.append(Instruction.makeInstruction(from: word,with: addressWord,with: immediate,with: offsets))
             }
         self._cachedInstructions = instructions
         }

@@ -127,7 +127,6 @@
 		BF36C98923FA0047000C4136 /* LEAVEInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF36C98823FA0047000C4136 /* LEAVEInstruction.swift */; };
 		BF36C98B23FA0053000C4136 /* DISPInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF36C98A23FA0053000C4136 /* DISPInstruction.swift */; };
 		BF36C98E23FA1D49000C4136 /* NOPInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF36C98D23FA1D49000C4136 /* NOPInstruction.swift */; };
-		BF36C99023FA1D59000C4136 /* PUSHPARMInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF36C98F23FA1D59000C4136 /* PUSHPARMInstruction.swift */; };
 		BF3C475123E89F1C008BCF13 /* SlotValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C475023E89F1C008BCF13 /* SlotValue.swift */; };
 		BF3C475423E8BF29008BCF13 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C475323E8BF29008BCF13 /* Thread.swift */; };
 		BF3C475623E8C615008BCF13 /* Method.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C475523E8C615008BCF13 /* Method.swift */; };
@@ -274,7 +273,6 @@
 		BF36C98823FA0047000C4136 /* LEAVEInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEAVEInstruction.swift; sourceTree = "<group>"; };
 		BF36C98A23FA0053000C4136 /* DISPInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DISPInstruction.swift; sourceTree = "<group>"; };
 		BF36C98D23FA1D49000C4136 /* NOPInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NOPInstruction.swift; sourceTree = "<group>"; };
-		BF36C98F23FA1D59000C4136 /* PUSHPARMInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PUSHPARMInstruction.swift; sourceTree = "<group>"; };
 		BF3C475023E89F1C008BCF13 /* SlotValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotValue.swift; sourceTree = "<group>"; };
 		BF3C475323E8BF29008BCF13 /* Thread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thread.swift; sourceTree = "<group>"; };
 		BF3C475523E8C615008BCF13 /* Method.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Method.swift; sourceTree = "<group>"; };
@@ -580,7 +578,6 @@
 				BF36C96223F9FDDD000C4136 /* ORInstruction.swift */,
 				BF36C95023F9FC90000C4136 /* POPInstruction.swift */,
 				BF36C94E23F9FC82000C4136 /* PUSHInstruction.swift */,
-				BF36C98F23FA1D59000C4136 /* PUSHPARMInstruction.swift */,
 				BF36C98423F9FFEA000C4136 /* RETInstruction.swift */,
 				BF36C97E23F9FFBF000C4136 /* SLOTGETInstruction.swift */,
 				BF36C98023F9FFCF000C4136 /* SLOTSETInstruction.swift */,
@@ -692,7 +689,6 @@
 				BF36C95D23F9FD34000C4136 /* DIVInstruction.swift in Sources */,
 				BF2488FB23FD2A2F00241E4B /* Double+Extensions.swift in Sources */,
 				BFA5E1C823FC4EC900DE9427 /* COERCEINTInstruction.swift in Sources */,
-				BF36C99023FA1D59000C4136 /* PUSHPARMInstruction.swift in Sources */,
 				BF00460623E5597100F07111 /* CodeBlockPointer.swift in Sources */,
 				BF0045E823E5597100F07111 /* ContractPointer.swift in Sources */,
 				BF36C96523F9FDE8000C4136 /* XORInstruction.swift in Sources */,

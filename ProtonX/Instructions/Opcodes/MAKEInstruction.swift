@@ -16,9 +16,9 @@ public class MAKEInstruction:Instruction
         return(super.displayString)
         }
         
-    public override init(_ word1:Word,_ word2:Word,_ word3:Word)
+    public override init(_ word1:Word,_ word2:Word,_ word3:Word,_ word4:Word)
         {
-        super.init(word1,word2,word3)
+        super.init(word1,word2,word3,word4)
         }
         
     public override init()

@@ -17,6 +17,7 @@ public class Instruction
         let word1 = wordAtAddress(address)
         var word2:Word = 0
         var word3:Word = 0
+        var word4:Word = 0
         if Self.instructionWordHasAddress(word1)
             {
             address += Proton.Address(MemoryLayout<Word>.stride)
@@ -27,10 +28,15 @@ public class Instruction
             address += Proton.Address(MemoryLayout<Word>.stride)
             word3 = wordAtAddress(address)
             }
-        return(self.makeInstruction(from: word1,with: word2,with: word3))
+        if Self.instructionWordHasOffsets(word1)
+            {
+            address += Proton.Address(MemoryLayout<Word>.stride)
+            word4 = wordAtAddress(address)
+            }
+        return(self.makeInstruction(from: word1,with: word2,with: word3,with: word4))
         }
         
-    public class func makeInstruction(from word1:Word,with word2:Word,with word3:Word) -> Instruction
+    public class func makeInstruction(from word1:Word,with word2:Word,with word3:Word,with word4:Word) -> Instruction
         {
         let operation = Operation(rawValue: (word1 & Self.Operation.kMask) >> Self.Operation.kShift)!
         switch(operation)
@@ -38,63 +44,61 @@ public class Instruction
             case .NOP:
                 return(NOPInstruction())
             case .MOV:
-                return(MOVInstruction(word1,word2,word3))
+                return(MOVInstruction(word1,word2,word3,word4))
             case .PUSH:
-                return(PUSHInstruction(word1,word2,word3))
+                return(PUSHInstruction(word1,word2,word3,word4))
             case .POP:
-                return(POPInstruction(word1,word2,word3))
+                return(POPInstruction(word1,word2,word3,word4))
             case .CALL:
-                return(CALLInstruction(word1,word2,word3))
+                return(CALLInstruction(word1,word2,word3,word4))
             case .ENTER:
-                return(ENTERInstruction(word1,word2,word3))
+                return(ENTERInstruction(word1,word2,word3,word4))
             case .LEAVE:
-                return(LEAVEInstruction(word1,word2,word3))
+                return(LEAVEInstruction(word1,word2,word3,word4))
             case .RET:
-                return(RETInstruction(word1,word2,word3))
+                return(RETInstruction(word1,word2,word3,word4))
             case .DISP:
-                return(DISPInstruction(word1,word2,word3))
+                return(DISPInstruction(word1,word2,word3,word4))
             case .BR:
-                return(BRInstruction(word1,word2,word3))
+                return(BRInstruction(word1,word2,word3,word4))
             case .BRNZ:
-                return(BRNZInstruction(word1,word2,word3))
+                return(BRNZInstruction(word1,word2,word3,word4))
             case .BRZ:
-                return(BRZInstruction(word1,word2,word3))
+                return(BRZInstruction(word1,word2,word3,word4))
             case .BREQ:
-                return(BREQInstruction(word1,word2,word3))
+                return(BREQInstruction(word1,word2,word3,word4))
             case .BRNEQ:
-                return(BRNEQInstruction(word1,word2,word3))
+                return(BRNEQInstruction(word1,word2,word3,word4))
             case .BRLT:
-                return(BRLTInstruction(word1,word2,word3))
+                return(BRLTInstruction(word1,word2,word3,word4))
             case .BRGT:
-                return(BRGTInstruction(word1,word2,word3))
+                return(BRGTInstruction(word1,word2,word3,word4))
             case .BRLTEQ:
-                return(BRLTEQInstruction(word1,word2,word3))
+                return(BRLTEQInstruction(word1,word2,word3,word4))
             case .BRGTEQ:
-                return(BRGTEQInstruction(word1,word2,word3))
+                return(BRGTEQInstruction(word1,word2,word3,word4))
             case .SLOTGET:
-                return(SLOTGETInstruction(word1,word2,word3))
+                return(SLOTGETInstruction(word1,word2,word3,word4))
             case .SLOTSET:
-                return(SLOTSETInstruction(word1,word2,word3))
+                return(SLOTSETInstruction(word1,word2,word3,word4))
             case .ADD:
-                return(ADDInstruction(word1,word2,word3))
+                return(ADDInstruction(word1,word2,word3,word4))
             case .SUB:
-                return(SUBInstruction(word1,word2,word3))
+                return(SUBInstruction(word1,word2,word3,word4))
             case .MUL:
-                return(MULInstruction(word1,word2,word3))
+                return(MULInstruction(word1,word2,word3,word4))
             case .DIV:
-                return(DIVInstruction(word1,word2,word3))
+                return(DIVInstruction(word1,word2,word3,word4))
             case .MOD:
-                return(MODInstruction(word1,word2,word3))
+                return(MODInstruction(word1,word2,word3,word4))
             case .AND:
-                return(ANDInstruction(word1,word2,word3))
+                return(ANDInstruction(word1,word2,word3,word4))
             case .OR:
-                return(ORInstruction(word1,word2,word3))
+                return(ORInstruction(word1,word2,word3,word4))
             case .XOR:
-                return(XORInstruction(word1,word2,word3))
+                return(XORInstruction(word1,word2,word3,word4))
             case .NOT:
-                return(NOTInstruction(word1,word2,word3))
-            case .PUSHPARM:
-                return(PUSHPARMInstruction(word1,word2,word3))
+                return(NOTInstruction(word1,word2,word3,word4))
             default:
                 return(Instruction())
             }
@@ -110,8 +114,25 @@ public class Instruction
         return(Mode(from: word).hasImmediate)
         }
     
+    public class func instructionWordHasOffsets(_ word:Word) -> Bool
+        {
+        return(word & Self.kOperand1HasOffsetMask == Self.kOperand1HasOffsetMask || word & Self.kOperand2HasOffsetMask == Self.kOperand2HasOffsetMask || word & Self.kOperand3HasOffsetMask == Self.kOperand3HasOffsetMask)
+        }
+        
     public struct InstructionWord
         {
+        public static let kOffset1Mask:Word = Word(2097151)
+        public static let kOffset1MaskShifted:Word = Word(2097151) << Word(42)
+        public static let kOffset1Shift:Word = 42
+        
+        public static let kOffset2Mask:Word = Word(2097151)
+        public static let kOffset2MaskShifted:Word = Word(2097151) << Word(21)
+        public static let kOffset2Shift:Word = 21
+        
+        public static let kOffset3Mask:Word = Word(2097151)
+        public static let kOffset3MaskShifted:Word = Word(2097151)
+        public static let kOffset3Shift:Word = 0
+        
         public var address:Word
             {
             get
@@ -186,17 +207,62 @@ public class Instruction
                 }
             }
             
+        public var offset1:Word
+            {
+            get
+                {
+                return((self.offsets & Self.kOffset1MaskShifted) >> Self.kOffset1Shift)
+                }
+            set
+                {
+                self.hasOffset = true
+                self.offsets &= ~Self.kOffset1MaskShifted
+                self.offsets |= (newValue & Self.kOffset1Mask) << Self.kOffset1Shift
+                }
+            }
+            
+        public var offset2:Word
+            {
+            get
+                {
+                return((self.offsets & Self.kOffset2MaskShifted) >> Self.kOffset2Shift)
+                }
+            set
+                {
+                self.hasOffset = true
+                self.offsets &= ~Self.kOffset2MaskShifted
+                self.offsets |= (newValue & Self.kOffset2Mask) << Self.kOffset2Shift
+                }
+            }
+            
+        public var offset3:Word
+            {
+            get
+                {
+                return((self.offsets & Self.kOffset3MaskShifted) >> Self.kOffset3Shift)
+                }
+            set
+                {
+                self.hasOffset = true
+                self.offsets &= ~Self.kOffset3MaskShifted
+                self.offsets |= (newValue & Self.kOffset3Mask) << Self.kOffset3Shift
+                }
+            }
+            
         public var instruction:Word
         private var _address:Word
         private var _immediate:Word
+        private var offsets:Word
         public var hasAddress = false
         public var hasImmediate = false
+        public var hasOffset = false
         
-        public init(instruction:Word,address:Word,immediate:Word)
+        public init(instruction:Word,address:Word,immediate:Word,offsets:Word)
             {
             self.instruction = instruction
             self._address = address
             self._immediate = immediate
+            self.offsets = offsets
             }
         }
         
@@ -207,7 +273,6 @@ public class Instruction
         
         case NOP = 0
         case PUSH
-        case PUSHPARM
         case POP
         case MAKE
         case MOV
@@ -457,19 +522,22 @@ public class Instruction
         case registerAddressLabel = 19
         case immediateAddress = 20
         
-        public func decodeOperand3(_ word1:Word,_ word2:Word,_ word3:Word) -> Operand
+        public func decodeOperand3(_ word1:Word,_ word2:Word,_ word3:Word,_ word4:Word) -> Operand
             {
             switch(self)
                 {
                 case .registerImmediateRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister3Mask) >> Register.kRegister3Shift))!
-                    return((word1 & kOperand3IsReferenceMask) == kOperand3IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand3HasOffsetMask == kOperand3HasOffsetMask ? (word4 & kOperand3HasOffsetMask) >> kOperand3HasOffsetShift : nil
+                    return((word1 & kOperand3IsReferenceMask) == kOperand3IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .immediateRegisterRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister3Mask) >> Register.kRegister3Shift))!
-                    return((word1 & kOperand3IsReferenceMask) == kOperand3IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand3HasOffsetMask == kOperand3HasOffsetMask ? (word4 & kOperand3HasOffsetMask) >> kOperand3HasOffsetShift : nil
+                    return((word1 & kOperand3IsReferenceMask) == kOperand3IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerRegisterRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister3Mask) >> Register.kRegister3Shift))!
-                    return((word1 & kOperand3IsReferenceMask) == kOperand3IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand3HasOffsetMask == kOperand3HasOffsetMask ? (word4 & kOperand3HasOffsetMask) >> kOperand3HasOffsetShift : nil
+                    return((word1 & kOperand3IsReferenceMask) == kOperand3IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerRegisterImmediate:
                     return(.immediate(Proton.Immediate(bitPattern: word3)))
                 case .registerAddressImmediate:
@@ -486,7 +554,7 @@ public class Instruction
             return(.none)
             }
             
-        public func decodeOperand2(_ word1:Word,_ word2:Word,_ word3:Word) -> Operand
+        public func decodeOperand2(_ word1:Word,_ word2:Word,_ word3:Word,_ word4:Word) -> Operand
             {
             switch(self)
                 {
@@ -496,105 +564,129 @@ public class Instruction
                     return(.immediate(Proton.Immediate(bitPattern: word3)))
                 case .registerRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
-                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand2HasOffsetMask == kOperand2HasOffsetMask ? (word4 & kOperand2HasOffsetMask) >> kOperand2HasOffsetShift : nil
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerImmediateRegister:
                     return(.immediate(Proton.Immediate(bitPattern: word3)))
                 case .immediateRegisterRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
-                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand2HasOffsetMask == kOperand2HasOffsetMask ? (word4 & kOperand2HasOffsetMask) >> kOperand2HasOffsetShift : nil
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerRegisterRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
-                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand2HasOffsetMask == kOperand2HasOffsetMask ? (word4 & kOperand2HasOffsetMask) >> kOperand2HasOffsetShift : nil
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerAddress:
                     return(.address(word2))
                 case .addressRegister:
                      let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
-                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
+                     let offset = word1 & kOperand2HasOffsetMask == kOperand2HasOffsetMask ? (word4 & kOperand2HasOffsetMask) >> kOperand2HasOffsetShift : nil
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .immediateRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
-                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand2HasOffsetMask == kOperand2HasOffsetMask ? (word4 & kOperand2HasOffsetMask) >> kOperand2HasOffsetShift : nil
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerRegisterImmediate:
                     let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
-                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand2HasOffsetMask == kOperand2HasOffsetMask ? (word4 & kOperand2HasOffsetMask) >> kOperand2HasOffsetShift : nil
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerAddressImmediate:
-                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceAddress(word2) : .address(word2))
+                    let offset = word1 & kOperand2HasOffsetMask == kOperand2HasOffsetMask ? (word4 & kOperand2HasOffsetMask) >> kOperand2HasOffsetShift : nil
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .addressee(word2,offset) : .address(word2))
                 case .stackRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
-                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand2HasOffsetMask == kOperand2HasOffsetMask ? (word4 & kOperand2HasOffsetMask) >> kOperand2HasOffsetShift : nil
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerStack:
                     return(.stack(Int(Int64(bitPattern: word3))))
                 case .registerRegisterLabel:
                     let register = Register(rawValue: Int((word1 & Register.kRegister2Mask) >> Register.kRegister2Shift))!
-                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand2HasOffsetMask == kOperand2HasOffsetMask ? (word4 & kOperand2HasOffsetMask) >> kOperand2HasOffsetShift : nil
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerImmediateLabel:
                     return(.immediate(Proton.Immediate(bitPattern: word3)))
                 case .registerAddressLabel:
-                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceAddress(word2) : .address(word2))
+                    let offset = word1 & kOperand2HasOffsetMask == kOperand2HasOffsetMask ? (word4 & kOperand2HasOffsetMask) >> kOperand2HasOffsetShift : nil
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .addressee(word2,offset) : .address(word2))
                 case .immediateAddress:
-                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .referenceAddress(word2) : .address(word2))
+                    let offset = word1 & kOperand2HasOffsetMask == kOperand2HasOffsetMask ? (word4 & kOperand2HasOffsetMask) >> kOperand2HasOffsetShift : nil
+                    return((word1 & kOperand2IsReferenceMask) == kOperand2IsReferenceMask ? .addressee(word2,offset) : .address(word2))
                 default:
                     break
                 }
             return(.none)
             }
             
-        public func decodeOperand1(_ word1:Word,_ word2:Word,_ word3:Word) -> Operand
+        public func decodeOperand1(_ word1:Word,_ word2:Word,_ word3:Word,_ word4:Word) -> Operand
             {
             switch(self)
                 {
                 case .none:
                     return(.none)
                 case .address:
-                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceAddress(word2) : .address(word2))
+                    let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .addressee(word2,offset) : .address(word2))
                 case .addressImmediate:
-                   return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceAddress(word2) : .address(word2))
+                    let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                   return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .addressee(word2,offset) : .address(word2))
                 case .immediate:
                     return(.immediate(Proton.Immediate(bitPattern: word3)))
                 case .register:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
-                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerRegister:
                      let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
-                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
+                     let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerImmediateRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
-                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .immediateRegisterRegister:
                     return(.immediate(Proton.Immediate(bitPattern: word3)))
                 case .registerRegisterRegister:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
-                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerAddress:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
-                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .addressRegister:
                     return(.address(word2))
                 case .immediateRegister:
                     return(.immediate(Proton.Immediate(bitPattern: word3)))
                 case .registerAddressImmediate:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
-                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .label:
                     return(.label(Label(key: Int(Proton.Immediate(bitPattern:word3)))))
                 case .stackRegister:
                     return(.stack(Int(Int64(bitPattern: word3))))
                 case .registerStack:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
-                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerRegisterLabel:
                      let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
-                     return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
+                     let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                     return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerImmediateLabel:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
-                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .registerAddressLabel:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
-                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 case .immediateAddress:
                     return(.immediate(Proton.Immediate(bitPattern: word3)))
                 case .registerRegisterImmediate:
                     let register = Register(rawValue: Int((word1 & Register.kRegister1Mask) >> Register.kRegister1Shift))!
-                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .referenceRegister(register) : .register(register))
+                    let offset = word1 & kOperand1HasOffsetMask == kOperand1HasOffsetMask ? (word4 & kOperand1HasOffsetMask) >> kOperand1HasOffsetShift : nil
+                    return((word1 & kOperand1IsReferenceMask) == kOperand1IsReferenceMask ? .registerAddressee(register,offset) : .register(register))
                 }
             }
             
@@ -602,9 +694,13 @@ public class Instruction
             {
             switch(self,operand3)
                 {
-                case let(.registerAddress,.referenceAddress(value)):
+                case let(.registerAddress,.addressee(value,offset)):
                     instruction.address = value
                     instruction.operand3IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset3 = offset
+                        }
                 case let(.registerAddress,.address(value)):
                     instruction.address = value
                     instruction.operand3IsReference = false
@@ -613,17 +709,25 @@ public class Instruction
                 case let(.registerRegisterRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister3Shift)
                     instruction.operand3IsReference = false
-                case let(.registerRegisterRegister,.referenceRegister(value)):
+                case let(.registerRegisterRegister,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister3Shift)
                     instruction.operand3IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset3 = offset
+                        }
                 case let(.registerRegisterImmediate,.immediate(value)):
                     instruction.immediate = UInt64(bitPattern: value)
                 case let(.registerImmediateRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister3Shift)
                     instruction.operand3IsReference = false
-                case let(.registerImmediateRegister,.referenceRegister(value)):
+                case let(.registerImmediateRegister,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister3Shift)
                     instruction.operand3IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset3 = offset
+                        }
                 default:
                     break
                 }
@@ -636,49 +740,85 @@ public class Instruction
                 {
                 case let(.address,.address(value)):
                     instruction.address = value
-                case let(.address,.referenceAddress(value)):
+                case let(.address,.addressee(value,offset)):
                     instruction.address = value
                     instruction.operand1IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset1 = offset
+                        }
                 case let(.addressRegister,.address(value)):
                     instruction.address = value
-                case let(.addressRegister,.referenceAddress(value)):
+                case let(.addressRegister,.addressee(value,offset)):
                     instruction.address = value
                     instruction.operand1IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset1 = offset
+                        }
                 case let(.registerImmediateRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
-                case let(.registerImmediateRegister,.referenceRegister(value)):
+                case let(.registerImmediateRegister,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
                     instruction.operand1IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset1 = offset
+                        }
                 case let(.register,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
-                case let(.register,.referenceRegister(value)):
+                case let(.register,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
                     instruction.operand1IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset1 = offset
+                        }
                 case let(.registerRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
-                case let(.registerRegister,.referenceRegister(value)):
+                case let(.registerRegister,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
                     instruction.operand1IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset1 = offset
+                        }
                 case let(.registerRegisterRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
-                case let(.registerRegisterRegister,.referenceRegister(value)):
+                case let(.registerRegisterRegister,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
                     instruction.operand1IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset1 = offset
+                        }
                 case let(.registerRegisterImmediate,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
-                case let(.registerRegisterImmediate,.referenceRegister(value)):
+                case let(.registerRegisterImmediate,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
                     instruction.operand1IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset1 = offset
+                        }
                 case let(.registerAddressImmediate,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
-                case let(.registerAddressImmediate,.referenceRegister(value)):
+                case let(.registerAddressImmediate,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
                     instruction.operand1IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset1 = offset
+                        }
                 case let(.registerAddress,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
-                case let(.registerAddress,.referenceRegister(value)):
+                case let(.registerAddress,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
                     instruction.operand1IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset1 = offset
+                        }
                 case let(.immediate,.immediate(value)):
                     instruction.immediate = UInt64(bitPattern: value)
                 case let(.immediateRegister,.immediate(value)):
@@ -687,9 +827,13 @@ public class Instruction
                      instruction.immediate = Word(UInt(bitPattern: value.key))
                 case let(.registerStack,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
-                case let(.registerStack,.referenceRegister(value)):
+                case let(.registerStack,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister1Shift)
                     instruction.operand1IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset1 = offset
+                        }
                 case let(.stackRegister,.stack(value)):
                     let sign = value < 0 ? Word(2147483648) : Word(0)
                     let posValue = Word(abs(value))
@@ -715,36 +859,60 @@ public class Instruction
                     instruction.address = value
                 case let(.registerRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
-                case let(.registerRegister,.referenceRegister(value)):
+                case let(.registerRegister,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
                     instruction.operand2IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset2 = offset
+                        }
                 case let(.registerRegisterRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
-                case let(.registerRegisterRegister,.referenceRegister(value)):
+                case let(.registerRegisterRegister,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
                     instruction.operand2IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset2 = offset
+                        }
                 case let(.registerRegisterImmediate,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
-                case let(.registerRegisterImmediate,.referenceRegister(value)):
+                case let(.registerRegisterImmediate,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
                     instruction.operand2IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset2 = offset
+                        }
                 case let(.addressRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
-                case let(.addressRegister,.referenceRegister(value)):
+                case let(.addressRegister,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
                     instruction.operand2IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset2 = offset
+                        }
                 case let(.immediateRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
-                case let(.immediateRegister,.referenceRegister(value)):
+                case let(.immediateRegister,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
                     instruction.operand2IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset2 = offset
+                        }
                 case let(.registerStack,.stack(value)):
                     instruction.instruction |= (Word(UInt32(bitPattern: Int32(value)) & 4294967295))
                 case let(.stackRegister,.register(value)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
-                case let(.stackRegister,.referenceRegister(value)):
+                case let(.stackRegister,.registerAddressee(value,offset)):
                     instruction.instruction |= Word(value.rawValue << Register.kRegister2Shift)
                     instruction.operand2IsReference = true
+                    if let offset = offset
+                        {
+                        instruction.offset2 = offset
+                        }
                 default:
                     break
                 }
@@ -768,6 +936,13 @@ public class Instruction
     public static let kOperand2IsReferenceShift:Word = 20
     public static let kOperand3IsReferenceMask:Word = Word(1) << Word(19)
     public static let kOperand3IsReferenceShift:Word = 19
+    
+    public static let kOperand1HasOffsetMask:Word = Word(1) << Word(18)
+    public static let kOperand1HasOffsetShift:Word = 18
+    public static let kOperand2HasOffsetMask:Word = Word(1) << Word(17)
+    public static let kOperand2HasOffsetShift:Word = 17
+    public static let kOperand3HasOffsetMask:Word = Word(1) << Word(16)
+    public static let kOperand3HasOffsetShift:Word = 16
     
     public var hasAddress:Bool
         {
@@ -829,11 +1004,12 @@ public class Instruction
                     return("\(value)")
                 case .address(let value):
                     return("\(value)")
-                case .referenceAddress(let value):
-                    return("[\(value)]")
+                case .addressee(let value,let offset):
+                    let offsetString = offset == nil ? "" : " + \(offset!)"
+                    return("[\(value)\(offsetString)]")
                 case .register(let value):
                     return("\(value)")
-                case .referenceRegister(let value):
+                case .registerAddressee(let value):
                     return("[\(value)]")
                 case .stack(let value):
                     return("BP[\(value)]")
@@ -842,19 +1018,33 @@ public class Instruction
                 }
             }
             
+            
+        public var hasOffset:Bool
+            {
+            switch(self)
+                {
+                case .addressee(_,let offset):
+                    return(offset != nil)
+                case .registerAddressee(_,let offset):
+                    return(offset != nil)
+                default:
+                    return(false)
+                }
+            }
+            
         case label(Label)
         case immediate(Proton.Immediate)
         case address(Proton.Address)
-        case referenceAddress(Proton.Address)
+        case addressee(Proton.Address,Proton.Offset?)
         case register(Register)
-        case referenceRegister(Register)
+        case registerAddressee(Register,Proton.Offset?)
         case stack(Int)
         case none
         }
         
     public var encoded:InstructionWord
         {
-        var word:InstructionWord = InstructionWord(instruction:0,address:0,immediate:0)
+        var word:InstructionWord = InstructionWord(instruction:0,address:0,immediate:0,offsets:0)
         word.instruction = self.operation.orMask | self.mode.orMask
         self.encode(into: &word)
         return(word)
@@ -885,7 +1075,7 @@ public class Instruction
     public var mode:Mode
     public private(set) var incomingLabel:Int = 0
     public private(set) var outgoingLabels:[Int] = []
-        
+    
     public init(_ operation:Operation,_ mode:Mode)
         {
         self.operation = operation
@@ -909,7 +1099,7 @@ public class Instruction
         self.mode = .none
         }
         
-    public init(_ word1:Word,_ word2:Word,_ word3:Word)
+    public init(_ word1:Word,_ word2:Word,_ word3:Word,_ word4:Word)
         {
         self.operation = Operation(from: word1)
         self.mode = Mode(from: word1)
@@ -929,17 +1119,17 @@ public class Instruction
         self.outgoingLabels.append(outgoingLabel)
         }
         
-    @inline(__always)
-    public func encode(into pointer:inout UnsafeMutablePointer<Word>)
-        {
-        let word = self.encoded
-        pointer.pointee = word.instruction
-        if word.hasAddress
-            {
-            pointer += 1
-            pointer.pointee = word.address
-            }
-        }
+//    @inline(__always)
+//    public func encode(into pointer:inout UnsafeMutablePointer<Word>)
+//        {
+//        let word = self.encoded
+//        pointer.pointee = word.instruction
+//        if word.hasAddress
+//            {
+//            pointer += 1
+//            pointer.pointee = word.address
+//            }
+//        }
         
     public func execute(on:Thread) throws
         {

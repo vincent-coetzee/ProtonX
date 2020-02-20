@@ -19,11 +19,11 @@ public class CoercionInstruction:Instruction
         return(super.displayString + self.operand1.displayString + "," + self.operand2.displayString)
         }
     
-    public override init(_ word1:Word,_ word2:Word,_ word3:Word)
+    public override init(_ word1:Word,_ word2:Word,_ word3:Word,_ word4:Word)
         {
-        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3)
-        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3)
-        super.init(word1,word2,word3)
+        self.operand1 = Mode.mode(of: word1).decodeOperand1(word1,word2,word3,word4)
+        self.operand2 = Mode.mode(of: word1).decodeOperand2(word1,word2,word3,word4)
+        super.init(word1,word2,word3,word4)
         }
         
     public init(operation:Operation,register1:Register,register2:Register)
@@ -42,14 +42,14 @@ public class CoercionInstruction:Instruction
         
     public init(operation:Operation,referenceAddress:Proton.Address,register1:Register)
         {
-        self.operand1 = .referenceAddress(referenceAddress)
+        self.operand1 = .addressee(referenceAddress,nil)
         self.operand2 = .register(register1)
         super.init(operation,.addressRegister)
         }
         
     public init(operation:Operation,register1:Register,referenceAddress:Proton.Address)
         {
-        self.operand2 = .referenceAddress(referenceAddress)
+        self.operand2 = .addressee(referenceAddress,nil)
         self.operand1 = .register(register1)
         super.init(operation,.registerAddress)
         }

@@ -205,6 +205,7 @@ public class Proton
     public typealias Address = Word
     public typealias Immediate = Int64
     public typealias Index = Int
+    public typealias Offset = Word
     
     public struct ByteCount
         {

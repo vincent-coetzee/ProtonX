@@ -59,14 +59,14 @@ public class StackSegment:MemorySegment
         case .address(let address):
             setWordAtAddress(address,self.top)
             self.top -= Word(MemoryLayout<Word>.size)
-        case .referenceAddress(let value):
-            setWordAtAddress(value,self.top)
+        case .addressee(let value,let offset):
+            setWordAtAddress(value,self.top + (offset ?? 0))
             self.top -= Word(MemoryLayout<Word>.size)
         case .register(let register):
             setWordAtAddress(thread.registers[register.rawValue],self.top)
             self.top -= Word(MemoryLayout<Word>.size)
-        case .referenceRegister(let register):
-            let address = thread.registers[register.rawValue]
+        case .registerAddressee(let register,let offset):
+            let address = thread.registers[register.rawValue] + (offset ?? 0)
             setWordAtAddress(wordAtAddress(address),self.top)
             self.top -= Word(MemoryLayout<Word>.size)
         case .stack(let offset):
