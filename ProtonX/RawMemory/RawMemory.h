@@ -87,83 +87,38 @@ typedef struct _Root
 //
 // INSTANCE FLAG
 //
-#define kInstanceFlag               ((Word)1)
-#define kInstanceFlagMask           (((Word)1) << ((Word)63))
-#define kInstanceFlagShift          ((Word)63)
+//#define kInstanceFlag               ((Word)1)
+//#define kInstanceFlagMask           (((Word)1) << ((Word)63))
+//#define kInstanceFlagShift          ((Word)63)
 //
 // TAG FLAGS FOR THE HEADER WORD
 //
 
-#define kTagBitsInteger           ((Word)0)
-#define kTagBitsUInteger          ((Word)1)
+#define kTagBitsUInteger          ((Word)0)
+#define kTagBitsInteger           ((Word)1)
 #define kTagBitsFloat32           ((Word)2)
-#define kTagBitsBoolean           ((Word)3)
-#define kTagBitsByte              ((Word)4)
-#define kTagBitsAddress           ((Word)5)
-#define kTagBitsBits              ((Word)6)
-#define kTagBitsPersistent        ((Word)7)
+#define kTagBitsFloat64           ((Word)3)
+#define kTagBitsBoolean           ((Word)4)
+#define kTagBitsCharacter         ((Word)5)
+#define kTagBitsByte              ((Word)6)
+#define kTagBitsString            ((Word)7)
+#define kTagBitsAddress           ((Word)8)
+#define kTagBitsBits              ((Word)9)
+#define kTagBitsPersistent        ((Word)10)
 
-#define kTagBitsMask               ((Word)7)
-#define kTagBitsShift              ((Word)60)
-//
-// SIZE MASKS AND SHIFTS FOR HEADER WORD
-//
-#define kSlotCountMask              ((Word)4294967295)
-#define kSlotCountShift             ((Word)8)
-//
-// HEADER FLAGS FOR TYPES
-//
-#define kTypeMethodInstance = ((Word)1)
-#define kTypeString = ((Word)2)
-#define kTypeDictionary = ((Word)3)
-#define kTypeSet = ((Word)4)
-#define kTypeBitSet = ((Word)5)
-#define kTypeArray = ((Word)6)
-#define kTypeList = ((Word)7)
-#define kTypeAlias = ((Word)8)
-#define kTypeEnumeration = ((Word)9)
-#define kTypeType = ((Word)10)
-#define kTypeUser = ((Word)11)
-#define kTypeWordBuffer = ((Word)12)
-#define kTypeSlot = ((Word)14)
-#define kTypeVirtualSlot = ((Word)15)
-#define kTypeSystemSlot = ((Word)16)
-#define kTypeCodeBlock = ((Word)17)
-#define kTypeClosure = ((Word)18)
-#define kTypeInstance = ((Word)19)
-#define kTypeMetaType = ((Word)20)
-#define kTypeSigned = ((Word)21)
-#define kTypeUnsigned = ((Word)22)
-#define kTypeBoolean = ((Word)23)
-#define kTypeCharacter = ((Word)24)
-#define kTypeByte = ((Word)25)
-#define kTypeCollection = ((Word)26)
-#define kTypeObject = ((Word)27)
-#define kTypeContract = ((Word)28)
-#define kTypeMethod = ((Word)29)
-#define kTypeFloat32 = ((Word)30)
-#define kTypeFloat64 = ((Word)31)
-#define kTypeStringDictionary = ((Word)32)
-#define kTypeTypeType = ((Word)33)
-#define kTypeStringType = ((Word)34)
 
-#define kTypeMask                     ((Word)255)
-#define kTypeShift                    ((Word)0)
-
-#define kHighHalfWordShift            ((Word)32)
-#define kHalfWordMask                 ((Word)4294967295)
+#define kTagBitsMask               ((Word)15)
+#define kTagBitsShift              ((Word)59)
 
 #define kHeaderMarkerMask             ((Word)1)
-#define kHeaderMarkerShift            ((Word)59)
-#define kHeaderMarkerMaskShifted      (((Word)1) << ((Word)59))
+#define kHeaderMarkerShift            ((Word)58)
+#define kHeaderMarkerMaskShifted      (((Word)1) << ((Word)58))
 
 //
 // WORD MACROS
 //
-#define WordFromHighLow(h,l) (((AsWord(h) & kHalfWordMask) << kHighHalfWordShift) | (AsWord(l) & kHalfWordMask))
 #define AlignWordTo(w,a) ((((Word)(w)) + (((Word)(a)) - 1)) & (~((Word)(a - 1))))
 #define AsPointerPointer(w) ((void**)(w))
-
 #define AsInteger(w) ((CInt64)(w))
 #define AsUInteger(w) ((CUInt64)(w))
 #define AsFloat32(w) ((float)(w))
@@ -209,32 +164,11 @@ typedef struct _Root
 #define AsUntaggedWordPointer(w) (AsWordPointer(AsWord(w) & ~(kTagBitsMask<<kTagBitsShift)))
 #define AsUntaggedPointerPointer(w) (AsPointerPointer(AsWord(w) & ~(kTagBitsMask<<kTagBitsShift)))
 
-//Word wordAtPointer(void* pointer);
-//void* pointerAtPointer(void* pointer);
-//Word untaggedWordAtPointer(void* pointer);
-//void setWordAtPointer(Word word,void* pointer);
-//void setAddressAtPointer(Word word,void* pointer);
-//void setWordAtIndexAtPointer(Word word,SlotIndex index,void* pointer);
-//Word wordAtIndexAtPointer(SlotIndex index,void* pointer);
-//void setTaggedWordAtIndexAtPointer(Word word,SlotIndex index,void* pointer);
-//void setInt64AtIndexAtPointer(CInt64 value,SlotIndex index,void* pointer);
-//Word pointerAsWord(void* pointer);
-//Word pointerAsAddress(void* pointer);
-//void* wordAsPointer(Word word);
 Word wordAtAddress(Word address);
 void setWordAtAddress(Word word,Word address);
-//void setPointerAtIndexAtPointer(void* pointer,SlotIndex index,void* targetPointer);
-//void setObjectPointerAtIndexAtPointer(void* pointer,SlotIndex index,void* targetPointer);
-//void tagAndSetPointerAtIndexAtPointer(void* pointer,SlotIndex index,void* targetPointer);
-//void tagAndSetAddressAtIndexAtPointer(Word address,SlotIndex index,void* targetPointer);
-//void* pointerAtIndexAtPointer(SlotIndex index,void* pointer);
 char* charPointerToIndexAtAddress(SlotIndex index,Word pointer);
-//void* pointerToIndexAtPointer(SlotIndex index,void* pointer);
 Word wordAtIndexAtAddress(SlotIndex index,Word pointer);
-//void* untaggedPointerAtAddress(Word address);
-//Word untaggedPointerAsAddress(void* pointer);
 void setWordAtIndexAtAddress(Word word,SlotIndex index,Word address);
-//void setAddressAtIndexAtPointer(Word word,SlotIndex index,void* pointer);
 //
 // GETTING VALUES AT ADDRESS
 //
@@ -277,51 +211,17 @@ Word taggedUInteger(CUInt64 word);
 Word taggedByte(unsigned char byte);
 Word taggedAddress(Word pointer);
 Word taggedBits(Word bits);
-//Word taggedObjectAddress(Word pointer);
 Word taggedFloat32(float value);
-//PrivateFloat64 taggedFloat64(Word header,double value);
 _Bool untaggedBoolean(_Bool word);
 CInt64 untaggedInteger(CInt64 word);
 CUInt64 untaggedUInteger(CUInt64 word);
 CUInt64 untaggedBits(CUInt64 word);
 unsigned char untaggedByte(unsigned char byte);
-//void* untaggedObject(void* pointer);
 float untaggedFloat32(float value);
-//double untaggedFloat64(PrivateFloat64 words);
 Word untaggedAddress(Word value);
-//Word untaggedWordAtIndexAtPointer(SlotIndex index,void* pointer);
-//Word untaggedBitsAtIndexAtPointer(SlotIndex index,void* pointer);
-//void setTaggedBitsAtIndexAtPointer(Word bits,SlotIndex index,void* pointer);
-//Word untaggedAddressAtIndexAtPointer(SlotIndex index,void* pointer);
-//void* untaggedPointerAtIndexAtPointer(SlotIndex index,void* pointer);
-//void* untaggedPointerToIndexAtPointer(SlotIndex index,void* pointer);
 Word untaggedWord(Word word);
-//void* untaggedPointer(void* pointer);
-//void* untaggedWordAsPointer(Word word);
-//void* untaggedAddressAsPointer(Word address);
 Word untaggedWordAtAddress(Word address);
-//CInt64 untaggedIntegerAtIndexAtPointer(SlotIndex index,void* pointer);
-//void setTaggedIntegerAtIndexAtPointer(CInt64 word,SlotIndex index,void* pointer);
-//void setTaggedUIntegerAtIndexAtPointer(CUInt64 word,SlotIndex index,void* pointer);
-//void setTaggedByteAtIndexAtPointer(Byte word,SlotIndex index,void* pointer);
-//void setTaggedBooleanAtIndexAtPointer(_Bool word,SlotIndex index,void* pointer);
-//void setTaggedFloat32AtIndexAtPointer(float word,SlotIndex index,void* pointer);
-//void setTaggedFloat64AtIndexAtPointer(double word,SlotIndex index,void* pointer);
-//void setTaggedObjectAddressAtIndexAtPointer(Word address,SlotIndex index,void* pointer);
-//void setTaggedObjectPointerAtIndexAtPointer(void* address,SlotIndex index,void* pointer);
-//CUInt64 untaggedUIntegerAtIndexAtPointer(SlotIndex index,void* pointer);
-//float untaggedFloat32AtIndexAtPointer(SlotIndex index,void* pointer);
-//double untaggedFloat64AtIndexAtPointer(SlotIndex index,void* pointer);
-//_Bool untaggedBooleanAtIndexAtPointer(SlotIndex index,void* pointer);
-//Byte untaggedByteAtIndexAtPointer(SlotIndex index,void* pointer);
-//Word untaggedAddressAtIndexAtPointer(SlotIndex index,void* pointer);
 Word bitWordAtIndexAtAddress(SlotIndex index,Word pointer);
 void setBitWordAtIndexAtAddress(Word word,SlotIndex index,Word pointer);
-//Word addressOfIndexAtPointer(SlotIndex index,void* pointer);
-
-//
-// TAGGING
-//
-//Word pointerAsTaggedObjectAddress(void* pointer);
 
 #endif /* RawMemory_h */

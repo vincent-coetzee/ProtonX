@@ -90,6 +90,11 @@ public class StringPointer:ObjectPointer
         return(MemoryLayout<Word>.stride)
         }
         
+    public var taggedBits:Word
+        {
+        return(self.address | (Proton.kTagBitsString << Proton.kTagBitsShift))
+        }
+        
     public var string:String
         {
         get
@@ -212,4 +217,18 @@ public class StringPointer:ObjectPointer
         return(hashValue)
         }
         
-    }
+    public init(taggedBits word:Word)
+        {
+        let mask = Proton.kTagBitsString << Proton.kTagBitsShift
+        if word & mask != mask
+            {
+            fatalError("init(taggedBits:) called on StringPointer with non string pointer")
+            }
+        super.init(Proton.Address(word & ~mask))
+        }
+    
+    public required init(_ address: Proton.Address)
+        {
+        super.init(address)
+        }
+}

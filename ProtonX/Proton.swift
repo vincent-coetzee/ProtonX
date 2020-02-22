@@ -130,16 +130,16 @@ public class Proton
     public enum HeaderTag:Word
         {
         case uinteger = 0
-        case integer
-        case float32
-        case float64
-        case boolean
-        case character
-        case byte
-        case string
-        case address
-        case bits
-        case persistent
+        case integer = 1
+        case float32 = 2
+        case float64 = 3
+        case boolean = 4
+        case character = 5
+        case byte = 6
+        case string = 7
+        case address = 8
+        case bits = 9
+        case persistent = 10
         }
         
     public static let kTagBitsFloat64:Word = HeaderTag.float64.rawValue
@@ -154,7 +154,7 @@ public class Proton
     public static let kTagBitsUInteger:Word = HeaderTag.uinteger.rawValue
     public static let kTagBitsString:Word = HeaderTag.string.rawValue
     
-    public static let kTagBitsZeroMask:Word =  ~(Word(7) << Word(60))
+    public static let kTagBitsZeroMask:Word =  ~(Word(15) << Word(59))
     
     public static let kSignMask:Word = Word(1) << Word(63)
     
@@ -163,19 +163,20 @@ public class Proton
     public static let kOffsetMask:Word = 65535
     public static let kOffsetShift:Word = 0
     
-    public static let kTagBitsMask:Word = 7
-    public static let kTagBitsShift:Word = 60
-    public static let kTagBitsWidth:Word = 5
+    public static let kTagBitsMask:Word = 15
+    public static let kTagBitsShift:Word = 59
+    public static let kTagBitsWidth:Word = 4
     public static let kTagBitsFloat32Mask:Word = 4294967295
+    public static let kTagBitsTop5Mask:Word = 17870283321406128128
 
     public static let kHeaderMarkerMask:Word = 1
-    public static let kHeaderMarkerShift:Word = 59
+    public static let kHeaderMarkerShift:Word = 58
     
     public static let kHeaderHasExtraSlotsAtEndMask:Word = 1
-    public static let kHeaderHasExtraSlotsAtEndShift:Word = 58
+    public static let kHeaderHasExtraSlotsAtEndShift:Word = 57
     
     public static let kHeaderIsForwardedMask:Word = 1
-    public static let kHeaderIsForwardedShift:Word = 57
+    public static let kHeaderIsForwardedShift:Word = 56
     
     public static let kHeaderSlotCountMask:Word = 4294967295
     public static let kHeaderSlotCountShift:Word = 8
@@ -456,14 +457,3 @@ public class Proton
         }
     }
 
-
-extension Proton.Immediate
-    {
-    public init(from: Word)
-        {
-        let sign = (from & 2147483648 == 2147483648) ? Int32(-1) : Int32(1)
-        let mask:Word = ~2147483648
-        let newValue = from & mask
-        self.init(Int32(Int(newValue & Word(4294967295))) * sign)
-        }
-    }

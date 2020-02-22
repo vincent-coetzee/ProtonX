@@ -13,7 +13,7 @@ extension Proton.Boolean:Value
     {
     public var taggedAddress:Proton.Address
         {
-        return(taggedBoolean(self))
+        return(Proton.Address(boolean: self))
         }
         
     public init(_ word:Word)
@@ -48,5 +48,15 @@ extension Proton.Boolean:Value
     public func withTagBitsZeroed() -> Proton.Boolean
         {
         return(self)
+        }
+        
+    public var taggedBits:Word
+        {
+        return((self ? Word(1) : Word(0)) | (Proton.kTagBitsBoolean << Proton.kTagBitsShift))
+        }
+        
+    public init(taggedBits:Word)
+        {
+        self = ((taggedBits & 1) == 1)
         }
     }

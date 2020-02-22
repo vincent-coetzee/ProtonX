@@ -65,7 +65,7 @@ public class ValuePointer:Pointer,Equatable
         
     public var taggedAddress:Proton.Address
         {
-        return(RawMemory.taggedAddress(self.address))
+        return((Proton.kTagBitsAddress << Proton.kTagBitsShift) | self.address)
         }
         
     public var untaggedAddress:Proton.Address
@@ -96,7 +96,7 @@ public class ValuePointer:Pointer,Equatable
         
     required public init(_ address:Proton.Address)
         {
-        self.address = address & ~Proton.kTagBitsMask
+        self.address = address & ~(Proton.kTagBitsMask << Proton.kTagBitsShift)
         self._index = Proton.nextIndex
         self.initSlots()
         }

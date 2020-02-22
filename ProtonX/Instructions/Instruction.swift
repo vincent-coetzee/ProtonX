@@ -313,8 +313,10 @@ public class Instruction
         case COERCEINT
         case COERCEUINT
         case COERCECHAR
-        case COERCEBOOL
         case COERCEBYTE
+        case LOCALGET
+        case LOCALSET
+        case PARMGET
         
         public var orMask:Word
             {

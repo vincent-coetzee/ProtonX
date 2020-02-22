@@ -53,8 +53,7 @@ extension Int
         
     public func withTagAndSignBitsCleared() -> Int
         {
-        let mask:Int = 1152921504606846975
-        return(self & mask)
+        return(Int(bitPattern: UInt((Word(UInt(bitPattern: self)) & ~Proton.kTagBitsTop5Mask))))
         }
     }
 

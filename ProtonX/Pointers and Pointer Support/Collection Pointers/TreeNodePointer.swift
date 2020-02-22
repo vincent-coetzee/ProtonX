@@ -76,11 +76,11 @@ public class TreeNodePointer:ObjectPointer
         {
         get
             {
-            return(wordAtIndexAtAddress(Self.kTreeNodeValueIndex,self.address))
+            return(addressAtIndexAtAddress(Self.kTreeNodeValueIndex,self.address))
             }
         set
             {
-            setWordAtIndexAtAddress(newValue,Self.kTreeNodeValueIndex,self.address)
+            setAddressAtIndexAtAddress(newValue,Self.kTreeNodeValueIndex,self.address)
             }
         }
         
@@ -132,7 +132,7 @@ public class TreeNodePointer:ObjectPointer
             self.leftNodeAddress = RawMemory.taggedAddress(newValue?.address ?? 0)
             }
         }
-        
+
     public var rightNodePointer:TreeNodePointer?
         {
         get
@@ -184,13 +184,13 @@ public class TreeNodePointer:ObjectPointer
         var node = Optional(self)
         if node?.rightNodePointer != nil
             {
-            return(node!.minimum)
+            return(node!.rightNodePointer!.minimum)
             }
         var currentNode = node?.parentNodePointer
-        while currentNode != nil && self.taggedAddress == currentNode!.rightNodeAddress
+        while currentNode != nil && node!.taggedAddress == currentNode!.rightNodeAddress
             {
             node = currentNode
-            currentNode = node?.parentNodePointer
+            currentNode = currentNode?.parentNodePointer
             }
         return(currentNode!)
         }
@@ -271,7 +271,7 @@ public class TreeNodePointer:ObjectPointer
                 {
                 tree.nodePointer = nextNode
                 }
-            else if ValueHolder(word: currentNode?.taggedAddress ?? 0) == ValueHolder(word: currentNode?.parentNodePointer?.leftNodePointer?.taggedAddress ?? 0)
+            else if (currentNode?.address ?? 0) == (currentNode?.parentNodePointer?.leftNodeAddress ?? 0)
                 {
                 currentNode?.parentNodePointer?.leftNodePointer = nextNode
                 }
@@ -279,7 +279,7 @@ public class TreeNodePointer:ObjectPointer
                 {
                 currentNode?.parentNodePointer?.rightNodePointer = nextNode
                 }
-            if ValueHolder(word: currentNode?.taggedAddress ?? 0) != ValueHolder(word: targetNode.taggedAddress)
+            if (currentNode?.address ?? 0) != targetNode.address
                 {
                 targetNode.keyAddress = currentNode!.keyAddress
                 targetNode.valueAddress = currentNode!.valueAddress

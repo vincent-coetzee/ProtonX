@@ -107,6 +107,18 @@ public class TreePointer:CollectionPointer
         
     public func value<T>(forKey key:T) -> Proton.Address? where T:Key
         {
+        if let nodePointer = self.nodePointer,let address = nodePointer.findValue(forKey: key)
+            {
+            return(address & ~(Proton.kTagBitsMask << Proton.kTagBitsShift))
+            }
+        else
+            {
+            return(nil)
+            }
+        }
+    
+    public func rawValue<T>(forKey key:T) -> Proton.Address? where T:Key
+        {
         if let nodePointer = self.nodePointer
             {
             return(nodePointer.findValue(forKey: key))

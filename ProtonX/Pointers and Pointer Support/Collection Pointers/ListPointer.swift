@@ -177,7 +177,7 @@ public class ListPointer:CollectionPointer
         
     public func contains(_ value:Value) -> Bool
         {
-        guard node(withValue: value) != nil else
+        guard self.node(withValue: value) != nil else
             {
             return(false)
             }

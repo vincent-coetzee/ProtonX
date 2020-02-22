@@ -11,6 +11,11 @@ import RawMemory
 
 extension Proton.Float32:Value
     {
+    public var taggedBits:Word
+        {
+        return(Word(self.bitPattern & 4294967295) | (Proton.kTagBitsFloat32 << Proton.kTagBitsShift))
+        }
+        
     public var bitString:String
         {
         var bitPattern = UInt64(1)
@@ -28,23 +33,8 @@ extension Proton.Float32:Value
         
     public var taggedAddress:Proton.Address
         {
-        return(taggedFloat32(self))
+        return((Proton.kTagBitsFloat32 << Proton.kTagBitsShift) | Word(UInt32(self.bitPattern)))
         }
-        
-//    public var valueStride:Int
-//        {
-//        return(MemoryLayout<Word>.stride)
-//        }
-//
-//    public var typePointer:TypePointer?
-//        {
-//        return(Memory.kTypeFloat32!)
-//        }
-//
-//    public var wordValue:Word
-//        {
-//        return(Word(self.bitPattern))
-//        }
         
     public init(_ word:Word)
         {
@@ -82,5 +72,10 @@ extension Proton.Float32:Value
     public func withTagBitsZeroed() -> Proton.Float32
         {
         return(self)
+        }
+        
+    public init(taggedBits:Word)
+        {
+        self.init(bitPattern: UInt32(taggedBits & 4294967295))
         }
     }

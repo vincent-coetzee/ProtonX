@@ -228,6 +228,15 @@ public class MemorySegment:Equatable
             {
             assert(stringList.contains(value),"List should contain value \(value) but does not")
             }
+        var missingWords = [String]()
+        for _ in 0..<15
+            {
+            missingWords.append(EnglishWord.random())
+            }
+        for word in missingWords
+            {
+            assert(!stringList.contains(word),"List should not contain value \(word) but does")
+            }
         let index = Int.random(in: 0...200)
         let selectedWord = stringValues[index]
         stringList.remove(selectedWord)

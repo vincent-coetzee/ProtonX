@@ -13,7 +13,7 @@ extension Proton.Byte:Value
     {
     public var taggedAddress:Proton.Address
         {
-        return(taggedByte(self))
+        return((Proton.kTagBitsByte << Proton.kTagBitsShift) | Word(self))
         }
         
     public func store(atAddress pointer:Proton.Address)
@@ -47,5 +47,10 @@ extension Proton.Byte:Value
     public func withTagBitsZeroed() -> Proton.Byte
         {
         return(self)
+        }
+        
+    public init(taggedBits word:Word)
+        {
+        self = UInt8(word & ~(Proton.kTagBitsMask << Proton.kTagBitsShift))
         }
     }

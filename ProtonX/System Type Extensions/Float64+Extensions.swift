@@ -40,11 +40,11 @@ extension Proton.Float64
         {
         let untaggedWord:Word = self.bitPattern
         let sign = untaggedWord & Proton.kSignMask
-        return(((untaggedWord >> 4) & Proton.kTagBitsZeroMask) | (Proton.kTagBitsFloat64 << Proton.kTagBitsShift) | sign)
+        return(((untaggedWord >> Proton.kTagBitsWidth) & Proton.kTagBitsZeroMask) | (Proton.kTagBitsFloat64 << Proton.kTagBitsShift) | sign)
         }
         
     public init(taggedBits:Word)
         {
-        self.init(bitPattern: ((taggedBits & Proton.kTagBitsZeroMask) << 4) | (taggedBits & Proton.kSignMask))
+        self.init(bitPattern: ((taggedBits & Proton.kTagBitsZeroMask) << Proton.kTagBitsWidth) | (taggedBits & Proton.kSignMask))
         }
     }

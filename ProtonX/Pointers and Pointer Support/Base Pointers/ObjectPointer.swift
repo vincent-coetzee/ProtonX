@@ -154,9 +154,9 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
         return(false)
         }
         
-    public func store(atAddress address:Proton.Address)
+    public func store(atAddress anAddress:Proton.Address)
         {
-        setAddressAtAddress(self.address,address)
+        setAddressAtAddress(self.taggedAddress,anAddress)
         }
         
     public func store(contentsOf holder:inout ValueHolder,atIndex index:SlotIndex)

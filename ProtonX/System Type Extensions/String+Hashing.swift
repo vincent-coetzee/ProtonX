@@ -74,8 +74,7 @@ extension String:HashableValue,Key
         
     public func store(atAddress:Proton.Address)
         {
-        let address = ImmutableStringPointer(self).address
-        setAddressAtAddress(address,atAddress)
+        setAddressAtAddress(ImmutableStringPointer(self).taggedAddress,atAddress)
         }
         
     public init(atAddress:Proton.Address)
@@ -180,5 +179,15 @@ extension String:HashableValue,Key
             return(self < (value as! String))
             }
         return(false)
+        }
+        
+    public init(taggedBits word:Word)
+        {
+        let mask = Proton.kTagBitsString << Proton.kTagBitsShift
+        if word & mask != mask
+            {
+            fatalError("init(taggedBits:) called on String with non string pointer")
+            }
+        self = StringPointer(word & ~mask).string
         }
     }

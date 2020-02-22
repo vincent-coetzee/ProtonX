@@ -299,7 +299,37 @@ public enum ValueHolder:Comparable
         
     public init(value:Value)
         {
-        self = .value(value)
+        if value is Word
+            {
+            let word = value as! Word
+            switch(word.tag)
+                {
+                case Proton.kTagBitsInteger:
+                    self = .integer(Proton.Integer(taggedBits: word))
+                case Proton.kTagBitsUInteger:
+                    self = .uinteger(Proton.UInteger(taggedBits: word))
+                case Proton.kTagBitsFloat32:
+                    self = .float32(Proton.Float32(taggedBits: word))
+                case Proton.kTagBitsFloat64:
+                    self = .float64(Proton.Float64(taggedBits: word))
+                case Proton.kTagBitsByte:
+                    self = .byte(Proton.Byte(taggedBits: word))
+                case Proton.kTagBitsBoolean:
+                    self = .boolean(Proton.Boolean(taggedBits: word))
+                case Proton.kTagBitsString:
+                    self = .stringReference(StringPointer(taggedBits: word))
+                default:
+                    fatalError("Tag not handled \(word.tag)")
+                }
+            }
+        else if value is String
+            {
+            self = .string(value as! String)
+            }
+        else
+            {
+            self = .value(value)
+            }
         }
         
     public init(object:ObjectPointer)
