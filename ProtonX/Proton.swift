@@ -125,6 +125,12 @@ public class Proton
         case treeNode
         case listNode
         case instruction
+        case setClass
+        case arrayClass
+        case listClass
+        case objectClass
+        case dictionaryClass
+        case treeClass
         }
         
     public enum HeaderTag:Word
@@ -177,6 +183,9 @@ public class Proton
     
     public static let kHeaderIsForwardedMask:Word = 1
     public static let kHeaderIsForwardedShift:Word = 56
+    
+    public static let kHeaderSegmentIndexMask:Word = 65535
+    public static let kHeaderSegmentIndexShift:Word = 40
     
     public static let kHeaderSlotCountMask:Word = 4294967295
     public static let kHeaderSlotCountShift:Word = 8

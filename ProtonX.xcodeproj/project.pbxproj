@@ -36,11 +36,7 @@
 		BF0045D723E5597000F07111 /* ValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458423E5596F00F07111 /* ValueHolder.swift */; };
 		BF0045D823E5597000F07111 /* Instruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458623E5596F00F07111 /* Instruction.swift */; };
 		BF0045D923E5597000F07111 /* IndexVector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458723E5596F00F07111 /* IndexVector.swift */; };
-		BF0045DB23E5597000F07111 /* TreeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458A23E5597000F07111 /* TreeValue.swift */; };
-		BF0045DC23E5597100F07111 /* ScalarValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458B23E5597000F07111 /* ScalarValue.swift */; };
-		BF0045DD23E5597100F07111 /* Pointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458C23E5597000F07111 /* Pointer.swift */; };
 		BF0045DE23E5597100F07111 /* HashableValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458D23E5597000F07111 /* HashableValue.swift */; };
-		BF0045DF23E5597100F07111 /* CollectionValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458E23E5597000F07111 /* CollectionValue.swift */; };
 		BF0045E023E5597100F07111 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00458F23E5597000F07111 /* Key.swift */; };
 		BF0045E123E5597100F07111 /* Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00459023E5597000F07111 /* Value.swift */; };
 		BF0045E223E5597100F07111 /* NamedPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF00459123E5597000F07111 /* NamedPointer.swift */; };
@@ -60,7 +56,7 @@
 		BF0045F023E5597100F07111 /* SystemSlotTypePointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0045A323E5597000F07111 /* SystemSlotTypePointer.swift */; };
 		BF0045F123E5597100F07111 /* SystemSlotPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0045A423E5597000F07111 /* SystemSlotPointer.swift */; };
 		BF0045F223E5597100F07111 /* VirtualSlotPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0045A523E5597000F07111 /* VirtualSlotPointer.swift */; };
-		BF0045F323E5597100F07111 /* ValuePointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0045A623E5597000F07111 /* ValuePointer.swift */; };
+		BF0045F323E5597100F07111 /* Pointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0045A623E5597000F07111 /* Pointer.swift */; };
 		BF0045F423E5597100F07111 /* ObjectTypePointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0045A723E5597000F07111 /* ObjectTypePointer.swift */; };
 		BF0045F523E5597100F07111 /* DictionaryPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0045A923E5597000F07111 /* DictionaryPointer.swift */; };
 		BF0045F623E5597100F07111 /* ListPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0045AA23E5597000F07111 /* ListPointer.swift */; };
@@ -134,12 +130,15 @@
 		BF4C319123FFFBA100769618 /* COERCEBYTEInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4C319023FFFBA100769618 /* COERCEBYTEInstruction.swift */; };
 		BF4C319324000B0300769618 /* LOCALGETInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4C319224000B0300769618 /* LOCALGETInstruction.swift */; };
 		BF4C319524000EC000769618 /* Proton.Immediate+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4C319424000EC000769618 /* Proton.Immediate+Extensions.swift */; };
+		BF4C31972402553E00769618 /* ChunkedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4C31962402553E00769618 /* ChunkedSegment.swift */; };
+		BF4C31992402FC9300769618 /* SetClassPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4C31982402FC9300769618 /* SetClassPointer.swift */; };
+		BF4C319B2402FCD500769618 /* ListClassPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4C319A2402FCD500769618 /* ListClassPointer.swift */; };
+		BF4C319D2402FD2B00769618 /* ClassPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4C319C2402FD2B00769618 /* ClassPointer.swift */; };
 		BF5DEF0B23F00F910010D55D /* WordPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5DEF0A23F00F910010D55D /* WordPointer.swift */; };
 		BF5DEF0D23F022A40010D55D /* Mutex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5DEF0C23F022A40010D55D /* Mutex.swift */; };
 		BF71F56923E827A90016ED08 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56823E827A90016ED08 /* Label.swift */; };
 		BF71F56C23E83C570016ED08 /* SeamPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56B23E83C570016ED08 /* SeamPointer.swift */; };
 		BF71F56E23E83EFE0016ED08 /* VisibilityModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56D23E83EFE0016ED08 /* VisibilityModifier.swift */; };
-		BF71F57023E840B90016ED08 /* VergePointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F56F23E840B90016ED08 /* VergePointer.swift */; };
 		BF71F57423E87CDB0016ED08 /* CachedPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF71F57323E87CDB0016ED08 /* CachedPointer.swift */; };
 		BF805E4623F81B6400960CF2 /* RecursiveLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF805E4523F81B6400960CF2 /* RecursiveLock.swift */; };
 		BFA5E1C623FC4D1500DE9427 /* CoercionInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA5E1C523FC4D1500DE9427 /* CoercionInstruction.swift */; };
@@ -147,6 +146,9 @@
 		BFA5E1CA23FC507E00DE9427 /* COERCEUINTInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA5E1C923FC507E00DE9427 /* COERCEUINTInstruction.swift */; };
 		BFA5E1CC23FC50B700DE9427 /* COERCEF32Instruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA5E1CB23FC50B700DE9427 /* COERCEF32Instruction.swift */; };
 		BFA5E1CE23FC738400DE9427 /* COERCEF64Instruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA5E1CD23FC738400DE9427 /* COERCEF64Instruction.swift */; };
+		BFF461D32403107300807182 /* DictionaryClassPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF461D22403107300807182 /* DictionaryClassPointer.swift */; };
+		BFF461D52403109300807182 /* ArrayClassPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF461D42403109300807182 /* ArrayClassPointer.swift */; };
+		BFF461D92403276300807182 /* CodeBlockClassPointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF461D82403276300807182 /* CodeBlockClassPointer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -182,11 +184,7 @@
 		BF00458423E5596F00F07111 /* ValueHolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueHolder.swift; sourceTree = "<group>"; };
 		BF00458623E5596F00F07111 /* Instruction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Instruction.swift; sourceTree = "<group>"; };
 		BF00458723E5596F00F07111 /* IndexVector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndexVector.swift; sourceTree = "<group>"; };
-		BF00458A23E5597000F07111 /* TreeValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TreeValue.swift; sourceTree = "<group>"; };
-		BF00458B23E5597000F07111 /* ScalarValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScalarValue.swift; sourceTree = "<group>"; };
-		BF00458C23E5597000F07111 /* Pointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pointer.swift; sourceTree = "<group>"; };
 		BF00458D23E5597000F07111 /* HashableValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashableValue.swift; sourceTree = "<group>"; };
-		BF00458E23E5597000F07111 /* CollectionValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionValue.swift; sourceTree = "<group>"; };
 		BF00458F23E5597000F07111 /* Key.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		BF00459023E5597000F07111 /* Value.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Value.swift; sourceTree = "<group>"; };
 		BF00459123E5597000F07111 /* NamedPointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamedPointer.swift; sourceTree = "<group>"; };
@@ -206,7 +204,7 @@
 		BF0045A323E5597000F07111 /* SystemSlotTypePointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemSlotTypePointer.swift; sourceTree = "<group>"; };
 		BF0045A423E5597000F07111 /* SystemSlotPointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemSlotPointer.swift; sourceTree = "<group>"; };
 		BF0045A523E5597000F07111 /* VirtualSlotPointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualSlotPointer.swift; sourceTree = "<group>"; };
-		BF0045A623E5597000F07111 /* ValuePointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValuePointer.swift; sourceTree = "<group>"; };
+		BF0045A623E5597000F07111 /* Pointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pointer.swift; sourceTree = "<group>"; };
 		BF0045A723E5597000F07111 /* ObjectTypePointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectTypePointer.swift; sourceTree = "<group>"; };
 		BF0045A923E5597000F07111 /* DictionaryPointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryPointer.swift; sourceTree = "<group>"; };
 		BF0045AA23E5597000F07111 /* ListPointer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListPointer.swift; sourceTree = "<group>"; };
@@ -282,12 +280,15 @@
 		BF4C319023FFFBA100769618 /* COERCEBYTEInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COERCEBYTEInstruction.swift; sourceTree = "<group>"; };
 		BF4C319224000B0300769618 /* LOCALGETInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LOCALGETInstruction.swift; sourceTree = "<group>"; };
 		BF4C319424000EC000769618 /* Proton.Immediate+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Proton.Immediate+Extensions.swift"; sourceTree = "<group>"; };
+		BF4C31962402553E00769618 /* ChunkedSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkedSegment.swift; sourceTree = "<group>"; };
+		BF4C31982402FC9300769618 /* SetClassPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetClassPointer.swift; sourceTree = "<group>"; };
+		BF4C319A2402FCD500769618 /* ListClassPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListClassPointer.swift; sourceTree = "<group>"; };
+		BF4C319C2402FD2B00769618 /* ClassPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassPointer.swift; sourceTree = "<group>"; };
 		BF5DEF0A23F00F910010D55D /* WordPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordPointer.swift; sourceTree = "<group>"; };
 		BF5DEF0C23F022A40010D55D /* Mutex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mutex.swift; sourceTree = "<group>"; };
 		BF71F56823E827A90016ED08 /* Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
 		BF71F56B23E83C570016ED08 /* SeamPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeamPointer.swift; sourceTree = "<group>"; };
 		BF71F56D23E83EFE0016ED08 /* VisibilityModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisibilityModifier.swift; sourceTree = "<group>"; };
-		BF71F56F23E840B90016ED08 /* VergePointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VergePointer.swift; sourceTree = "<group>"; };
 		BF71F57323E87CDB0016ED08 /* CachedPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedPointer.swift; sourceTree = "<group>"; };
 		BF805E4523F81B6400960CF2 /* RecursiveLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecursiveLock.swift; sourceTree = "<group>"; };
 		BFA5E1C523FC4D1500DE9427 /* CoercionInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoercionInstruction.swift; sourceTree = "<group>"; };
@@ -295,6 +296,9 @@
 		BFA5E1C923FC507E00DE9427 /* COERCEUINTInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COERCEUINTInstruction.swift; sourceTree = "<group>"; };
 		BFA5E1CB23FC50B700DE9427 /* COERCEF32Instruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COERCEF32Instruction.swift; sourceTree = "<group>"; };
 		BFA5E1CD23FC738400DE9427 /* COERCEF64Instruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COERCEF64Instruction.swift; sourceTree = "<group>"; };
+		BFF461D22403107300807182 /* DictionaryClassPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryClassPointer.swift; sourceTree = "<group>"; };
+		BFF461D42403109300807182 /* ArrayClassPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayClassPointer.swift; sourceTree = "<group>"; };
+		BFF461D82403276300807182 /* CodeBlockClassPointer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeBlockClassPointer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -376,6 +380,7 @@
 				BF00457623E5596F00F07111 /* StaticSegment.swift */,
 				BF36C94A23F9FB8F000C4136 /* PersistentSegment.swift */,
 				BF36C94C23F9FBC0000C4136 /* PersistentPage.swift */,
+				BF4C31962402553E00769618 /* ChunkedSegment.swift */,
 			);
 			path = "Memory and Segments";
 			sourceTree = "<group>";
@@ -423,11 +428,7 @@
 		BF00458923E5597000F07111 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				BF00458A23E5597000F07111 /* TreeValue.swift */,
-				BF00458B23E5597000F07111 /* ScalarValue.swift */,
-				BF00458C23E5597000F07111 /* Pointer.swift */,
 				BF00458D23E5597000F07111 /* HashableValue.swift */,
-				BF00458E23E5597000F07111 /* CollectionValue.swift */,
 				BF00458F23E5597000F07111 /* Key.swift */,
 				BF00459023E5597000F07111 /* Value.swift */,
 				BF00459123E5597000F07111 /* NamedPointer.swift */,
@@ -465,13 +466,18 @@
 		BF00459923E5597000F07111 /* Type Pointers */ = {
 			isa = PBXGroup;
 			children = (
-				BF71F56F23E840B90016ED08 /* VergePointer.swift */,
-				BF71F56B23E83C570016ED08 /* SeamPointer.swift */,
 				BF00459A23E5597000F07111 /* ContractPointer.swift */,
 				BF00459B23E5597000F07111 /* EnumerationPointer.swift */,
-				BF00459C23E5597000F07111 /* ScalarTypePointer.swift */,
-				BF00459D23E5597000F07111 /* TypePointer.swift */,
 				BF00459E23E5597000F07111 /* ScalarPointer.swift */,
+				BF00459C23E5597000F07111 /* ScalarTypePointer.swift */,
+				BF71F56B23E83C570016ED08 /* SeamPointer.swift */,
+				BF00459D23E5597000F07111 /* TypePointer.swift */,
+				BF4C31982402FC9300769618 /* SetClassPointer.swift */,
+				BF4C319A2402FCD500769618 /* ListClassPointer.swift */,
+				BF4C319C2402FD2B00769618 /* ClassPointer.swift */,
+				BFF461D22403107300807182 /* DictionaryClassPointer.swift */,
+				BFF461D42403109300807182 /* ArrayClassPointer.swift */,
+				BFF461D82403276300807182 /* CodeBlockClassPointer.swift */,
 			);
 			path = "Type Pointers";
 			sourceTree = "<group>";
@@ -485,7 +491,7 @@
 				BF0045A323E5597000F07111 /* SystemSlotTypePointer.swift */,
 				BF0045A423E5597000F07111 /* SystemSlotPointer.swift */,
 				BF0045A523E5597000F07111 /* VirtualSlotPointer.swift */,
-				BF0045A623E5597000F07111 /* ValuePointer.swift */,
+				BF0045A623E5597000F07111 /* Pointer.swift */,
 				BF0045A723E5597000F07111 /* ObjectTypePointer.swift */,
 				BF3C475023E89F1C008BCF13 /* SlotValue.swift */,
 			);
@@ -679,6 +685,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF00460323E5597100F07111 /* PackagePointer.swift in Sources */,
+				BF4C319B2402FCD500769618 /* ListClassPointer.swift in Sources */,
 				BF0045E323E5597100F07111 /* Log.swift in Sources */,
 				BF36C96123F9FDCD000C4136 /* ANDInstruction.swift in Sources */,
 				BF3C475123E89F1C008BCF13 /* SlotValue.swift in Sources */,
@@ -690,7 +697,6 @@
 				BF4C319324000B0300769618 /* LOCALGETInstruction.swift in Sources */,
 				BF0045E123E5597100F07111 /* Value.swift in Sources */,
 				BF0045E223E5597100F07111 /* NamedPointer.swift in Sources */,
-				BF0045DF23E5597100F07111 /* CollectionValue.swift in Sources */,
 				BF0045FD23E5597100F07111 /* CollectionPointer.swift in Sources */,
 				BF0045CD23E5597000F07111 /* Array+Extensions.swift in Sources */,
 				BF36C95D23F9FD34000C4136 /* DIVInstruction.swift in Sources */,
@@ -705,17 +711,15 @@
 				BF36C97D23F9FF6D000C4136 /* BRLTEQInstruction.swift in Sources */,
 				BF3C475A23E8C634008BCF13 /* MethodDispatchGraph.swift in Sources */,
 				BF36C97323F9FEE1000C4136 /* BRZInstruction.swift in Sources */,
+				BFF461D92403276300807182 /* CodeBlockClassPointer.swift in Sources */,
 				BF36C97523F9FEEC000C4136 /* BRNZInstruction.swift in Sources */,
 				BF0045C623E5597000F07111 /* MemorySegment.swift in Sources */,
 				BF36C97B23F9FF5F000C4136 /* BRLTInstruction.swift in Sources */,
 				BF36C96B23F9FE55000C4136 /* BRInstruction.swift in Sources */,
 				BF4C318F23FFFB6500769618 /* COERCECHAR.swift in Sources */,
 				BF0045FF23E5597100F07111 /* ArrayPointer.swift in Sources */,
-				BF0045DD23E5597100F07111 /* Pointer.swift in Sources */,
 				BF34189B23FAD7CD00F3656C /* EnumeratedArray.swift in Sources */,
-				BF0045DB23E5597000F07111 /* TreeValue.swift in Sources */,
 				BF36C98523F9FFEA000C4136 /* RETInstruction.swift in Sources */,
-				BF71F57023E840B90016ED08 /* VergePointer.swift in Sources */,
 				BF0045CA23E5597000F07111 /* ManagedSegment.swift in Sources */,
 				BF0045F723E5597100F07111 /* ImmutableStringPointer.swift in Sources */,
 				BF36C97923F9FF53000C4136 /* BTGTEQInstruction.swift in Sources */,
@@ -723,6 +727,7 @@
 				BF00461023E5598400F07111 /* RawMemory.c in Sources */,
 				BF36C98E23FA1D49000C4136 /* NOPInstruction.swift in Sources */,
 				BF00460723E5597100F07111 /* MethodInstancePointer.swift in Sources */,
+				BFF461D52403109300807182 /* ArrayClassPointer.swift in Sources */,
 				BF0045D623E5597000F07111 /* Word+Extensions.swift in Sources */,
 				BF36C96323F9FDDD000C4136 /* ORInstruction.swift in Sources */,
 				BF00460023E5597100F07111 /* ByteArrayPointer.swift in Sources */,
@@ -731,11 +736,12 @@
 				BF00460123E5597100F07111 /* PackageElementPointer.swift in Sources */,
 				BF36C95B23F9FD24000C4136 /* MULInstruction.swift in Sources */,
 				BF0045E923E5597100F07111 /* EnumerationPointer.swift in Sources */,
-				BF0045F323E5597100F07111 /* ValuePointer.swift in Sources */,
+				BF0045F323E5597100F07111 /* Pointer.swift in Sources */,
 				BFA5E1CA23FC507E00DE9427 /* COERCEUINTInstruction.swift in Sources */,
 				BF24890123FD927B00241E4B /* Proton.Boolean+Extensions.swift in Sources */,
 				BF0045D223E5597000F07111 /* String+Hashing.swift in Sources */,
 				BF0045D723E5597000F07111 /* ValueHolder.swift in Sources */,
+				BF4C319D2402FD2B00769618 /* ClassPointer.swift in Sources */,
 				BF0045EA23E5597100F07111 /* ScalarTypePointer.swift in Sources */,
 				BF0045FA23E5597100F07111 /* ListNodePointer.swift in Sources */,
 				BF36C96723F9FDF6000C4136 /* NOTInstruction.swift in Sources */,
@@ -786,15 +792,17 @@
 				BF36C95323F9FCE2000C4136 /* MAKEInstruction.swift in Sources */,
 				BF0045F123E5597100F07111 /* SystemSlotPointer.swift in Sources */,
 				BF0045D123E5597000F07111 /* Float64+Extensions.swift in Sources */,
-				BF0045DC23E5597100F07111 /* ScalarValue.swift in Sources */,
 				BF0045E523E5597100F07111 /* EnglishWord.swift in Sources */,
+				BF4C31992402FC9300769618 /* SetClassPointer.swift in Sources */,
 				BF71F56923E827A90016ED08 /* Label.swift in Sources */,
 				BF0045EB23E5597100F07111 /* TypePointer.swift in Sources */,
+				BFF461D32403107300807182 /* DictionaryClassPointer.swift in Sources */,
 				BF36C95723F9FD0C000C4136 /* ADDInstruction.swift in Sources */,
 				BF0045D823E5597000F07111 /* Instruction.swift in Sources */,
 				BF36C97123F9FED5000C4136 /* BRNEQInstruction.swift in Sources */,
 				BF3C475623E8C615008BCF13 /* Method.swift in Sources */,
 				BF36C95923F9FD18000C4136 /* SUBInstruction.swift in Sources */,
+				BF4C31972402553E00769618 /* ChunkedSegment.swift in Sources */,
 				BF0045C823E5597000F07111 /* Memory.swift in Sources */,
 				BF71F56E23E83EFE0016ED08 /* VisibilityModifier.swift in Sources */,
 				BF71F56C23E83C570016ED08 /* SeamPointer.swift in Sources */,

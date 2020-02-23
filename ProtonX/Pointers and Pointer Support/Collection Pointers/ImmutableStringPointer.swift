@@ -23,7 +23,7 @@ public class ImmutableStringPointer:StringPointer
         return(85)
         }
   
-    public static func ====(lhs:ImmutableStringPointer,rhs:ValuePointer) -> Bool
+    public static func ====(lhs:ImmutableStringPointer,rhs:Pointer) -> Bool
         {
         if !(rhs is ImmutableStringPointer)
             {

@@ -16,7 +16,6 @@ public class Memory
     public static let codeSegment = CodeSegment(sizeInMegabytes: 64)
     public static let dataSegment = DataSegment(sizeInMegabytes: 16)
     public static let staticSegment = StaticSegment(sizeInMegabytes: 32)
-    public static let managedSegment = ManagedSegment(sizeInMegabytes: 128)
     
     private static var typesKeyedByName:[String:TypePointer] = [:]
     private static var segmentsKeyedByIndex:[Word:MemorySegment] = [:]
@@ -207,4 +206,6 @@ public class Memory
         Self.kTypeInstruction?.instanceType = Proton.kTypeInstruction
         Self.kPackageArgon!.append(Self.kTypeInstruction!)
         }
+        
+    public let managedSegment:ManagedSegment = ManagedSegment(sizeInMegabytes: 128)
     }

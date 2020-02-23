@@ -8,6 +8,6 @@
 
 import Foundation
 
-public class StaticSegment:MemorySegment
+public class StaticSegment:ChunkedSegment
     {
     }

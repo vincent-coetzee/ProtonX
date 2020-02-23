@@ -11,14 +11,36 @@ import RawMemory
     
 infix operator ====
 
-public class ValuePointer:Pointer,Equatable
+public class Pointer:Equatable
     {
     public class func isNullPointer(_ pointer:AnyObject) -> Bool
         {
         return(unsafeBitCast(pointer,to: Word.self) == 0)
         }
         
-    public static func ==(lhs:ValuePointer,rhs:ValuePointer) -> Bool
+    public class func pointer(for address:Proton.Address) -> Pointer
+        {
+        if address.tag == Proton.kTagBitsAddress
+            {
+            let header = addressAtAddress(address & ~(Proton.kTagBitsMask << Proton.kTagBitsShift))
+            let type = Proton.ValueType(rawValue: (header & Proton.kHeaderValueTypeMask)) ?? .none
+            switch(type)
+                {
+                case .setClass:
+                    return(SetClassPointer(address))
+                case .listClass:
+                    return(ListClassPointer(address))
+                case .dictionaryClass:
+                    return(DictionaryClassPointer(address))
+                case .arrayClass:
+                    return(ArrayClassPointer(address))
+                case .objectClass:
+                    return(ClassPointer(address))
+                }
+            }
+        }
+        
+    public static func ==(lhs:Pointer,rhs:Pointer) -> Bool
         {
         if unsafeBitCast(lhs,to: Word.self) == unsafeBitCast(rhs,to: Word.self)
             {

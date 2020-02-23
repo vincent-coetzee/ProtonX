@@ -9,7 +9,7 @@
 import Foundation
 import RawMemory
 
-public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
+public class ObjectPointer:Pointer,Headered,Value,Key,CachedPointer
     {
     public var valueStride: Int
         {
@@ -52,6 +52,20 @@ public class ObjectPointer:ValuePointer,Headered,Value,Key,CachedPointer
     public override var untaggedAddress:Proton.Address
         {
         return(self.address & ~(Proton.kTagBitsMask << Proton.kTagBitsShift))
+        }
+        
+    public var valueType:Proton.ValueType
+        {
+        get
+            {
+            return(Proton.ValueType(rawValue: (self.headerWord & Proton.kHeaderValueTypeMask)) ?? .none)
+            }
+        set
+            {
+            let newWord = (Word(newValue.rawValue) & Proton.kHeaderValueTypeMask)
+            let header = self.headerWord & ~(Proton.kHeaderValueTypeMask)
+            self.headerWord = header | newWord
+            }
         }
         
     public var typePointer:TypePointer?

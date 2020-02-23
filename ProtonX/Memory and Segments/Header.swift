@@ -79,6 +79,20 @@ extension Headered
             }
         }
         
+    public var valueType:Proton.ValueType
+        {
+        get
+            {
+            return(Proton.ValueType(rawValue: (self.headerWord & Proton.kHeaderValueTypeMask)) ?? .none)
+            }
+        set
+            {
+            let newWord = (Word(newValue.rawValue) & Proton.kHeaderValueTypeMask)
+            let header = self.headerWord & ~(Proton.kHeaderValueTypeMask)
+            self.headerWord = header | newWord
+            }
+        }
+        
     public var hasExtraSlotsAtEnd:Bool
         {
         get
@@ -101,7 +115,7 @@ extension Headered
             }
         set
             {
-            if ValuePointer.isNullPointer(self)
+            if Pointer.isNullPointer(self)
                 {
                 return
                 }

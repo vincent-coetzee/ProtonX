@@ -15,6 +15,7 @@ public class Thread
     public var registers:Array<Word>
     public let stack:StackSegment
     public let exceptionStack:StackSegment
+    public let managed:ManagedSegment
     
     public init(memory:Memory)
         {
@@ -22,6 +23,7 @@ public class Thread
         self.stack = memory.makeStackSegment(sizeInMegabytes: 4)
         self.exceptionStack = memory.makeStackSegment(sizeInMegabytes: 2)
         self.registers = Array<Word>(repeating: 0, count: Instruction.Register.allCases.reduce(0,{max($0,$1.rawValue)}))
+        self.managed = memory.managedSegment
         }
         
     private func saveExecutionContext()

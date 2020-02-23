@@ -8,6 +8,6 @@
 
 import Foundation
 
-public class CodeSegment:MemorySegment
+public class CodeSegment:ChunkedSegment
     {
     }

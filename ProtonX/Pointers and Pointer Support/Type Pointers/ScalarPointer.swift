@@ -9,7 +9,7 @@
 import Foundation
 import RawMemory
 
-public class ScalarPointer:ValuePointer,Key
+public class ScalarPointer:Pointer,Key
     {
     public static func ==(lhs:ScalarPointer,rhs:ScalarPointer) -> Bool
         {
